@@ -1,6 +1,6 @@
 # Kyle Gregory Ibo — Portfolio
 
-Personal portfolio site for **Kyle Gregory Ibo**, AI Automation & Systems Engineer.
+Personal portfolio site for **Kyle Gregory Ibo**, Systems & Automation Engineer.
 A fast, statically-exported [Next.js](https://nextjs.org) site with a client-first
 landing page, built with TypeScript and Tailwind CSS and deployed to GitHub Pages.
 

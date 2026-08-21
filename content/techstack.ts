@@ -34,22 +34,6 @@ export const techStack: StackGroup[] = [
     ],
   },
   {
-    group: "Applied AI",
-    items: [
-      { name: "Gemini API", slug: "googlegemini" },
-      { name: "Hugging Face", slug: "huggingface" },
-    ],
-    notes: [
-      "LLM API integration",
-      "Prompt design",
-      "AI steps inside n8n workflows",
-      "Human-in-the-loop approval",
-      "Wav2Vec2-XLSR",
-      "KenLM",
-      "Speech recognition pipelines",
-    ],
-  },
-  {
     group: "Backend, Frontend & APIs",
     items: [
       { name: "Node.js", slug: "nodedotjs" },
@@ -90,6 +74,14 @@ export const techStack: StackGroup[] = [
       "Incident response",
       "Uptime monitoring",
     ],
+  },
+  {
+    group: "Applied AI",
+    items: [
+      { name: "Hugging Face", slug: "huggingface" },
+      { name: "Gemini API", slug: "googlegemini" },
+    ],
+    notes: ["Wav2Vec2-XLSR", "KenLM", "Speech recognition pipelines"],
   },
   {
     group: "Infrastructure & Tools",

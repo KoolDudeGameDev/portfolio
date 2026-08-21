@@ -3,7 +3,7 @@
 Personal portfolio website. Single-page, client-first, deployed to **GitHub Pages**.
 
 ## Owner
-Kyle Gregory Ibo — AI Automation & Systems Engineer (backend, systems integration, applied AI/ML).
+Kyle Gregory Ibo — Systems & Automation Engineer (backend, systems integration, applied ML).
 - GitHub: [KoolDudeGameDev](https://github.com/KoolDudeGameDev)
 - Contact email shown on site: gregoryibo7@gmail.com
 - Positioning: **client-first** (win business owners), with skills/tech/experience in

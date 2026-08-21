@@ -123,18 +123,6 @@ export function AutomationIcon(props: IconProps) {
   );
 }
 
-export function AiIcon(props: IconProps) {
-  return (
-    <svg {...base} {...props}>
-      {/* Processor die with pins, plus a sparkle — the gear already carries
-          plain automation, so this one has to read as the thinking kind. */}
-      <rect x="6.6" y="6.6" width="10.8" height="10.8" rx="2.4" />
-      <path d="M10 3v3.6M14 3v3.6M10 17.4V21M14 17.4V21M3 10h3.6M3 14h3.6M17.4 10H21M17.4 14H21" />
-      <path d="M12 9.1l.86 2.03L14.9 12l-2.04.87L12 14.9l-.86-2.03L9.1 12l2.04-.87z" />
-    </svg>
-  );
-}
-
 export function BackendIcon(props: IconProps) {
   return (
     <svg {...base} {...props}>

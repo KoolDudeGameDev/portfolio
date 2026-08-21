@@ -1,5 +1,4 @@
 export type ServiceIcon =
-  | "ai"
   | "automation"
   | "backend"
   | "crm"
@@ -25,20 +24,6 @@ export const services: Service[] = [
     description:
       "I connect the tools your business already runs on — CRM, project boards, email, spreadsheets — into one automated system, so leads, tasks, and updates flow without anyone copying data between tabs.",
     stack: ["n8n", "GoHighLevel", "Asana", "Webhooks", "REST APIs"],
-  },
-  {
-    icon: "ai",
-    title: "AI Automation & Agents",
-    tagline: "Put AI where the manual work actually is.",
-    description:
-      "The tasks worth handing to AI are the judgement ones — reading an incoming message, pulling the right context, drafting the reply, flagging the exception. I build those steps into the workflows you already run, with a person approving anything that leaves the building.",
-    stack: [
-      "n8n AI nodes",
-      "LLM APIs",
-      "Prompt design",
-      "Human-in-the-loop",
-      "Webhooks",
-    ],
   },
   {
     icon: "crm",
@@ -77,5 +62,6 @@ export const services: Service[] = [
       "PostgreSQL",
       "n8n",
     ],
+    wide: true,
   },
 ];

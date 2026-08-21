@@ -20,17 +20,13 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "Kyle Gregory Ibo — AI Automation & Systems Engineer",
+  title: "Kyle Gregory Ibo — Systems & Automation Engineer",
   description:
-    "I build the AI automations, integrations, and backends that make businesses run themselves — n8n workflows, CRM systems, REST APIs, and web apps that turn manual work into reliable systems.",
+    "I build the automations, integrations, and backends that make businesses run themselves — n8n, CRM systems, REST APIs, and web apps that turn manual work into reliable systems.",
   keywords: [
-    "AI automation",
-    "AI workflow automation",
     "automation engineer",
     "systems integration",
     "n8n",
-    "workflow automation",
-    "API integration",
     "GoHighLevel",
     "backend developer",
     "Supabase",
@@ -39,7 +35,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Kyle Gregory Ibo" }],
   openGraph: {
-    title: "Kyle Gregory Ibo — AI Automation & Systems Engineer",
+    title: "Kyle Gregory Ibo — Systems & Automation Engineer",
     description:
       "Automations, integrations, and backends that make businesses run themselves.",
     type: "website",

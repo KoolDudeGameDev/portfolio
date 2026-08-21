@@ -48,11 +48,17 @@ export function About() {
               can actually follow.
             </p>
             <p>
+              I also lead a four-person intern team at the brokerage — I assign
+              the workflow builds, review what they ship, and own the
+              documentation standards we all work to. Getting four people
+              building against the same conventions is its own engineering
+              problem, and a system nobody else can maintain isn&apos;t
+              finished.
+            </p>
+            <p>
               Whether it&apos;s automating a brokerage&apos;s pipeline or
               training a speech model from scratch, I like owning a problem from
-              the database to the deployed product. My first reaction to a
-              manual process is to ask why it&apos;s still manual — then go
-              build the thing that ends it.
+              the database to the deployed product.
             </p>
           </div>
         </div>

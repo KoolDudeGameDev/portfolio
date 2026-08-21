@@ -13,7 +13,7 @@ export const experience: ExperienceItem[] = [
     org: "Bai Finance",
     location: "Cebu, Philippines",
     summary:
-      "Own a version-controlled n8n automation platform integrating GoHighLevel and Asana across a 19-pipeline brokerage, ship its marketing site and admin CMS, and lead a three-person intern team on builds, reviews, and documentation standards.",
+      "Own a version-controlled n8n automation platform integrating GoHighLevel and Asana across a 19-pipeline brokerage, ship its marketing site and admin CMS, and lead a four-person intern team on builds, code reviews, and documentation standards.",
   },
   {
     period: "Jun 2026 — Present",

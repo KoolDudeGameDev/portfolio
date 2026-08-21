@@ -10,7 +10,7 @@ export function asset(path: string): string {
 
 export const site = {
   name: "Kyle Gregory Ibo",
-  role: "AI Automation & Systems Engineer",
+  role: "Systems & Automation Engineer",
   email: "gregoryibo7@gmail.com",
   location: "Ginatilan, Cebu, Philippines",
   socials: {

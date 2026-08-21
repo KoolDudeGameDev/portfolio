@@ -31,8 +31,7 @@ export function Hero() {
 
         <p className="mt-7 max-w-2xl text-lg leading-relaxed text-muted md:text-xl">
           I&apos;m {site.name} — I connect your CRM, tools, and data into
-          automated workflows and reliable backends, with AI doing the
-          judgement work where it earns its place, so leads get followed up,
+          automated workflows and reliable backends, so leads get followed up,
           tasks create themselves, and your team stops doing copy-paste work.
         </p>
 

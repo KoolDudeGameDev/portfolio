@@ -1,6 +1,5 @@
 import { SectionHeading } from "./SectionHeading";
 import {
-  AiIcon,
   AutomationIcon,
   BackendIcon,
   CrmIcon,
@@ -10,7 +9,6 @@ import {
 import { services, type ServiceIcon } from "@/content/services";
 
 const iconMap: Record<ServiceIcon, typeof AutomationIcon> = {
-  ai: AiIcon,
   automation: AutomationIcon,
   backend: BackendIcon,
   crm: CrmIcon,

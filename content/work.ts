@@ -50,6 +50,7 @@ export const work: WorkItem[] = [
       "Mapped 30+ pipeline stages into auto-created tasks",
       "Engineered an authoritative-state check that killed the bidirectional echo loop causing duplicate updates",
       "Added follower-based broker routing that enforces per-broker data confidentiality",
+      "Lead a four-person intern team building against it — assigning workflow builds, reviewing deliverables, and owning the documentation standards",
     ],
     tech: ["n8n", "GoHighLevel v2 API", "Asana API", "Webhooks", "REST"],
   },
