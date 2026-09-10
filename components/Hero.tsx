@@ -14,7 +14,7 @@ export function Hero() {
   return (
     <section
       id="home"
-      className="relative px-6 pt-36 pb-4 md:pt-44 md:pb-8"
+      className="relative px-6 pt-32 pb-4 md:pt-44 md:pb-8"
     >
       <div className="relative mx-auto max-w-6xl">
         <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-4 py-1.5 text-xs uppercase tracking-[0.18em] text-muted">
@@ -22,7 +22,7 @@ export function Hero() {
           {site.role}
         </div>
 
-        <h1 className="max-w-4xl font-sans text-[2.6rem] font-semibold leading-[1.05] tracking-tight sm:text-6xl md:text-7xl">
+        <h1 className="max-w-4xl font-sans text-[2.1rem] font-semibold leading-[1.05] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
           I build the systems that make a business{" "}
           <span className="font-serif font-normal italic text-accent">
             run itself.
@@ -30,9 +30,10 @@ export function Hero() {
         </h1>
 
         <p className="mt-7 max-w-2xl text-lg leading-relaxed text-muted md:text-xl">
-          I&apos;m {site.name} — I connect your CRM, tools, and data into
-          automated workflows and reliable backends, so leads get followed up,
-          tasks create themselves, and your team stops doing copy-paste work.
+          I&apos;m {site.name} — I ship production automation, backends, and web
+          applications end to end, from REST API contracts and webhooks to
+          access-control logic and CRM data architecture. Right now that&apos;s
+          100+ live workflows connecting GoHighLevel, n8n, Asana, and Supabase.
         </p>
 
         <div className="mt-10 flex flex-wrap items-center gap-4">
@@ -52,9 +53,12 @@ export function Hero() {
           </a>
         </div>
 
-        <dl className="mt-16 grid grid-cols-2 gap-x-8 gap-y-8 border-t border-border pt-10 text-center sm:grid-cols-3 md:grid-cols-5">
+        {/* Flex-wrapped rather than a grid: five figures never divide evenly
+            into two or three columns, and a grid strands the last one against
+            the left edge. Wrapping centres whatever ends up on the last row. */}
+        <dl className="mt-12 flex flex-wrap justify-center gap-x-10 gap-y-8 border-t border-border pt-10 text-center md:mt-16 md:gap-x-16">
           {stats.map((stat) => (
-            <div key={stat.label}>
+            <div key={stat.label} className="w-36 md:w-auto md:min-w-[7.5rem]">
               <dt className="font-serif text-3xl font-normal md:text-4xl">
                 {stat.value}
               </dt>
