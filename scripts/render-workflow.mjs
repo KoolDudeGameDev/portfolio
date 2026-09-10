@@ -141,34 +141,78 @@ const minX = Math.min(...boxes.map((b) => b.x));
 const minY = Math.min(...boxes.map((b) => b.y));
 const maxX = Math.max(...boxes.map((b) => b.x + b.w));
 const maxY = Math.max(...boxes.map((b) => b.y + b.h));
+// Frame on the NODES, not the sticky notes: a note can be 3000px wide and would
+// drag the frame off the graph it is annotating.
+const nMinX = Math.min(...nodes.map((n) => n.position[0]));
+const nMinY = Math.min(...nodes.map((n) => n.position[1]));
+const nMaxX = Math.max(...nodes.map((n) => n.position[0] + NODE_W));
+const nMaxY = Math.max(...nodes.map((n) => n.position[1] + NODE_H));
+
 const fitScale = Math.min(
-  (W - PAD * 2) / (maxX - minX),
-  (H - PAD * 2) / (maxY - minY),
+  (W - PAD * 2) / (nMaxX - nMinX),
+  (H - PAD * 2) / (nMaxY - nMinY),
   1,
 );
 
-// A whole-graph fit turns a big canvas into illegible slivers and the long
-// response edges into spaghetti. Below the point where labels survive, frame a
-// readable slice instead — the way a screenshot of the real editor would.
-const LABEL_FLOOR = 92;
-const useZoom = !forceFit && (zoomOverride > 0 || NODE_W * fitScale < LABEL_FLOOR);
-const zoom = zoomOverride > 0 ? zoomOverride : 132;
-const scale = useZoom ? Math.min(zoom / NODE_W, 1) : fitScale;
+// Below this the labels stop being readable even in the case-study modal, so a
+// whole-graph fit is not worth having — better to crop and stay legible.
+const MIN_SCALE = 0.5;
 
-let offX;
-let offY;
-if (useZoom) {
-  // Centre on the median node, so one stray far-flung node can't drag the frame
-  // off the part of the graph that actually carries the story.
-  const mid = (vals) => vals.sort((a, b) => a - b)[Math.floor(vals.length / 2)];
-  const cx = mid(nodes.map((n) => n.position[0] + NODE_W / 2));
-  const cy = mid(nodes.map((n) => n.position[1] + NODE_H / 2));
-  offX = W / 2 - cx * scale;
-  offY = H / 2 - cy * scale;
+let scale;
+let cx;
+let cy;
+
+if (zoomOverride > 0) {
+  scale = Math.min(zoomOverride / NODE_W, 1);
+} else if (forceFit || fitScale >= MIN_SCALE) {
+  scale = fitScale;
 } else {
-  offX = (W - (maxX - minX) * scale) / 2 - minX * scale;
-  offY = (H - (maxY - minY) * scale) / 2 - minY * scale;
+  scale = MIN_SCALE;
 }
+
+if (scale <= fitScale + 1e-6) {
+  // Everything fits at this scale: centre the graph.
+  cx = (nMinX + nMaxX) / 2;
+  cy = (nMinY + nMaxY) / 2;
+} else {
+  // It does not fit, so the frame has to crop. Slide a window over the graph and
+  // keep the position that shows the MOST nodes — centring on a median or a
+  // centroid lands in whitespace whenever the graph is L-shaped or has an
+  // outlying error lane, which is most of them.
+  // Inset by the padding: a node counts as "shown" only if it clears the frame
+  // edge, otherwise the best-scoring window is one with a row sliced in half.
+  const winW = (W - PAD * 2) / scale;
+  const winH = (H - PAD * 2) / scale;
+  let best = -1;
+  for (const a of nodes) {
+    for (const b of nodes) {
+      const ccx = a.position[0] + NODE_W / 2;
+      const ccy = b.position[1] + NODE_H / 2;
+      const l = ccx - winW / 2;
+      const t = ccy - winH / 2;
+      let seen = 0;
+      for (const n of nodes) {
+        if (
+          n.position[0] >= l &&
+          n.position[0] + NODE_W <= l + winW &&
+          n.position[1] >= t &&
+          n.position[1] + NODE_H <= t + winH
+        ) {
+          seen++;
+        }
+      }
+      // Tie-break toward the top-left, so a frame starts where the flow starts.
+      if (seen > best || (seen === best && ccx + ccy < cx + cy)) {
+        best = seen;
+        cx = ccx;
+        cy = ccy;
+      }
+    }
+  }
+}
+
+const offX = W / 2 - cx * scale;
+const offY = H / 2 - cy * scale;
 const tx = (x) => x * scale + offX;
 const ty = (y) => y * scale + offY;
 
@@ -304,6 +348,6 @@ await sharp(Buffer.from(svg)).webp({ quality: 90 }).toFile(webpPath);
 
 console.log(
   `${path.basename(input)}  ${nodes.length} nodes, ${edges.length} edges, ` +
-    `${notes.length} notes  ${useZoom ? "zoom" : "fit"} scale=${scale.toFixed(3)} labels=${labelled}\n` +
+    `${notes.length} notes  ${scale <= fitScale + 1e-6 ? "fit" : "cropped"} scale=${scale.toFixed(3)} labels=${labelled}\n` +
     `  -> ${webpPath}`,
 );
