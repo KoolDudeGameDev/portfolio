@@ -57,7 +57,10 @@ export function WorkCard({
   const extraTech = item.tech.length - MAX_TECH;
 
   return (
-    <article className="group flex flex-col rounded-2xl border border-border bg-card p-5 transition-all hover:-translate-y-1 hover:border-fg/25 md:p-6">
+    // `relative` + the stretched pseudo-element on the button below makes the
+    // whole card the click target while keeping exactly one tab stop and a real
+    // button for screen readers — a card-level onClick would give neither.
+    <article className="group relative flex cursor-pointer flex-col rounded-2xl border border-border bg-card p-5 transition-all hover:-translate-y-1 hover:border-fg/25 focus-within:border-fg/25 md:p-6">
       <Thumbnail item={item} />
 
       <div className="mt-5 flex items-center justify-between gap-3">
@@ -93,7 +96,7 @@ export function WorkCard({
         <button
           type="button"
           onClick={onOpen}
-          className="inline-flex w-full items-center justify-between border-t border-border pt-4 text-sm font-medium transition-colors hover:text-muted"
+          className="inline-flex w-full items-center justify-between border-t border-border pt-4 text-sm font-medium transition-colors after:absolute after:inset-0 after:rounded-2xl after:content-[''] group-hover:text-muted"
         >
           <span>
             Case study
