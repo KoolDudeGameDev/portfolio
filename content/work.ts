@@ -103,7 +103,7 @@ export const work: WorkItem[] = [
     status: "Active",
     featured: true,
     problem:
-      "A Malaysian ecommerce brand's affiliate rewards platform — storefront, dashboards, payouts, messaging — had one engineer available to keep it alive, and its failures surfaced as wrong numbers rather than as errors.",
+      "A Malaysian ecommerce brand's affiliate-management platform — storefront, dashboards, payouts, messaging — had one engineer available to keep it alive, and its failures surfaced as wrong numbers rather than as errors.",
     build:
       "Took sole ownership of production: uptime monitoring, incident response, security review, database maintenance, and feature work across 17 Supabase Edge Functions, two role-gated dashboards, and a self-hosted automation stack.",
     results: [
@@ -161,13 +161,22 @@ export const work: WorkItem[] = [
     problem:
       "The brokerage needed a public site its own staff could keep current — services, calculators, blog, team — without a developer in the loop for every edit.",
     build:
-      "Built a Next.js marketing site backed by a Supabase admin CMS, with admin routes gated in middleware, request rate limiting, and content-security headers set at the framework level.",
+      "Built a Next.js marketing site backed by a Supabase admin CMS — services, calculators, blog, team, partners and an inquiry chat — with admin access, rate limiting and security headers all enforced before a request reaches a page.",
     results: [
-      "Staff publish and edit content directly; admin routes stay invisible to anyone without the role",
-      "Vitest and Playwright suites hold 90% coverage on the contact and calculator paths",
-      "Every CRM write funnels through one sync function, so lead capture can't drift between channels",
+      "Staff publish and edit content themselves; a request to the admin area without the role gets a 404 rather than a 401, so the route never advertises that it exists",
+      "The contact form and calculators hold a 90% coverage floor in CI, across unit tests and browser tests",
+      "Every CRM write funnels through one sync function, so a chat lead and a form lead reach GoHighLevel the same way instead of drifting apart",
+      "Rate limiting is keyed by caller and path in one place, so a new endpoint can't quietly ship without it",
+      "Each release is checked by a read-only security suite run against the deployed site, not just the local build",
     ],
     tech: ["Next.js", "Supabase", "Playwright", "Vitest", "Railway"],
+    links: [
+      {
+        label: "Live site",
+        href: "https://www.baifinance.com.au/",
+        icon: "external",
+      },
+    ],
   },
   {
     title: "CRM Migration & Data Pipeline",
@@ -181,7 +190,7 @@ export const work: WorkItem[] = [
     build:
       "Wrote a Python pipeline that consolidates every source into one import-ready master: normalizing contact details, splitting joint applicants into individual records, and applying a namespaced tagging scheme through a single validation step.",
     results: [
-      "1,900+ deduplicated contacts consolidated from 20+ source sheets",
+      "Audited 4,000+ contacts across 20+ source sheets and consolidated them into 1,900+ deduplicated records",
       "A tag taxonomy where each tag carries exactly one fact, so adding a segment doesn't mean reworking existing lists",
       "Delivered a phased cleanup roadmap and a company-wide Contact Management SOP",
     ],
@@ -238,13 +247,15 @@ export const work: WorkItem[] = [
     problem:
       "The company needed an internal learning platform with role-based access and live sessions — and a QA process to keep it stable.",
     build:
-      "Built and QA-owned an internal LMS with a course builder, live sessions, and server-rendered certificates, and designed its GHL-to-LearnWorlds enrollment integration.",
+      "Built and QA-owned an internal LMS — a Django REST backend behind a Next.js front end — with a drag-and-drop course builder, quizzes, a community, Jitsi live sessions and server-rendered certificates, and designed its GoHighLevel enrollment integration.",
     results: [
-      "Access control across seven distinct roles, with a review flow for new accounts",
-      "Certificate issuance with a public verification page that needs no login",
-      "Triaged a P0–P2 defect backlog to stabilize the platform",
+      "Seven roles, each with its own dashboard; new broker, BDA and student accounts pass through a moderator review queue before they can see anything",
+      "Moderator rights are granular rather than all-or-nothing, and every account action is written to an audit log",
+      "Certificates are rendered on the server and confirmed at a public verification page that needs no login",
+      "Dashboards update over a live socket instead of polling, so a review decision shows up without a refresh",
+      "Triaged a P0–P2 defect backlog to stabilise the platform",
     ],
-    tech: ["Next.js", "Django REST", "Supabase", "PostgreSQL"],
+    tech: ["Next.js", "Django", "DRF", "Supabase", "Jitsi", "Railway"],
   },
   {
     title: "Cebuano Speech-to-Text",
