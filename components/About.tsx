@@ -35,10 +35,10 @@ export function About() {
           </h2>
           <div className="mt-6 space-y-4 leading-relaxed text-muted">
             <p>
-              I&apos;m a Computer Technology student (Cum Laude standing) who
-              turns business requirements into maintainable systems — from REST
-              API contracts and webhooks to access-control logic and CRM data
-              architecture.
+              I&apos;m a Computer Technology graduate (Cum Laude)
+              who turns business requirements into maintainable systems — from
+              REST API contracts and webhooks to access-control logic and CRM
+              data architecture.
             </p>
             <p>
               Day to day I build live integrations across GoHighLevel, n8n,
@@ -48,9 +48,10 @@ export function About() {
               can actually follow.
             </p>
             <p>
-              I also lead a four-person intern team at the brokerage — I assign
+              I also lead a six-person engineering team at the brokerage,
+              drawn from some of the country&apos;s top universities — I assign
               the workflow builds, review what they ship, and own the
-              documentation standards we all work to. Getting four people
+              documentation standards we all work to. Getting six people
               building against the same conventions is its own engineering
               problem, and a system nobody else can maintain isn&apos;t
               finished.

@@ -8,15 +8,15 @@ export type ExperienceItem = {
 
 export const experience: ExperienceItem[] = [
   {
-    period: "May 2026 — Present",
-    role: "Automation & Systems Integration Engineer (IT Intern)",
+    period: "May 2026 — Sep 2026",
+    role: "Automation & Systems Integration Engineer",
     org: "Bai Finance",
     location: "Cebu, Philippines",
     summary:
-      "Own a version-controlled n8n automation platform integrating GoHighLevel and Asana across a 19-pipeline brokerage, ship its marketing site and admin CMS, and lead a four-person intern team on builds, code reviews, and documentation standards.",
+      "Owned a version-controlled n8n automation platform integrating GoHighLevel and Asana across a 19-pipeline brokerage, shipped its marketing site, admin CMS, and a company-wide leave platform, and led a six-person engineering team on builds, code reviews, and documentation standards.",
   },
   {
-    period: "Jun 2026 — Present",
+    period: "Jun 2026 — Sep 2026",
     role: "Technical Operations Engineer (Agency Contract)",
     org: "Confidential Client — Ecommerce",
     location: "Remote — Malaysia",
@@ -44,6 +44,6 @@ export const experience: ExperienceItem[] = [
 export const education = {
   school: "Cebu Technological University — Ginatilan Campus",
   degree: "BIT, Major in Computer Technology",
-  honor: "Cum Laude standing",
-  period: "Expected May 2027",
+  honor: "Cum Laude",
+  period: "May 2026",
 };
