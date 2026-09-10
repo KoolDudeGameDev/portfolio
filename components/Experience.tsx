@@ -30,16 +30,29 @@ export function Experience() {
           ))}
         </ol>
 
-        <div className="mt-10 flex flex-col gap-2 rounded-2xl border border-border bg-card p-6 sm:flex-row sm:items-center sm:justify-between md:p-8">
-          <div>
-            <h3 className="text-lg font-semibold">{education.degree}</h3>
-            <p className="text-sm text-muted">{education.school}</p>
+        <div className="mt-10 rounded-2xl border border-border bg-card p-6 md:p-8">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <h3 className="text-lg font-semibold">{education.degree}</h3>
+              <p className="text-sm text-muted">{education.school}</p>
+            </div>
+            <div className="text-sm sm:text-right">
+              <p className="font-serif text-lg italic text-accent">
+                {education.honor}
+              </p>
+              <p className="text-muted">{education.period}</p>
+            </div>
           </div>
-          <div className="text-sm sm:text-right">
-            <p className="font-serif text-lg italic text-accent">
-              {education.honor}
+
+          {/* The degree name is unfamiliar outside PH, so the coursework carries
+              the explanation the resume no longer has room for. */}
+          <div className="mt-5 border-t border-border pt-5">
+            <p className="text-xs uppercase tracking-[0.2em] text-muted">
+              Relevant coursework
             </p>
-            <p className="text-muted">{education.period}</p>
+            <p className="mt-2 text-sm leading-relaxed text-muted">
+              {education.coursework.join(" · ")}
+            </p>
           </div>
         </div>
       </div>

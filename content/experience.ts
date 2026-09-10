@@ -46,4 +46,13 @@ export const education = {
   degree: "BIT, Major in Computer Technology",
   honor: "Cum Laude",
   period: "May 2026",
+  // "BIT, Major in Computer Technology" doesn't tell a reader outside the
+  // Philippines what the degree actually covered — this is what does.
+  coursework: [
+    "Programming",
+    "Computer Networks and Security",
+    "Microprocessor Systems",
+    "Embedded Systems",
+    "Digital Electronics",
+  ],
 };
