@@ -65,6 +65,11 @@ export const work: WorkItem[] = [
           "Broker assignment: a new client is routed to the owning broker by originating BDA, added as a follower, and notified by email.",
       },
       {
+        src: "ghl-workflow-list.webp",
+        caption:
+          "The master-pipeline sync folder: one workflow per lending pipeline, each feeding the same master board.",
+      },
+      {
         src: "ghl-workflow-scale.webp",
         caption:
           "One nurture workflow zoomed out. The location carries roughly 105 of these across 19 pipelines.",
