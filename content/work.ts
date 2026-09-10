@@ -76,6 +76,26 @@ export const work: WorkItem[] = [
     tech: ["Supabase", "PostgreSQL", "React", "TypeScript", "Deno", "n8n"],
   },
   {
+    title: "Leave Application Platform",
+    org: "Bai Finance",
+    image: "leave-intake-form.webp",
+    group: "Automation",
+    category: "Internal Platform",
+    status: "Shipped",
+    problem:
+      "Staff filed leave over chat and email. Not everyone was onboarded into the HR app, approvals left no record, and the balance a person was quoted didn't always match the one the HR app would compute.",
+    build:
+      "Built a no-login intake page served by n8n itself, backed by an email approval layer that reads and writes the HR app's own database — no second system of record, and no second policy engine.",
+    results: [
+      "Staff sign in with an employee ID; the one-time code goes to the address already on their record, so nobody can direct a code to an address they chose",
+      "Balances are computed once, in SQL, against the HR app's existing accrual engine — the two systems can't quote different numbers for the same person",
+      "Leave spanning a quarter boundary is charged day by day to the quarter it falls in, and the paid/unpaid split is shown before anyone submits",
+      "Approval emails open a confirmation page instead of deciding on click — mail scanners prefetch every link, and a decide-on-GET link would approve itself",
+      "Lives in its own Postgres schema with no foreign keys into the HR app's tables, so its migrations can never fail because of this",
+    ],
+    tech: ["n8n", "Supabase", "PostgreSQL", "SQL", "SMTP"],
+  },
+  {
     title: "Marketing Site & Admin CMS",
     org: "Bai Finance",
     image: "baifinance-site.webp",
