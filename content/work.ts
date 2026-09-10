@@ -47,17 +47,37 @@ export const work: WorkItem[] = [
   {
     title: "Automation & Integration Platform",
     org: "Bai Finance",
-    image: "workflow-stage-sync.webp",
+    image: "ghl-stage-fanout.webp",
     shots: [
+      {
+        src: "ghl-stage-fanout.webp",
+        caption:
+          "The GoHighLevel side of one lending pipeline: an opportunity moving stage fans out to a branch per stage, each writing the matching opportunity on the master pipeline.",
+      },
       {
         src: "workflow-stage-sync.webp",
         caption:
-          "One lending pipeline's stage sync — the coloured lanes are the workflow's own regions: trigger, mapping logic, then the success and error paths.",
+          "The n8n side of the same sync. The coloured lanes are the workflow's own regions: trigger, mapping logic, then the success and error paths.",
       },
       {
         src: "workflow-broker-routing.webp",
         caption:
           "Broker assignment: a new client is routed to the owning broker by originating BDA, added as a follower, and notified by email.",
+      },
+      {
+        src: "ghl-workflow-scale.webp",
+        caption:
+          "One nurture workflow zoomed out. The location carries roughly 105 of these across 19 pipelines.",
+      },
+      {
+        src: "ghl-qualification-chatbot.webp",
+        caption:
+          "A lead-qualification chatbot branch: no answer, timed out, and showing interest each take a different route.",
+      },
+      {
+        src: "ghl-reply-routing.webp",
+        caption:
+          "Reply routing — a positive reply books the lead, a negative one moves it to cold, and silence ends the sequence.",
       },
     ],
     group: "Automation",
@@ -80,20 +100,20 @@ export const work: WorkItem[] = [
   {
     title: "Creator Rewards Platform Operations",
     org: "Confidential Client — Ecommerce",
-    image: "workflow-commission-engine.webp",
+    image: "n8n-commission-engine.webp",
     shots: [
       {
-        src: "workflow-commission-engine.webp",
+        src: "n8n-commission-engine.webp",
         caption:
           "The commission engine. Six commission types fan out from one switch, and each is checked against its own source-of-truth table before a payout row is written.",
       },
       {
-        src: "workflow-sales-attribution.webp",
+        src: "n8n-sales-attribution.webp",
         caption:
           "Sales attribution: a storefront order is matched to a creator by discount code, then by referral link, before commission and tier progression run.",
       },
       {
-        src: "workflow-messaging-engine.webp",
+        src: "n8n-messaging-engine.webp",
         caption:
           "The messaging engine — thirteen notification types routed to one delivery path, deduplicated by hashed message content so a retry can't send twice.",
       },
@@ -125,12 +145,12 @@ export const work: WorkItem[] = [
           "The intake page, served by n8n itself so the page and its API share an origin.",
       },
       {
-        src: "workflow-leave-intake.webp",
+        src: "n8n-leave-intake.webp",
         caption:
           "Intake: serve the page, issue and burn a one-time code, open a session, then price the request against the HR app's accrual engine before writing it.",
       },
       {
-        src: "workflow-leave-approval.webp",
+        src: "n8n-leave-approval.webp",
         caption:
           "Approval. The top path only renders a confirmation page; the bottom path is the only one that records a decision.",
       },
@@ -199,10 +219,10 @@ export const work: WorkItem[] = [
   {
     title: "WhatsApp OTP Login",
     org: "Confidential Client — Ecommerce",
-    image: "workflow-messaging-engine.webp",
+    image: "n8n-messaging-engine.webp",
     shots: [
       {
-        src: "workflow-messaging-engine.webp",
+        src: "n8n-messaging-engine.webp",
         caption:
           "The platform's existing WhatsApp delivery layer. The login reuses it to send the code rather than onboarding a second messaging vendor.",
       },
