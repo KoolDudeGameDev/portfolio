@@ -17,7 +17,7 @@ export const workGroups = [
   "Automation",
   "Web Apps",
   "Backend & Data",
-  "Reliability",
+  "Infrastructure & Reliability",
   "Research & Systems",
 ] as const;
 
@@ -105,25 +105,25 @@ export const work: WorkItem[] = [
   {
     title: "Creator Rewards Platform Operations",
     org: "Confidential Client — Ecommerce",
-    image: "n8n-commission-engine.webp",
+    image: "workflow-commission-engine.webp",
     shots: [
       {
-        src: "n8n-commission-engine.webp",
+        src: "workflow-commission-engine.webp",
         caption:
           "The commission engine. Six commission types fan out from one switch, and each is checked against its own source-of-truth table before a payout row is written.",
       },
       {
-        src: "n8n-sales-attribution.webp",
+        src: "workflow-sales-attribution.webp",
         caption:
           "Sales attribution: a storefront order is matched to a creator by discount code, then by referral link, before commission and tier progression run.",
       },
       {
-        src: "n8n-messaging-engine.webp",
+        src: "workflow-messaging-engine.webp",
         caption:
           "The messaging engine — thirteen notification types routed to one delivery path, deduplicated by hashed message content so a retry can't send twice.",
       },
     ],
-    group: "Reliability",
+    group: "Infrastructure & Reliability",
     category: "Reliability",
     status: "Active",
     featured: true,
@@ -177,6 +177,26 @@ export const work: WorkItem[] = [
     tech: ["n8n", "Supabase", "PostgreSQL", "SQL", "SMTP"],
   },
   {
+    title: "Self-Hosted Automation Platform",
+    org: "Bai Finance",
+    image: "platform-architecture.webp",
+    group: "Infrastructure & Reliability",
+    category: "Infrastructure",
+    status: "Shipped",
+    problem:
+      "The automation platform ran on a hosted n8n plan. That plan went away and took its database with it — every workflow the business depended on, gone in one afternoon, with no way to log in and get them back.",
+    build:
+      "Rebuilt the platform on a VPS the company controls: a Docker Compose stack behind Traefik doing TLS at the edge, with the workflow definitions kept in git so the running instance is reproducible rather than irreplaceable.",
+    results: [
+      "Restored every workflow from the git-committed JSON exports — the repo was the only surviving copy, which is now the point rather than the accident",
+      "Traefik terminates TLS and redirects HTTP at the entrypoint, so no workflow has to know anything about certificates",
+      "Postgres holds execution state instead of the container filesystem, so the stack can be rebuilt without losing history",
+      "The encryption key is treated as the platform's real secret — lose it and every stored credential becomes permanently unreadable",
+      "Traced a TLS failure to a proxy release that had dropped two config keys, and was serving a self-signed certificate rather than erroring",
+    ],
+    tech: ["Docker Compose", "Traefik", "Linux", "PostgreSQL", "n8n", "DNS"],
+  },
+  {
     title: "Marketing Site & Admin CMS",
     org: "Bai Finance",
     image: "baifinance-site.webp",
@@ -224,10 +244,10 @@ export const work: WorkItem[] = [
   {
     title: "WhatsApp OTP Login",
     org: "Confidential Client — Ecommerce",
-    image: "n8n-messaging-engine.webp",
+    image: "workflow-messaging-engine.webp",
     shots: [
       {
-        src: "n8n-messaging-engine.webp",
+        src: "workflow-messaging-engine.webp",
         caption:
           "The platform's existing WhatsApp delivery layer. The login reuses it to send the code rather than onboarding a second messaging vendor.",
       },
