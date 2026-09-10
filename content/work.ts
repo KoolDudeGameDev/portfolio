@@ -1,3 +1,11 @@
+/** One visual in a case study. The card shows `image`; the modal shows these. */
+export type WorkShot = {
+  /** Filename under public/assets. */
+  src: string;
+  /** What the reader is looking at. Shown under the image in the modal. */
+  caption: string;
+};
+
 export type WorkLink = {
   label: string;
   href: string;
@@ -26,7 +34,9 @@ export type WorkItem = {
   build: string;
   results: string[];
   tech: string[];
-  image?: string; // path under /assets
+  image?: string; // path under /assets — the card thumbnail
+  /** Extra visuals for the modal. Falls back to `image` when omitted. */
+  shots?: WorkShot[];
   links?: WorkLink[];
   status: "Active" | "Shipped" | "Completed" | "Research";
   featured?: boolean;
@@ -38,6 +48,18 @@ export const work: WorkItem[] = [
     title: "Automation & Integration Platform",
     org: "Bai Finance",
     image: "workflow-stage-sync.webp",
+    shots: [
+      {
+        src: "workflow-stage-sync.webp",
+        caption:
+          "One lending pipeline's stage sync — the coloured lanes are the workflow's own regions: trigger, mapping logic, then the success and error paths.",
+      },
+      {
+        src: "workflow-broker-routing.webp",
+        caption:
+          "Broker assignment: a new client is routed to the owning broker by originating BDA, added as a follower, and notified by email.",
+      },
+    ],
     group: "Automation",
     category: "Automation",
     status: "Active",
@@ -59,6 +81,23 @@ export const work: WorkItem[] = [
     title: "Creator Rewards Platform Operations",
     org: "Confidential Client — Ecommerce",
     image: "workflow-commission-engine.webp",
+    shots: [
+      {
+        src: "workflow-commission-engine.webp",
+        caption:
+          "The commission engine. Six commission types fan out from one switch, and each is checked against its own source-of-truth table before a payout row is written.",
+      },
+      {
+        src: "workflow-sales-attribution.webp",
+        caption:
+          "Sales attribution: a storefront order is matched to a creator by discount code, then by referral link, before commission and tier progression run.",
+      },
+      {
+        src: "workflow-messaging-engine.webp",
+        caption:
+          "The messaging engine — thirteen notification types routed to one delivery path, deduplicated by hashed message content so a retry can't send twice.",
+      },
+    ],
     group: "Reliability",
     category: "Reliability",
     status: "Active",
@@ -79,6 +118,23 @@ export const work: WorkItem[] = [
     title: "Leave Application Platform",
     org: "Bai Finance",
     image: "leave-intake-form.webp",
+    shots: [
+      {
+        src: "leave-intake-form.webp",
+        caption:
+          "The intake page, served by n8n itself so the page and its API share an origin.",
+      },
+      {
+        src: "workflow-leave-intake.webp",
+        caption:
+          "Intake: serve the page, issue and burn a one-time code, open a session, then price the request against the HR app's accrual engine before writing it.",
+      },
+      {
+        src: "workflow-leave-approval.webp",
+        caption:
+          "Approval. The top path only renders a confirmation page; the bottom path is the only one that records a decision.",
+      },
+    ],
     group: "Automation",
     category: "Internal Platform",
     status: "Shipped",
@@ -135,6 +191,13 @@ export const work: WorkItem[] = [
     title: "WhatsApp OTP Login",
     org: "Confidential Client — Ecommerce",
     image: "workflow-messaging-engine.webp",
+    shots: [
+      {
+        src: "workflow-messaging-engine.webp",
+        caption:
+          "The platform's existing WhatsApp delivery layer. The login reuses it to send the code rather than onboarding a second messaging vendor.",
+      },
+    ],
     group: "Backend & Data",
     category: "Backend",
     status: "Shipped",

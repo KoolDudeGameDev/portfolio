@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Close, Github, ArrowUpRight } from "./Icons";
 import { type WorkItem } from "@/content/work";
@@ -19,6 +19,12 @@ export function WorkModal({
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const restoreFocusRef = useRef<HTMLElement | null>(null);
+  const [shot, setShot] = useState(0);
+
+  // Reopening a different case study must not inherit the last one's slide.
+  useEffect(() => {
+    setShot(0);
+  }, [item]);
 
   // Close on Escape, lock body scroll, and park focus inside the dialog —
   // same contract as ResumeModal.
@@ -45,6 +51,15 @@ export function WorkModal({
   }, [item, onClose]);
 
   if (!item) return null;
+
+  // A card may carry several visuals (a UI screenshot plus the workflow behind
+  // it). `shots` is the normalised list; `image` alone still works.
+  const shots =
+    item.shots?.length
+      ? item.shots
+      : item.image
+        ? [{ src: item.image, caption: "" }]
+        : [];
 
   const modal = (
     <div
@@ -86,14 +101,48 @@ export function WorkModal({
         </div>
 
         <div className="flex-1 overflow-y-auto px-5 py-6 sm:px-6">
-          {item.image ? (
-            <div className="mb-6 overflow-hidden rounded-xl border border-border">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={asset(`/assets/${item.image}`)}
-                alt={item.title}
-                className="aspect-[16/9] w-full object-cover"
-              />
+          {shots.length ? (
+            <div className="mb-6">
+              <div className="overflow-hidden rounded-xl border border-border">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={asset(`/assets/${shots[shot].src}`)}
+                  alt={shots[shot].caption || item.title}
+                  className="aspect-[16/9] w-full object-cover"
+                />
+              </div>
+
+              {shots[shot].caption ? (
+                <p className="mt-2 text-sm text-muted">{shots[shot].caption}</p>
+              ) : null}
+
+              {/* Only worth a filmstrip when there is more than one thing to
+                  look at — a single-shot card keeps the quieter layout. */}
+              {shots.length > 1 ? (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {shots.map((s, i) => (
+                    <button
+                      key={s.src}
+                      type="button"
+                      onClick={() => setShot(i)}
+                      aria-label={s.caption || `View ${i + 1}`}
+                      aria-current={i === shot}
+                      className={`h-14 w-24 overflow-hidden rounded-md border transition-colors ${
+                        i === shot
+                          ? "border-accent"
+                          : "border-border opacity-70 hover:opacity-100"
+                      }`}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={asset(`/assets/${s.src}`)}
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              ) : null}
             </div>
           ) : null}
 
