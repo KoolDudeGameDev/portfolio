@@ -110,7 +110,7 @@ export const work: WorkItem[] = [
       {
         src: "workflow-commission-engine.webp",
         caption:
-          "The commission engine. Six commission types fan out from one switch, and each is checked against its own source-of-truth table before a payout row is written.",
+          "The commission engine. Every claim is routed by type and checked against the table that owns that bonus — a claim nobody can vouch for is rejected rather than paid.",
       },
       {
         src: "workflow-sales-attribution.webp",

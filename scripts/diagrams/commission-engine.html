@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commission engine</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #171a24; font-family: 'Geist', system-ui, sans-serif; }
+    /* The export target: exactly the card's 16:9 frame, nothing around it. */
+    svg#d { width: 1200px; height: 675px; display: block; }
+  </style>
+</head>
+<body>
+  <svg id="d" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg"
+       role="img" aria-labelledby="commission-engine-title commission-engine-desc">
+    <title id="commission-engine-title">Commission engine</title>
+    <desc id="commission-engine-desc">A commission claim is validated, routed by commission type, checked against the source-of-truth table for that type, screened for duplicates, and only then written as a pending commission. Failing any of those three gates rejects the claim and writes nothing.</desc>
+
+    <defs>
+      <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#9aa4bd"/>
+      </marker>
+      <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#ea4b71"/>
+      </marker>
+      <marker id="arrow-soft" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#6b7590"/>
+      </marker>
+      <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
+        <circle cx="1" cy="1" r="1" fill="rgba(232,236,245,0.07)"/>
+      </pattern>
+    </defs>
+
+    <rect width="100%" height="100%" fill="#171a24"/>
+    <rect width="100%" height="100%" fill="url(#dots)"/>
+
+    <!-- ══ arrows first, so nodes paint over the stroke ends ══ -->
+
+    <!-- happy path: one spine, left to right. The accented leg is the claim
+         reaching the check that actually decides whether it is real. -->
+    <line x1="208" y1="192" x2="252" y2="192" stroke="#9aa4bd" stroke-width="1.4" marker-end="url(#arrow)"/>
+    <line x1="392" y1="192" x2="436" y2="192" stroke="#9aa4bd" stroke-width="1.4" marker-end="url(#arrow)"/>
+    <line x1="576" y1="192" x2="620" y2="192" stroke="#ea4b71" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+    <line x1="760" y1="192" x2="804" y2="192" stroke="#9aa4bd" stroke-width="1.4" marker-end="url(#arrow)"/>
+    <line x1="944" y1="192" x2="988" y2="192" stroke="#9aa4bd" stroke-width="1.4" marker-end="url(#arrow)"/>
+
+    <!-- Three gates drop to one outcome. Each gets its own rail height and its
+         own attach point on the oval, so no two strokes ever share a path. -->
+    <path d="M324,224 V344 a8,8 0 0 0 8,8 H592 a8,8 0 0 1 8,8 V440"
+          fill="none" stroke="#6b7590" stroke-width="1.2" marker-end="url(#arrow-soft)"/>
+    <path d="M692,224 V372 a8,8 0 0 1 -8,8 H656 a8,8 0 0 0 -8,8 V440"
+          fill="none" stroke="#6b7590" stroke-width="1.2" marker-end="url(#arrow-soft)"/>
+    <path d="M876,236 V400 a8,8 0 0 1 -8,8 H704 a8,8 0 0 0 -8,8 V440"
+          fill="none" stroke="#6b7590" stroke-width="1.2" marker-end="url(#arrow-soft)"/>
+
+    <!-- reject labels: beside the vertical run, clear of the stroke -->
+    <rect x="336" y="252" width="64" height="14" rx="2" fill="#171a24"/>
+    <text x="340" y="263" fill="#7f8aa5" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.08em">MALFORMED</text>
+    <rect x="704" y="276" width="76" height="14" rx="2" fill="#171a24"/>
+    <text x="708" y="287" fill="#7f8aa5" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.08em">NO SUCH ROW</text>
+    <rect x="888" y="300" width="76" height="14" rx="2" fill="#171a24"/>
+    <text x="892" y="311" fill="#7f8aa5" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.08em">ALREADY PAID</text>
+
+    <!-- ══ nodes ══ -->
+
+    <!-- 1. start -->
+    <rect x="72" y="160" width="136" height="64" rx="32" fill="#171a24"/>
+    <rect x="72" y="160" width="136" height="64" rx="32" fill="rgba(52,211,153,0.06)" stroke="#34d399" stroke-width="1"/>
+    <circle cx="140" cy="176" r="4" fill="#34d399"/>
+    <text x="140" y="200" fill="#e8ecf5" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Claim arrives</text>
+    <text x="140" y="214" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">from attribution</text>
+
+    <!-- 2. validate -->
+    <rect x="256" y="160" width="136" height="64" rx="6" fill="#171a24"/>
+    <rect x="256" y="160" width="136" height="64" rx="6" fill="#232838" stroke="#39415a" stroke-width="1"/>
+    <circle cx="324" cy="176" r="4" fill="#818cf8"/>
+    <text x="324" y="200" fill="#e8ecf5" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Validate</text>
+    <text x="324" y="214" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">shape + affiliate</text>
+
+    <!-- 3. route -->
+    <rect x="440" y="160" width="136" height="64" rx="6" fill="#171a24"/>
+    <rect x="440" y="160" width="136" height="64" rx="6" fill="#232838" stroke="#39415a" stroke-width="1"/>
+    <circle cx="508" cy="176" r="4" fill="#fbbf24"/>
+    <text x="508" y="200" fill="#e8ecf5" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Route by type</text>
+    <text x="508" y="214" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">6 kinds of bonus</text>
+
+    <!-- 4. FOCAL — the one check the whole engine exists for -->
+    <rect x="624" y="160" width="136" height="64" rx="6" fill="#171a24"/>
+    <rect x="624" y="160" width="136" height="64" rx="6" fill="rgba(234,75,113,0.10)" stroke="#ea4b71" stroke-width="1.2"/>
+    <circle cx="692" cy="176" r="4" fill="#c084fc"/>
+    <text x="692" y="200" fill="#ffffff" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Verify claim</text>
+    <text x="692" y="214" fill="#f3aec0" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">against its table</text>
+
+    <!-- 5. duplicate gate -->
+    <polygon points="876,144 944,192 876,240 808,192" fill="#171a24"/>
+    <polygon points="876,144 944,192 876,240 808,192" fill="#232838" stroke="#39415a" stroke-width="1"/>
+    <circle cx="876" cy="168" r="4" fill="#c084fc"/>
+    <text x="876" y="200" fill="#e8ecf5" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Paid before?</text>
+
+    <!-- 6. write -->
+    <rect x="992" y="160" width="136" height="64" rx="6" fill="#171a24"/>
+    <rect x="992" y="160" width="136" height="64" rx="6" fill="#232838" stroke="#39415a" stroke-width="1"/>
+    <circle cx="1060" cy="176" r="4" fill="#c084fc"/>
+    <text x="1060" y="200" fill="#e8ecf5" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Write payout</text>
+    <text x="1060" y="214" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">status: pending</text>
+
+    <!-- 7. rejected -->
+    <rect x="568" y="440" width="160" height="56" rx="28" fill="#171a24"/>
+    <rect x="568" y="440" width="160" height="56" rx="28" fill="rgba(154,164,189,0.06)" stroke="#6b7590" stroke-width="1"/>
+    <text x="648" y="466" fill="#c8cfdf" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Rejected</text>
+    <text x="648" y="480" fill="#7f8aa5" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">nothing written</text>
+
+    <!-- ══ legend ══ -->
+    <line x1="72" y1="560" x2="1128" y2="560" stroke="rgba(232,236,245,0.12)" stroke-width="0.8"/>
+    <text x="72" y="584" fill="#7f8aa5" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">N8N NODE</text>
+    <circle cx="216" cy="580" r="4" fill="#34d399"/>
+    <text x="228" y="584" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace">trigger</text>
+    <circle cx="352" cy="580" r="4" fill="#818cf8"/>
+    <text x="364" y="584" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace">code</text>
+    <circle cx="464" cy="580" r="4" fill="#fbbf24"/>
+    <text x="476" y="584" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace">switch</text>
+    <circle cx="592" cy="580" r="4" fill="#c084fc"/>
+    <text x="604" y="584" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace">database</text>
+  </svg>
+</body>
+</html>
