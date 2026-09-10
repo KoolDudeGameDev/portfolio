@@ -300,6 +300,49 @@ export const work: WorkItem[] = [
     tech: ["n8n", "GoHighLevel", "Email Deliverability", "DNS"],
   },
   {
+    title: "n8n Reference Workflows",
+    org: "Open source",
+    image: "ref-idempotent-intake.webp",
+    shots: [
+      {
+        src: "ref-idempotent-intake.webp",
+        caption:
+          "Idempotent intake. Three deliberate replies — unusable, already have it, created — so the caller can act on each one instead of guessing.",
+      },
+      {
+        src: "ref-health-check.webp",
+        caption:
+          "The health check probes every target before it reports anything, so one dead endpoint can't hide the others behind it.",
+      },
+      {
+        src: "ref-workflow-backup.webp",
+        caption:
+          "Nightly export of every workflow to a git repository — the backup that has to live somewhere other than the machine it protects.",
+      },
+    ],
+    group: "Automation",
+    category: "Open Source",
+    status: "Shipped",
+    problem:
+      "Three problems turn up on every automation project and get solved badly under time pressure: a retried webhook quietly creating two records, an outage nobody notices until a customer mentions it, and an automation platform that is the only copy of its own automations.",
+    build:
+      "Three importable n8n workflows, each a single JSON file, with the reasoning kept in sticky notes beside the nodes it explains rather than in a README nobody opens. No client data — every secret is an environment reference.",
+    results: [
+      "The idempotency key is a hash of the caller's own fields, never a timestamp, so a retry produces the same key — and a unique index still catches the race the lookup misses",
+      "The health check collects every result before sending one digest, because ten alerts for ten dead endpoints is an inbox nobody reads",
+      "The backup names files by workflow id and strips the fields that change on their own, so a nightly run only produces a diff when something really changed",
+      "Written to be read rather than just imported — each choice has the failure that motivated it next to it",
+    ],
+    tech: ["n8n", "Webhooks", "REST APIs", "GitHub API", "SHA-256"],
+    links: [
+      {
+        label: "Repository",
+        href: "https://github.com/KoolDudeGameDev/n8n-reference-workflows",
+        icon: "github",
+      },
+    ],
+  },
+  {
     title: "BaiAcademy Learning Platform",
     org: "Bai Finance",
     image: "baiacademy-lms.webp",
