@@ -200,6 +200,23 @@ export const work: WorkItem[] = [
     title: "Marketing Site & Admin CMS",
     org: "Bai Finance",
     image: "baifinance-site.webp",
+    shots: [
+      {
+        src: "baifinance-site.webp",
+        caption:
+          "The public site. The exchange rate in the hero is live, not a figure someone remembers to update.",
+      },
+      {
+        src: "baifinance-calculator.webp",
+        caption:
+          "One of the calculators: borrowing power, assessed with the buffer lenders actually apply rather than the headline rate.",
+      },
+      {
+        src: "baifinance-contact.webp",
+        caption:
+          "The inquiry form. Every submission lands in the CRM through the same sync function the live chat uses, so neither channel drifts.",
+      },
+    ],
     group: "Web Apps",
     category: "Web App",
     status: "Shipped",
@@ -286,6 +303,18 @@ export const work: WorkItem[] = [
     title: "BaiAcademy Learning Platform",
     org: "Bai Finance",
     image: "baiacademy-lms.webp",
+    shots: [
+      {
+        src: "baiacademy-lms.webp",
+        caption:
+          "The instructor dashboard. The sidebar is built from the signed-in role, so a student never renders these routes at all.",
+      },
+      {
+        src: "baiacademy-courses.webp",
+        caption:
+          "Course management: publish state, enrolment and lesson progress per course, with subjects an instructor can claim.",
+      },
+    ],
     group: "Web Apps",
     category: "Web App",
     status: "Active",
