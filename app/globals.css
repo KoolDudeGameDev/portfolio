@@ -133,16 +133,9 @@ body,
 }
 
 /* ==================== LOGO MARQUEE ==================== */
-@keyframes marquee-scroll {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    /* The track holds the same list twice, so -50% lands on a seam-free loop. */
-    transform: translateX(-50%);
-  }
-}
-
+/* A real scroll container, not a transform animation: the drift is driven by
+   scrollLeft in LogoMarquee.tsx, so dragging, the trackpad, and the arrow keys
+   all move the same thing instead of fighting an animation. */
 .marquee {
   /* Fade the logos into the page edges instead of clipping them hard. */
   -webkit-mask-image: linear-gradient(
@@ -159,16 +152,32 @@ body,
     #000 calc(100% - 6rem),
     transparent
   );
+  overflow-x: auto;
+  /* The page scrolls smoothly for nav links; this one must not, or every
+     scrollLeft nudge would animate against the next frame's nudge. */
+  scroll-behavior: auto;
+  overscroll-behavior-x: contain;
+  cursor: grab;
+  /* The strip is its own affordance — a scrollbar under it would read as chrome. */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.marquee::-webkit-scrollbar {
+  display: none;
+}
+
+.marquee.is-dragging {
+  cursor: grabbing;
+}
+
+.marquee:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
 }
 
 .marquee-track {
   width: max-content;
-  animation: marquee-scroll var(--marquee-duration, 48s) linear infinite;
-}
-
-.marquee:hover .marquee-track,
-.marquee:focus-within .marquee-track {
-  animation-play-state: paused;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -187,6 +196,9 @@ body,
   .marquee {
     -webkit-mask-image: none;
     mask-image: none;
+    /* Nothing overflows once the row wraps, so a grab cursor would be a lie. */
+    overflow-x: visible;
+    cursor: auto;
   }
   .marquee-track {
     width: 100%;
