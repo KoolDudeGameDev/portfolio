@@ -60,9 +60,11 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Offset anchored sections so the sticky nav doesn't cover headings. */
+/* Offset anchored sections so the floating nav pill doesn't cover headings.
+   The pill sits 12-16px down and stands about 52px tall, so this leaves a
+   deliberate gap under it rather than parking the heading against its edge. */
 section[id] {
-  scroll-margin-top: 72px;
+  scroll-margin-top: 92px;
 }
 
 ::selection {

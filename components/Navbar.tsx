@@ -47,31 +47,33 @@ export function Navbar() {
   }, []);
 
   return (
-    <header
-      className={`fixed inset-x-0 top-0 z-50 border-b transition-colors ${
-        scrolled
-          ? "border-border bg-bg/85 backdrop-blur-md"
-          : "border-transparent bg-transparent"
-      }`}
-    >
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+    // Floats clear of the page rather than sitting on a full-width band, so the
+    // cream ground runs behind it and the bar reads as a control, not a header.
+    <header className="fixed inset-x-0 top-3 z-50 px-4 sm:top-4 sm:px-6">
+      <nav
+        className={`mx-auto flex max-w-5xl items-center justify-between gap-4 rounded-full border py-2 pl-5 pr-2 transition-all duration-300 ${
+          scrolled
+            ? "border-border bg-bg/80 shadow-[0_10px_30px_-12px_rgba(24,20,16,0.28)] backdrop-blur-xl"
+            : "border-border/50 bg-bg/55 backdrop-blur-md"
+        }`}
+      >
         <a
           href="#home"
-          className="font-serif text-lg font-semibold tracking-tight"
+          className="shrink-0 font-serif text-base font-semibold tracking-tight sm:text-lg"
         >
           {site.name}
         </a>
 
-        <div className="hidden items-center gap-8 md:flex">
-          <ul className="flex items-center gap-7 text-sm">
+        <div className="hidden items-center gap-6 md:flex">
+          <ul className="flex items-center gap-1 text-sm">
             {links.map((link) => (
               <li key={link.href}>
                 <a
                   href={link.href}
-                  className={`transition-colors hover:text-fg ${
+                  className={`rounded-full px-3 py-1.5 transition-colors ${
                     active === link.href.slice(1)
-                      ? "text-fg"
-                      : "text-muted"
+                      ? "bg-surface text-fg"
+                      : "text-muted hover:text-fg"
                   }`}
                 >
                   {link.label}
@@ -79,12 +81,12 @@ export function Navbar() {
               </li>
             ))}
           </ul>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <ThemeToggle />
             <button
               type="button"
               onClick={() => setResumeOpen(true)}
-              className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-medium text-muted transition-colors hover:border-accent hover:text-fg"
+              className="inline-flex items-center gap-2 rounded-full border border-border px-3.5 py-2 text-sm font-medium text-muted transition-colors hover:border-accent hover:text-fg"
             >
               <FileIcon className="h-4 w-4" />
               Résumé
@@ -98,7 +100,7 @@ export function Navbar() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="flex items-center gap-1 md:hidden">
           <ThemeToggle />
           <button
             type="button"
@@ -116,10 +118,10 @@ export function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile menu */}
+      {/* Mobile menu — its own floating card under the pill, not a band. */}
       {open && (
-        <div className="border-t border-border bg-bg md:hidden">
-          <ul className="mx-auto flex max-w-6xl flex-col gap-1 px-6 py-4 text-sm">
+        <div className="mx-auto mt-2 max-w-5xl rounded-2xl border border-border bg-bg/95 shadow-[0_10px_30px_-12px_rgba(24,20,16,0.28)] backdrop-blur-xl md:hidden">
+          <ul className="flex flex-col gap-1 px-5 py-4 text-sm">
             {links.map((link) => (
               <li key={link.href}>
                 <a
