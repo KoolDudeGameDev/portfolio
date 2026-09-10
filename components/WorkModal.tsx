@@ -1,8 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Close, Github, ArrowUpRight } from "./Icons";
+import {
+  Close,
+  Github,
+  ArrowUpRight,
+  ChevronLeft,
+  ChevronRight,
+} from "./Icons";
 import { type WorkItem } from "@/content/work";
 import { asset } from "@/lib/site";
 
@@ -21,6 +27,23 @@ export function WorkModal({
   const restoreFocusRef = useRef<HTMLElement | null>(null);
   const [shot, setShot] = useState(0);
 
+  // A card may carry several visuals (a UI screenshot plus the workflow behind
+  // it). `shots` is the normalised list; `image` alone still works. Computed
+  // above the early return so the keyboard handler can see how many there are.
+  const shots = item?.shots?.length
+    ? item.shots
+    : item?.image
+      ? [{ src: item.image, caption: "" }]
+      : [];
+  const count = shots.length;
+
+  // Wrapping, so holding an arrow key cycles instead of dead-ending.
+  const prev = useCallback(
+    () => setShot((i) => (i - 1 + count) % count),
+    [count],
+  );
+  const next = useCallback(() => setShot((i) => (i + 1) % count), [count]);
+
   // Reopening a different case study must not inherit the last one's slide.
   useEffect(() => {
     setShot(0);
@@ -35,6 +58,8 @@ export function WorkModal({
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
+      if (count > 1 && e.key === "ArrowLeft") prev();
+      if (count > 1 && e.key === "ArrowRight") next();
     };
     document.addEventListener("keydown", onKeyDown);
 
@@ -48,18 +73,9 @@ export function WorkModal({
       document.body.style.overflow = overflow;
       restoreFocusRef.current?.focus();
     };
-  }, [item, onClose]);
+  }, [item, onClose, count, prev, next]);
 
   if (!item) return null;
-
-  // A card may carry several visuals (a UI screenshot plus the workflow behind
-  // it). `shots` is the normalised list; `image` alone still works.
-  const shots =
-    item.shots?.length
-      ? item.shots
-      : item.image
-        ? [{ src: item.image, caption: "" }]
-        : [];
 
   const modal = (
     <div
@@ -103,23 +119,49 @@ export function WorkModal({
         <div className="flex-1 overflow-y-auto px-5 py-6 sm:px-6">
           {shots.length ? (
             <div className="mb-6">
-              <div className="overflow-hidden rounded-xl border border-border">
+              <div className="group relative overflow-hidden rounded-xl border border-border">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={asset(`/assets/${shots[shot].src}`)}
                   alt={shots[shot].caption || item.title}
                   className="aspect-[16/9] w-full object-cover"
                 />
+
+                {shots.length > 1 ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={prev}
+                      aria-label="Previous image"
+                      className="absolute left-3 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/45 text-white backdrop-blur-sm transition hover:bg-black/70 focus-visible:opacity-100"
+                    >
+                      <ChevronLeft className="h-5 w-5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={next}
+                      aria-label="Next image"
+                      className="absolute right-3 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/45 text-white backdrop-blur-sm transition hover:bg-black/70 focus-visible:opacity-100"
+                    >
+                      <ChevronRight className="h-5 w-5" />
+                    </button>
+                    <span className="absolute bottom-3 right-3 rounded-full bg-black/55 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-sm">
+                      {shot + 1} / {shots.length}
+                    </span>
+                  </>
+                ) : null}
               </div>
 
               {shots[shot].caption ? (
-                <p className="mt-2 text-sm text-muted">{shots[shot].caption}</p>
+                <p className="mt-2 text-sm leading-relaxed text-muted">
+                  {shots[shot].caption}
+                </p>
               ) : null}
 
-              {/* Only worth a filmstrip when there is more than one thing to
-                  look at — a single-shot card keeps the quieter layout. */}
+              {/* One scrolling row, never wrapped: a second row of thumbnails
+                  pushes the write-up off the screen on the longer case studies. */}
               {shots.length > 1 ? (
-                <div className="mt-3 flex flex-wrap gap-2">
+                <div className="-mx-1 mt-3 flex gap-2 overflow-x-auto px-1 pb-1">
                   {shots.map((s, i) => (
                     <button
                       key={s.src}
@@ -127,10 +169,10 @@ export function WorkModal({
                       onClick={() => setShot(i)}
                       aria-label={s.caption || `View ${i + 1}`}
                       aria-current={i === shot}
-                      className={`h-14 w-24 overflow-hidden rounded-md border transition-colors ${
+                      className={`h-12 w-20 shrink-0 overflow-hidden rounded-md border transition ${
                         i === shot
-                          ? "border-accent"
-                          : "border-border opacity-70 hover:opacity-100"
+                          ? "border-accent ring-1 ring-accent"
+                          : "border-border opacity-60 hover:opacity-100"
                       }`}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
