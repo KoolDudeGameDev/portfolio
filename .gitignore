@@ -30,5 +30,11 @@ next-env.d.ts
 # application drafts (local only)
 /applications/
 
-# tailored resume variants (local only)
-Kyle_Gregory_Ibo_Resume_AI_Automation.pdf
+# resume source exports (local only; the site copy lives in public/assets)
+/Resume_Kyle_Gregory_Ibo*.pdf
+
+# resume masters (local only; the site copy lives in public/assets)
+/docs/
+
+# Playwright MCP scratch output
+.playwright-mcp/
