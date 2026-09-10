@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sales attribution</title>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #171a24; font-family: 'Geist', system-ui, sans-serif; }
+    svg#d { width: 1200px; height: 675px; display: block; }
+  </style>
+</head>
+<body>
+  <svg id="d" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg"
+       role="img" aria-labelledby="attr-title attr-desc">
+    <title id="attr-title">Sales attribution</title>
+    <desc id="attr-desc">A storefront order is normalised, screened for duplicates, matched to a creator by discount code and then by referral link, and only a matched order earns commission and triggers the bonus engines. Duplicates and unmatched orders close cleanly.</desc>
+
+    <defs>
+      <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#9aa4bd"/></marker>
+      <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#ea4b71"/></marker>
+      <marker id="arrow-soft" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6b7590"/></marker>
+      <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="rgba(232,236,245,0.07)"/></pattern>
+    </defs>
+
+    <rect width="100%" height="100%" fill="#171a24"/>
+    <rect width="100%" height="100%" fill="url(#dots)"/>
+
+    <!-- spine -->
+    <line x1="208" y1="192" x2="252" y2="192" stroke="#9aa4bd" stroke-width="1.4" marker-end="url(#arrow)"/>
+    <line x1="392" y1="192" x2="436" y2="192" stroke="#9aa4bd" stroke-width="1.4" marker-end="url(#arrow)"/>
+    <line x1="576" y1="192" x2="620" y2="192" stroke="#ea4b71" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+    <line x1="760" y1="192" x2="804" y2="192" stroke="#9aa4bd" stroke-width="1.4" marker-end="url(#arrow)"/>
+    <line x1="944" y1="192" x2="988" y2="192" stroke="#9aa4bd" stroke-width="1.4" marker-end="url(#arrow)"/>
+
+    <!-- the two ways an order closes without earning anything -->
+    <path d="M508,236 V368 a8,8 0 0 0 8,8 H592 a8,8 0 0 1 8,8 V440"
+          fill="none" stroke="#6b7590" stroke-width="1.2" marker-end="url(#arrow-soft)"/>
+    <path d="M692,224 V400 a8,8 0 0 1 -8,8 H656 a8,8 0 0 0 -8,8 V440"
+          fill="none" stroke="#6b7590" stroke-width="1.2" marker-end="url(#arrow-soft)"/>
+
+    <rect x="520" y="276" width="76" height="14" rx="2" fill="#171a24"/>
+    <text x="524" y="287" fill="#7f8aa5" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.08em">SEEN BEFORE</text>
+    <rect x="704" y="304" width="72" height="14" rx="2" fill="#171a24"/>
+    <text x="708" y="315" fill="#7f8aa5" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.08em">NO CODE HIT</text>
+
+    <!-- 1. order in -->
+    <rect x="72" y="160" width="136" height="64" rx="32" fill="#171a24"/>
+    <rect x="72" y="160" width="136" height="64" rx="32" fill="rgba(52,211,153,0.06)" stroke="#34d399" stroke-width="1"/>
+    <circle cx="140" cy="176" r="4" fill="#34d399"/>
+    <text x="140" y="200" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">Order placed</text>
+    <text x="140" y="214" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">storefront webhook</text>
+
+    <!-- 2. normalise -->
+    <rect x="256" y="160" width="136" height="64" rx="6" fill="#171a24"/>
+    <rect x="256" y="160" width="136" height="64" rx="6" fill="#232838" stroke="#39415a" stroke-width="1"/>
+    <circle cx="324" cy="176" r="4" fill="#818cf8"/>
+    <text x="324" y="200" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">Normalise</text>
+    <text x="324" y="214" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">basket, codes, buyer</text>
+
+    <!-- 3. dedupe gate -->
+    <polygon points="508,144 576,192 508,240 440,192" fill="#171a24"/>
+    <polygon points="508,144 576,192 508,240 440,192" fill="#232838" stroke="#39415a" stroke-width="1"/>
+    <circle cx="508" cy="168" r="4" fill="#c084fc"/>
+    <text x="508" y="200" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">New order?</text>
+
+    <!-- 4. FOCAL — the match is what decides whether anyone gets paid -->
+    <rect x="624" y="160" width="136" height="64" rx="6" fill="#171a24"/>
+    <rect x="624" y="160" width="136" height="64" rx="6" fill="rgba(234,75,113,0.10)" stroke="#ea4b71" stroke-width="1.2"/>
+    <circle cx="692" cy="176" r="4" fill="#c084fc"/>
+    <text x="692" y="200" fill="#ffffff" font-size="12" font-weight="600" text-anchor="middle">Match a creator</text>
+    <text x="692" y="214" fill="#f3aec0" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">code, then link</text>
+
+    <!-- 5. commission -->
+    <rect x="808" y="160" width="136" height="64" rx="6" fill="#171a24"/>
+    <rect x="808" y="160" width="136" height="64" rx="6" fill="#232838" stroke="#39415a" stroke-width="1"/>
+    <circle cx="876" cy="176" r="4" fill="#c084fc"/>
+    <text x="876" y="200" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">Record earnings</text>
+    <text x="876" y="214" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">rate x basket</text>
+
+    <!-- 6. downstream -->
+    <rect x="992" y="160" width="136" height="64" rx="6" fill="#171a24"/>
+    <rect x="992" y="160" width="136" height="64" rx="6" fill="#232838" stroke="#39415a" stroke-width="1"/>
+    <circle cx="1060" cy="176" r="4" fill="#fbbf24"/>
+    <text x="1060" y="200" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">Wake the bonuses</text>
+    <text x="1060" y="214" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">tier · velocity</text>
+
+    <!-- closed -->
+    <rect x="568" y="440" width="160" height="56" rx="28" fill="#171a24"/>
+    <rect x="568" y="440" width="160" height="56" rx="28" fill="rgba(154,164,189,0.06)" stroke="#6b7590" stroke-width="1"/>
+    <text x="648" y="466" fill="#c8cfdf" font-size="12" font-weight="600" text-anchor="middle">Closed</text>
+    <text x="648" y="480" fill="#7f8aa5" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">no commission owed</text>
+
+    <!-- legend -->
+    <line x1="72" y1="560" x2="1128" y2="560" stroke="rgba(232,236,245,0.12)" stroke-width="0.8"/>
+    <text x="72" y="584" fill="#7f8aa5" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">N8N NODE</text>
+    <circle cx="216" cy="580" r="4" fill="#34d399"/>
+    <text x="228" y="584" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace">trigger</text>
+    <circle cx="352" cy="580" r="4" fill="#818cf8"/>
+    <text x="364" y="584" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace">code</text>
+    <circle cx="464" cy="580" r="4" fill="#fbbf24"/>
+    <text x="476" y="584" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace">sub-workflow</text>
+    <circle cx="628" cy="580" r="4" fill="#c084fc"/>
+    <text x="640" y="584" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace">database</text>
+  </svg>
+</body>
+</html>
