@@ -37,6 +37,7 @@ export const work: WorkItem[] = [
   {
     title: "Automation & Integration Platform",
     org: "Bai Finance",
+    image: "workflow-stage-sync.webp",
     group: "Automation",
     category: "Automation",
     status: "Active",
@@ -57,6 +58,7 @@ export const work: WorkItem[] = [
   {
     title: "Creator Rewards Platform Operations",
     org: "Confidential Client — Ecommerce",
+    image: "workflow-commission-engine.webp",
     group: "Reliability",
     category: "Reliability",
     status: "Active",
@@ -76,6 +78,7 @@ export const work: WorkItem[] = [
   {
     title: "Marketing Site & Admin CMS",
     org: "Bai Finance",
+    image: "baifinance-site.webp",
     group: "Web Apps",
     category: "Web App",
     status: "Shipped",
@@ -93,6 +96,7 @@ export const work: WorkItem[] = [
   {
     title: "CRM Migration & Data Pipeline",
     org: "Bai Finance",
+    image: "workflow-intake-gatekeeper.webp",
     group: "Backend & Data",
     category: "Data",
     status: "Shipped",
@@ -110,6 +114,7 @@ export const work: WorkItem[] = [
   {
     title: "WhatsApp OTP Login",
     org: "Confidential Client — Ecommerce",
+    image: "workflow-messaging-engine.webp",
     group: "Backend & Data",
     category: "Backend",
     status: "Shipped",
@@ -126,6 +131,7 @@ export const work: WorkItem[] = [
   {
     title: "QR Lead-Capture Flow",
     org: "Bai Finance",
+    image: "workflow-qr-capture.webp",
     group: "Automation",
     category: "Automation",
     status: "Shipped",
@@ -142,6 +148,7 @@ export const work: WorkItem[] = [
   {
     title: "BaiAcademy Learning Platform",
     org: "Bai Finance",
+    image: "baiacademy-lms.webp",
     group: "Web Apps",
     category: "Web App",
     status: "Active",
