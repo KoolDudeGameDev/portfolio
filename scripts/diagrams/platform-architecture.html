@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Self-hosted automation platform</title>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #171a24; font-family: 'Geist', system-ui, sans-serif; }
+    svg#d { width: 1200px; height: 675px; display: block; }
+  </style>
+</head>
+<body>
+  <svg id="d" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg"
+       role="img" aria-labelledby="arch-title arch-desc">
+    <title id="arch-title">Self-hosted automation platform</title>
+    <desc id="arch-desc">Public traffic reaches a VPS through Traefik, which terminates TLS and hands requests to n8n. n8n keeps execution state in Postgres, vectors in Qdrant and runs local models through Ollama. DNS resolves the name to the box, and every workflow is exported to a git repository that lives outside the host.</desc>
+
+    <defs>
+      <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#9aa4bd"/></marker>
+      <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#ea4b71"/></marker>
+      <marker id="arrow-soft" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6b7590"/></marker>
+      <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="rgba(232,236,245,0.07)"/></pattern>
+    </defs>
+
+    <rect width="100%" height="100%" fill="#171a24"/>
+    <rect width="100%" height="100%" fill="url(#dots)"/>
+
+    <!-- ══ the host boundary: everything inside is one compose stack on one box ══ -->
+    <rect x="372" y="96" width="648" height="360" rx="12" fill="rgba(35,40,56,0.35)" stroke="#39415a" stroke-width="1" stroke-dasharray="6 5"/>
+    <text x="396" y="124" fill="#7f8aa5" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">OVH VPS · DEBIAN 12 · DOCKER COMPOSE</text>
+
+    <!-- ══ arrows first, so nodes paint over the stroke ends ══ -->
+
+    <!-- traffic in -->
+    <line x1="332" y1="208" x2="400" y2="208" stroke="#9aa4bd" stroke-width="1.4" marker-end="url(#arrow)"/>
+    <!-- the accented leg: the edge handing requests to the platform itself -->
+    <line x1="556" y1="208" x2="608" y2="208" stroke="#ea4b71" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+
+    <!-- name resolution is not traffic, so it is drawn dashed -->
+    <path d="M332,344 H472 a8,8 0 0 0 8,-8 V244"
+          fill="none" stroke="#6b7590" stroke-width="1.2" stroke-dasharray="5 4" marker-end="url(#arrow-soft)"/>
+    <!-- Label masks sit inside the boundary, so they take its blended fill
+         (#1b1f2b), not the page colour — a page-colour mask shows as a box. -->
+    <rect x="388" y="322" width="64" height="14" rx="2" fill="#1b1f2b"/>
+    <text x="392" y="333" fill="#7f8aa5" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.08em">RESOLVES</text>
+
+    <!-- n8n to its three backing services: own attach point and own elbow each -->
+    <path d="M764,192 H788 a8,8 0 0 0 8,-8 V160 a8,8 0 0 1 8,-8 H824"
+          fill="none" stroke="#9aa4bd" stroke-width="1.2" marker-end="url(#arrow)"/>
+    <path d="M764,208 H800 a8,8 0 0 1 8,8 V240 a8,8 0 0 0 8,8 H824"
+          fill="none" stroke="#9aa4bd" stroke-width="1.2" marker-end="url(#arrow)"/>
+    <path d="M764,224 H776 a8,8 0 0 1 8,8 V336 a8,8 0 0 0 8,8 H824"
+          fill="none" stroke="#9aa4bd" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+    <!-- the export leaves the box on purpose -->
+    <line x1="688" y1="240" x2="688" y2="484" stroke="#9aa4bd" stroke-width="1.2" marker-end="url(#arrow)"/>
+    <rect x="700" y="364" width="52" height="14" rx="2" fill="#1b1f2b"/>
+    <text x="704" y="375" fill="#7f8aa5" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.08em">EXPORT</text>
+
+    <!-- ══ nodes ══ -->
+
+    <!-- public traffic (entry) -->
+    <rect x="180" y="176" width="152" height="64" rx="32" fill="#171a24"/>
+    <rect x="180" y="176" width="152" height="64" rx="32" fill="rgba(52,211,153,0.06)" stroke="#34d399" stroke-width="1"/>
+    <circle cx="256" cy="192" r="4" fill="#34d399"/>
+    <text x="256" y="216" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">Public traffic</text>
+    <text x="256" y="230" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">HTTPS only</text>
+
+    <!-- DNS (external) -->
+    <rect x="180" y="312" width="152" height="64" rx="6" fill="#171a24"/>
+    <rect x="180" y="312" width="152" height="64" rx="6" fill="#232838" stroke="#39415a" stroke-width="1"/>
+    <circle cx="256" cy="328" r="4" fill="#7c8aa8"/>
+    <text x="256" y="352" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">DNS</text>
+    <text x="256" y="366" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">A record to the box</text>
+
+    <!-- Traefik (edge) -->
+    <rect x="404" y="176" width="152" height="64" rx="6" fill="#171a24"/>
+    <rect x="404" y="176" width="152" height="64" rx="6" fill="#232838" stroke="#39415a" stroke-width="1"/>
+    <circle cx="480" cy="192" r="4" fill="#fbbf24"/>
+    <text x="480" y="216" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">Traefik</text>
+    <text x="480" y="230" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">TLS · 80 → 443</text>
+
+    <!-- n8n — FOCAL: the platform the rest exists to serve -->
+    <rect x="612" y="176" width="152" height="64" rx="6" fill="#171a24"/>
+    <rect x="612" y="176" width="152" height="64" rx="6" fill="rgba(234,75,113,0.10)" stroke="#ea4b71" stroke-width="1.2"/>
+    <circle cx="688" cy="192" r="4" fill="#ea4b71"/>
+    <text x="688" y="216" fill="#ffffff" font-size="12" font-weight="600" text-anchor="middle">n8n</text>
+    <text x="688" y="230" fill="#f3aec0" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">workflows + API</text>
+
+    <!-- Postgres (data) -->
+    <rect x="828" y="120" width="152" height="64" rx="6" fill="#171a24"/>
+    <rect x="828" y="120" width="152" height="64" rx="6" fill="#232838" stroke="#39415a" stroke-width="1"/>
+    <circle cx="904" cy="136" r="4" fill="#c084fc"/>
+    <text x="904" y="160" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">Postgres 16</text>
+    <text x="904" y="174" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">execution state</text>
+
+    <!-- Qdrant (data) -->
+    <rect x="828" y="216" width="152" height="64" rx="6" fill="#171a24"/>
+    <rect x="828" y="216" width="152" height="64" rx="6" fill="#232838" stroke="#39415a" stroke-width="1"/>
+    <circle cx="904" cy="232" r="4" fill="#c084fc"/>
+    <text x="904" y="256" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">Qdrant</text>
+    <text x="904" y="270" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">vector store</text>
+
+    <!-- Ollama (model) -->
+    <rect x="828" y="312" width="152" height="64" rx="6" fill="#171a24"/>
+    <rect x="828" y="312" width="152" height="64" rx="6" fill="#232838" stroke="#39415a" stroke-width="1"/>
+    <circle cx="904" cy="328" r="4" fill="#22d3ee"/>
+    <text x="904" y="352" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">Ollama</text>
+    <text x="904" y="366" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">local models</text>
+
+    <!-- Git repo (external) — outside the boundary, because a backup on the
+         machine it is backing up is not a backup -->
+    <rect x="612" y="488" width="152" height="64" rx="6" fill="#171a24"/>
+    <rect x="612" y="488" width="152" height="64" rx="6" fill="#232838" stroke="#39415a" stroke-width="1"/>
+    <circle cx="688" cy="504" r="4" fill="#7c8aa8"/>
+    <text x="688" y="528" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">Git repo</text>
+    <text x="688" y="542" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">outlives the host</text>
+
+    <!-- ══ legend ══ -->
+    <line x1="72" y1="600" x2="1128" y2="600" stroke="rgba(232,236,245,0.12)" stroke-width="0.8"/>
+    <text x="72" y="624" fill="#7f8aa5" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">ROLE</text>
+    <circle cx="176" cy="620" r="4" fill="#ea4b71"/>
+    <text x="188" y="624" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace">platform</text>
+    <circle cx="300" cy="620" r="4" fill="#34d399"/>
+    <text x="312" y="624" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace">entry</text>
+    <circle cx="404" cy="620" r="4" fill="#fbbf24"/>
+    <text x="416" y="624" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace">edge proxy</text>
+    <circle cx="536" cy="620" r="4" fill="#c084fc"/>
+    <text x="548" y="624" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace">data</text>
+    <circle cx="628" cy="620" r="4" fill="#22d3ee"/>
+    <text x="640" y="624" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace">model</text>
+    <circle cx="728" cy="620" r="4" fill="#7c8aa8"/>
+    <text x="740" y="624" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace">external</text>
+  </svg>
+</body>
+</html>
