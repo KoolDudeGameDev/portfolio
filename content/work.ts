@@ -182,6 +182,42 @@ export const work: WorkItem[] = [
     tech: ["n8n", "Supabase", "PostgreSQL", "SQL", "SMTP"],
   },
   {
+    title: "Automation Training Series",
+    org: "Bai Finance",
+    image: "training-orientation.webp",
+    shots: [
+      {
+        src: "training-orientation.webp",
+        caption:
+          "Part 0 sets the ground rules first. The practice server is the production server, so the sandbox rules come before any login.",
+      },
+      {
+        src: "training-ghl-asana.webp",
+        caption:
+          "Part 1: a hands-on GHL → n8n → Asana sync. The point is learning to read an API reference and wire unfamiliar tools together, not the sync itself.",
+      },
+      {
+        src: "training-debugging.webp",
+        caption:
+          "Part 5 is a handbook rather than a tutorial: triage order, status codes, five traps and a symptom index, all drawn from real incidents.",
+      },
+    ],
+    group: "Automation",
+    category: "Enablement",
+    status: "Shipped",
+    problem:
+      "New engineers were joining a team whose practice server is also its production server. Every workflow they built would sit next to ones moving real client data, and nothing technical stopped a practice run from breaking a live automation.",
+    build:
+      "Wrote a six-part, hands-on training series: orientation and sandbox rules, a GHL → n8n → Asana sync and its reverse, CRM configuration, contact data and tagging, and a debugging and operations handbook. Each part ends in something the engineer builds and tests.",
+    results: [
+      "Sandbox rules and a naming convention are the real boundary on a shared live server, written as rules because a personal API key can still reach every workflow on it",
+      "Both directions of a real integration are built against the actual APIs: reading the reference, finding the IDs, mapping the fields",
+      "The debugging handbook comes from failures that actually happened: fixes left in draft, swallowed errors, test versus production URLs, automations triggering each other, and matching on names instead of IDs",
+      "Every part ends in a deliverable, and fixes are written up as runbook entries in one fixed shape",
+    ],
+    tech: ["n8n", "GoHighLevel", "Asana API", "Technical Writing"],
+  },
+  {
     title: "Self-Hosted Automation Platform",
     org: "Bai Finance",
     image: "platform-architecture.webp",
