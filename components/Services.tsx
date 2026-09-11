@@ -1,12 +1,14 @@
 import { SectionHeading } from "./SectionHeading";
 import {
+  ArrowRight,
   AutomationIcon,
   BackendIcon,
   CrmIcon,
   ReliabilityIcon,
   WebIcon,
 } from "./Icons";
-import { services, type ServiceIcon } from "@/content/services";
+import { engagements, services, type ServiceIcon } from "@/content/services";
+import { mailtoHref } from "@/lib/site";
 
 const iconMap: Record<ServiceIcon, typeof AutomationIcon> = {
   automation: AutomationIcon,
@@ -61,6 +63,46 @@ export function Services() {
               </article>
             );
           })}
+        </div>
+
+        {/* How to hire me. No rates here on purpose: see content/services.ts. */}
+        <div className="mt-16">
+          <h3 className="text-xs uppercase tracking-[0.2em] text-muted">
+            How we&apos;d work together
+          </h3>
+          <div className="mt-6 grid gap-4 md:grid-cols-3">
+            {engagements.map((engagement) => (
+              <article
+                key={engagement.title}
+                className="flex flex-col rounded-2xl border border-border bg-card p-7"
+              >
+                <p className="font-mono text-xs uppercase tracking-[0.14em] text-muted">
+                  {engagement.terms}
+                </p>
+                <h4 className="mt-3 text-lg font-semibold">
+                  {engagement.title}
+                </h4>
+                <p className="mt-3 flex-1 leading-relaxed text-muted">
+                  {engagement.description}
+                </p>
+                <p className="mt-5 border-t border-border pt-4 text-sm">
+                  <span className="text-muted">Good for: </span>
+                  {engagement.goodFor}
+                </p>
+              </article>
+            ))}
+          </div>
+          <p className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted">
+            Every engagement is quoted per project, after a short call about
+            what you need.
+            <a
+              href={mailtoHref}
+              className="group inline-flex items-center gap-1 font-medium text-fg underline-offset-4 hover:underline"
+            >
+              Start a project
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </a>
+          </p>
         </div>
       </div>
     </section>

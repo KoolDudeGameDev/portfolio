@@ -65,3 +65,37 @@ export const services: Service[] = [
     wide: true,
   },
 ];
+
+export type Engagement = {
+  title: string;
+  /** How it's scoped and billed, in a few words. No prices on purpose. */
+  terms: string;
+  description: string;
+  goodFor: string;
+};
+
+// How a business can hire me. Deliberately no rates: every engagement is
+// quoted after a short call, so the work is judged before the price is.
+export const engagements: Engagement[] = [
+  {
+    title: "Automation audit",
+    terms: "Fixed scope · 1–2 weeks",
+    description:
+      "I map how work actually moves through your tools, find where hours and leads are leaking, and hand back a prioritised plan you can build with me or with anyone else.",
+    goodFor: "Knowing what to fix first",
+  },
+  {
+    title: "Project build",
+    terms: "Quoted per project",
+    description:
+      "One workflow, integration or app, built end to end: scoped before any work starts, tested against real data, and documented so your team can run it without me.",
+    goodFor: "A process you already know you want automated",
+  },
+  {
+    title: "Ongoing support",
+    terms: "Monthly retainer",
+    description:
+      "Monitoring, fixes and small improvements for systems that are already running, including ones I didn't build.",
+    goodFor: "Keeping things working after launch",
+  },
+];
