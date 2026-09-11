@@ -243,7 +243,14 @@ export const work: WorkItem[] = [
   {
     title: "CRM Migration & Data Pipeline",
     org: "Bai Finance",
-    image: "workflow-intake-gatekeeper.webp",
+    image: "crm-pipeline.webp",
+    shots: [
+      {
+        src: "crm-pipeline.webp",
+        caption:
+          "One pass from twenty-odd sources to one import-ready master. A single validation step decides what gets in; anything that fails a rule goes back to be fixed where it came from.",
+      },
+    ],
     group: "Backend & Data",
     category: "Data",
     status: "Shipped",
@@ -261,8 +268,13 @@ export const work: WorkItem[] = [
   {
     title: "WhatsApp OTP Login",
     org: "Confidential Client — Ecommerce",
-    image: "workflow-messaging-engine.webp",
+    image: "whatsapp-otp-login.webp",
     shots: [
+      {
+        src: "whatsapp-otp-login.webp",
+        caption:
+          "The code travels over WhatsApp, but the session is a genuine one: once the code checks out, an admin-minted magic-link token is exchanged for it.",
+      },
       {
         src: "workflow-messaging-engine.webp",
         caption:
