@@ -55,6 +55,11 @@ export const work: WorkItem[] = [
           "The GoHighLevel side of one lending pipeline: an opportunity moving stage fans out to a branch per stage, each writing the matching opportunity on the master pipeline.",
       },
       {
+        src: "ghl-automation-overview.webp",
+        caption:
+          "The location's automation overview: 191 workflows, 41 of them published, and 14.1K enrollments to date.",
+      },
+      {
         src: "workflow-stage-sync.webp",
         caption:
           "The n8n side, in both directions. Each side reads where the record already is before writing; if it's already at that stage the run stops, and that check is what ended the echo loop.",
