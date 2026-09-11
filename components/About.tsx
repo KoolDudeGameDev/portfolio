@@ -36,7 +36,7 @@ export function About() {
           <div className="mt-6 space-y-4 leading-relaxed text-muted">
             <p>
               I&apos;m a Computer Technology graduate (Cum Laude)
-              who turns business requirements into maintainable systems — from
+              who turns business requirements into maintainable systems, from
               REST API contracts and webhooks to access-control logic and CRM
               data architecture.
             </p>
@@ -49,7 +49,7 @@ export function About() {
             </p>
             <p>
               I also lead a six-person engineering team at the brokerage,
-              drawn from some of the country&apos;s top universities — I assign
+              drawn from some of the country&apos;s top universities. I assign
               the workflow builds, review what they ship, and own the
               documentation standards we all work to. Getting six people
               building against the same conventions is its own engineering

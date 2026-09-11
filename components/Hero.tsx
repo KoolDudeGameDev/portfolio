@@ -35,7 +35,7 @@ export function Hero() {
         </h1>
 
         <p className="mt-7 max-w-2xl text-lg leading-relaxed text-muted md:text-xl">
-          I&apos;m {site.name} — I ship production automation, backends, and web
+          I&apos;m {site.name}. I ship production automation, backends, and web
           applications end to end, from REST API contracts and webhooks to
           access-control logic and CRM data architecture. Right now that&apos;s
           a platform of 190+ workflows connecting GoHighLevel, n8n, Asana, and

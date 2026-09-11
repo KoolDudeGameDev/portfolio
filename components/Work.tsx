@@ -30,9 +30,9 @@ export function Work() {
         <SectionHeading
           index="02"
           eyebrow="Selected work"
-          title="Real systems, shipped and"
-          titleItalic="running in production."
-          description="A mix of client automation work, backend systems, and research — each framed by the problem it solved."
+          title="Real systems, built to"
+          titleItalic="survive production."
+          description="Client automation, backend systems, open-source reference workflows and research, each framed by the problem it solved."
         />
 
         <div className="mb-10 flex flex-wrap gap-2">

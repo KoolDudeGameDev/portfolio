@@ -87,7 +87,7 @@ export const work: WorkItem[] = [
       {
         src: "ghl-reply-routing.webp",
         caption:
-          "Reply routing — a positive reply books the lead, a negative one moves it to cold, and silence ends the sequence.",
+          "Reply routing: a positive reply books the lead, a negative one moves it to cold, and silence ends the sequence.",
       },
     ],
     group: "Automation",
@@ -95,7 +95,7 @@ export const work: WorkItem[] = [
     status: "Active",
     featured: true,
     problem:
-      "A finance brokerage ran on a brittle Google Apps Script setup — new opportunities didn't become tasks, and updates echoed back and forth as duplicates.",
+      "A finance brokerage ran on a brittle Google Apps Script setup. New opportunities didn't become tasks, and updates echoed back and forth as duplicates.",
     build:
       "Architected a scalable, version-controlled automation platform on n8n with dedicated webhook endpoints and REST payload contracts, driving bidirectional GoHighLevel↔Asana sync on the GHL v2 API.",
     results: [
@@ -103,7 +103,7 @@ export const work: WorkItem[] = [
       "Mapped 30+ pipeline stages into auto-created tasks",
       "Engineered an authoritative-state check that killed the bidirectional echo loop causing duplicate updates",
       "Added follower-based broker routing that enforces per-broker data confidentiality",
-      "Led a six-person engineering team building against it — assigning workflow builds, reviewing deliverables, and owning the documentation standards",
+      "Led a six-person engineering team building against it: assigning workflow builds, reviewing deliverables, and owning the documentation standards",
     ],
     tech: ["n8n", "GoHighLevel v2 API", "Asana API", "Webhooks", "REST"],
   },
@@ -115,7 +115,7 @@ export const work: WorkItem[] = [
       {
         src: "workflow-commission-engine.webp",
         caption:
-          "The commission engine. Every claim is routed by type and checked against the table that owns that bonus — a claim nobody can vouch for is rejected rather than paid.",
+          "The commission engine. Every claim is routed by type and checked against the table that owns that bonus. A claim nobody can vouch for is rejected rather than paid.",
       },
       {
         src: "workflow-sales-attribution.webp",
@@ -125,7 +125,7 @@ export const work: WorkItem[] = [
       {
         src: "workflow-messaging-engine.webp",
         caption:
-          "The messaging engine — thirteen notification types routed to one delivery path, deduplicated by hashed message content so a retry can't send twice.",
+          "The messaging engine: thirteen notification types routed to one delivery path, deduplicated by hashed message content so a retry can't send twice.",
       },
       {
         src: "health-check.webp",
@@ -138,7 +138,7 @@ export const work: WorkItem[] = [
     status: "Active",
     featured: true,
     problem:
-      "An ecommerce brand's affiliate-management platform — storefront, dashboards, payouts, messaging — had one engineer available to keep it alive, and its failures surfaced as wrong numbers rather than as errors.",
+      "An ecommerce brand's affiliate-management platform (storefront, dashboards, payouts, messaging) had one engineer available to keep it alive, and its failures surfaced as wrong numbers rather than as errors.",
     build:
       "Took sole ownership of production: uptime monitoring, incident response, security review, database maintenance, and feature work across 17 Supabase Edge Functions, two role-gated dashboards, and a self-hosted automation stack.",
     results: [
@@ -176,12 +176,12 @@ export const work: WorkItem[] = [
     problem:
       "Staff filed leave over chat and email. Not everyone was onboarded into the HR app, approvals left no record, and the balance a person was quoted didn't always match the one the HR app would compute.",
     build:
-      "Built a no-login intake page served by n8n itself, backed by an email approval layer that reads and writes the HR app's own database — no second system of record, and no second policy engine.",
+      "Built a no-login intake page served by n8n itself, backed by an email approval layer that reads and writes the HR app's own database. No second system of record, and no second policy engine.",
     results: [
       "Staff sign in with an employee ID; the one-time code goes to the address already on their record, so nobody can direct a code to an address they chose",
-      "Balances are computed once, in SQL, against the HR app's existing accrual engine — the two systems can't quote different numbers for the same person",
+      "Balances are computed once, in SQL, against the HR app's existing accrual engine, so the two systems can't quote different numbers for the same person",
       "Leave spanning a quarter boundary is charged day by day to the quarter it falls in, and the paid/unpaid split is shown before anyone submits",
-      "Approval emails open a confirmation page instead of deciding on click — mail scanners prefetch every link, and a decide-on-GET link would approve itself",
+      "Approval emails open a confirmation page instead of deciding on click. Mail scanners prefetch every link, so a decide-on-GET link would approve itself",
       "Lives in its own Postgres schema with no foreign keys into the HR app's tables, so its migrations can never fail because of this",
     ],
     tech: ["n8n", "Supabase", "PostgreSQL", "SQL", "SMTP"],
@@ -230,14 +230,14 @@ export const work: WorkItem[] = [
     category: "Infrastructure",
     status: "Shipped",
     problem:
-      "The automation platform ran on a hosted n8n plan. That plan went away and took its database with it — every workflow the business depended on, gone in one afternoon, with no way to log in and get them back.",
+      "The automation platform ran on a hosted n8n plan. That plan went away and took its database with it. Every workflow the business depended on was gone in one afternoon, with no way to log in and get them back.",
     build:
       "Rebuilt the platform on a VPS the company controls: a Docker Compose stack behind Traefik doing TLS at the edge, with the workflow definitions kept in git so the running instance is reproducible rather than irreplaceable.",
     results: [
-      "Restored every workflow from the git-committed JSON exports — the repo was the only surviving copy, which is now the point rather than the accident",
+      "Restored every workflow from the git-committed JSON exports. The repo was the only surviving copy, which is now the point rather than the accident",
       "Traefik terminates TLS and redirects HTTP at the entrypoint, so no workflow has to know anything about certificates",
       "Postgres holds execution state instead of the container filesystem, so the stack can be rebuilt without losing history",
-      "The encryption key is treated as the platform's real secret — lose it and every stored credential becomes permanently unreadable",
+      "The encryption key is treated as the platform's real secret: lose it and every stored credential becomes permanently unreadable",
       "Traced a TLS failure to a proxy release that had dropped two config keys, and was serving a self-signed certificate rather than erroring",
     ],
     tech: ["Docker Compose", "Traefik", "Linux", "PostgreSQL", "n8n", "DNS"],
@@ -267,9 +267,9 @@ export const work: WorkItem[] = [
     category: "Web App",
     status: "Shipped",
     problem:
-      "The brokerage needed a public site its own staff could keep current — services, calculators, blog, team — without a developer in the loop for every edit.",
+      "The brokerage needed a public site its own staff could keep current (services, calculators, blog, team) without a developer in the loop for every edit.",
     build:
-      "Built a Next.js marketing site backed by a Supabase admin CMS — services, calculators, blog, team, partners and an inquiry chat — with admin access, rate limiting and security headers all enforced before a request reaches a page.",
+      "Built a Next.js marketing site backed by a Supabase admin CMS (services, calculators, blog, team, partners and an inquiry chat), with admin access, rate limiting and security headers all enforced before a request reaches a page.",
     results: [
       "Staff publish and edit content themselves; a request to the admin area without the role gets a 404 rather than a 401, so the route never advertises that it exists",
       "The contact form and calculators hold a 90% coverage floor in CI, across unit tests and browser tests",
@@ -301,7 +301,7 @@ export const work: WorkItem[] = [
     category: "Data",
     status: "Shipped",
     problem:
-      "Years of growth left thousands of contacts spread across 20+ spreadsheets and CRM exports — duplicates, malformed emails and phone numbers, and couples sharing a single record.",
+      "Years of growth left thousands of contacts spread across 20+ spreadsheets and CRM exports: duplicates, malformed emails and phone numbers, and couples sharing a single record.",
     build:
       "Wrote a Python pipeline that consolidates every source into one import-ready master: normalizing contact details, splitting joint applicants into individual records, and applying a namespaced tagging scheme through a single validation step.",
     results: [
@@ -331,7 +331,7 @@ export const work: WorkItem[] = [
     category: "Backend",
     status: "Shipped",
     problem:
-      "Creators on the rewards platform live on WhatsApp, not email — but the authentication provider could only issue sessions from its own email or SMS codes.",
+      "Creators on the rewards platform live on WhatsApp, not email, but the authentication provider could only issue sessions from its own email or SMS codes.",
     build:
       "Designed a second login channel that delivers a one-time code over WhatsApp, then bridges it into a genuine authenticated session using admin-generated magic-link tokens, leaving the existing email login untouched.",
     results: [
@@ -360,7 +360,7 @@ export const work: WorkItem[] = [
       "Built an n8n flow that upserts scanned prospects into GHL, assigns the owning broker through a routing guard, and sends a welcome email via a verified sender with per-broker Reply-To.",
     results: [
       "Per-broker Reply-To routing that preserves SPF/DKIM/DMARC alignment",
-      "Zero manual triage — every scan is routed and greeted automatically",
+      "Zero manual triage: every scan is routed and greeted automatically",
     ],
     tech: ["n8n", "GoHighLevel", "Email Deliverability", "DNS"],
   },
@@ -372,21 +372,21 @@ export const work: WorkItem[] = [
       {
         src: "ref-idempotent-intake.webp",
         caption:
-          "Three deliberate replies — unusable, already have it, created — so the caller can act on each one instead of guessing.",
+          "Three deliberate replies (unusable, already have it, created) so the caller can act on each one instead of guessing.",
       },
     ],
     group: "Backend & Data",
     category: "Open Source",
     status: "Shipped",
     problem:
-      "Senders retry, and networks drop the response after the write has already happened. Any endpoint that creates something will eventually be called twice with the same payload — and quietly create two records.",
+      "Senders retry, and networks drop the response after the write has already happened. Any endpoint that creates something will eventually be called twice with the same payload, and quietly create two records.",
     build:
       "An importable n8n workflow that keys every request on a hash of the caller's own fields, checks that key before writing, and answers in a way the caller can act on. The reasoning sits in sticky notes beside the nodes it explains.",
     results: [
-      "The key is a SHA-256 of the caller's identifying fields — never a timestamp or a random value, because a retry has to produce the same key",
+      "The key is a SHA-256 of the caller's identifying fields, never a timestamp or a random value, because a retry has to produce the same key",
       "A unique index on the key backs up the lookup, so a race that slips past the check still can't create a second row",
       "Answers 400 when retrying won't help, 200 when the record already exists, and 201 when something was created",
-      "No client data and no credentials — every secret is an environment reference",
+      "No client data and no credentials: every secret is an environment reference",
     ],
     tech: ["n8n", "Webhooks", "SHA-256", "Supabase"],
     links: [
@@ -417,7 +417,7 @@ export const work: WorkItem[] = [
       "A scheduled n8n workflow that probes a list of endpoints and sends a single digest only when something is actually down. Silence is the success case.",
     results: [
       "Every probe runs with errors captured as data, so one outage can't abort the run and mask the rest",
-      "Failures are collected before anything is sent — one digest for ten dead endpoints, not ten alerts",
+      "Failures are collected before anything is sent: one digest for ten dead endpoints, not ten alerts",
       "Nothing is sent when everything is up, so the channel stays worth reading",
       "Flap suppression is deliberately left out and documented as the next step, rather than half-built",
     ],
@@ -438,7 +438,7 @@ export const work: WorkItem[] = [
       {
         src: "ref-workflow-backup.webp",
         caption:
-          "A nightly export of every workflow to a git repository — the backup that has to live somewhere other than the machine it protects.",
+          "A nightly export of every workflow to a git repository: the backup that has to live somewhere other than the machine it protects.",
       },
     ],
     group: "Infrastructure & Reliability",
@@ -450,7 +450,7 @@ export const work: WorkItem[] = [
       "A nightly n8n workflow that exports every workflow through the n8n API and commits each one to a repository, so the running instance is reproducible rather than irreplaceable.",
     results: [
       "Files are named by workflow id, not name, so a rename produces a diff instead of an orphan plus a new file",
-      "Fields that change on their own — active state, version id, timestamps — are stripped, so a nightly run only commits when something really changed",
+      "Fields that change on their own (active state, version id, timestamps) are stripped, so a nightly run only commits when something really changed",
       "Reads the current file SHA before writing, so an update never collides with the commit before it",
       "Built from the recovery that actually happened, not a hypothetical one",
     ],
@@ -582,9 +582,9 @@ export const work: WorkItem[] = [
     category: "Web App",
     status: "Active",
     problem:
-      "The company needed an internal learning platform with role-based access and live sessions — and a QA process to keep it stable.",
+      "The company needed an internal learning platform with role-based access and live sessions, and a QA process to keep it stable.",
     build:
-      "Built and QA-owned an internal LMS — a Django REST backend behind a Next.js front end — with a drag-and-drop course builder, quizzes, a community, Jitsi live sessions and server-rendered certificates, and designed its GoHighLevel enrollment integration.",
+      "Built and QA-owned an internal LMS (a Django REST backend behind a Next.js front end) with a drag-and-drop course builder, quizzes, a community, Jitsi live sessions and server-rendered certificates, and designed its GoHighLevel enrollment integration.",
     results: [
       "Seven roles, each with its own dashboard; new broker, BDA and student accounts pass through a moderator review queue before they can see anything",
       "Moderator rights are granular rather than all-or-nothing, and every account action is written to an audit log",
@@ -604,7 +604,7 @@ export const work: WorkItem[] = [
     problem:
       "Cebuano is a low-resource language with almost no ready speech-recognition tooling to build on.",
     build:
-      "Engineered an end-to-end ASR pipeline in Python with Hugging Face Transformers, Wav2Vec2-XLSR, and a custom KenLM language model — training and decoding the models independently.",
+      "Engineered an end-to-end ASR pipeline in Python with Hugging Face Transformers, Wav2Vec2-XLSR, and a custom KenLM language model, training and decoding the models independently.",
     results: [
       "3.07% WER and 1.03% CER on 552 test samples",
       "Reproducible pipeline over 3,622 speaker-disjoint utterances; authored a conference paper",
@@ -626,7 +626,7 @@ export const work: WorkItem[] = [
     status: "Completed",
     image: "labelingloop.webp",
     problem:
-      "Building the ASR dataset needed one place to upload, transcribe, correct, and export audio — not a pile of scripts.",
+      "Building the ASR dataset needed one place to upload, transcribe, correct, and export audio, not a pile of scripts.",
     build:
       "Developed a Django CRUD application integrating audio upload, transcription, correction, and export into a single backend workflow, deployed via Cloudflare Tunnel for live user testing.",
     results: [

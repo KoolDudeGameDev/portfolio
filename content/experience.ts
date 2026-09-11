@@ -21,7 +21,7 @@ export const experience: ExperienceItem[] = [
     org: "Confidential Client — Ecommerce",
     location: "Remote",
     summary:
-      "Placed by a software agency as the sole engineer on one client product — an affiliate-rewards ecommerce platform — owning uptime monitoring, incident response, security review of live endpoints, Supabase/PostgreSQL maintenance, and React/TypeScript feature work under a tiered SLA, in direct contact with the client.",
+      "Placed by a software agency as the sole engineer on one client product, an affiliate-rewards ecommerce platform, owning uptime monitoring, incident response, security review of live endpoints, Supabase/PostgreSQL maintenance, and React/TypeScript feature work under a tiered SLA, in direct contact with the client.",
   },
   {
     period: "Jun 2025 — May 2026",

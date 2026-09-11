@@ -22,7 +22,7 @@ const fraunces = Fraunces({
 export const metadata: Metadata = {
   title: "Kyle Gregory Ibo — Systems & Automation Engineer",
   description:
-    "I build the automations, integrations, and backends that make businesses run themselves — n8n, CRM systems, REST APIs, and web apps that turn manual work into reliable systems.",
+    "I build the automations, integrations, and backends that make businesses run themselves: n8n, CRM systems, REST APIs, and web apps that turn manual work into reliable systems.",
   keywords: [
     "automation engineer",
     "systems integration",

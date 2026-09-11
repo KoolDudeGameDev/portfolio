@@ -46,9 +46,9 @@ export function Contact() {
             </span>
           </h2>
           <p className="mx-auto mt-5 max-w-xl leading-relaxed text-muted">
-            Tell me what&apos;s slowing your team down. I reply quickly and keep
-            communication clear and direct — whether it&apos;s a project, a
-            collaboration, or a technical question.
+            Tell me what&apos;s slowing your team down. I&apos;ll reply with a few
+            questions and, if it&apos;s a fit, a scoped quote. Collaborations
+            and technical questions are welcome too.
           </p>
 
           <div className="mt-9">

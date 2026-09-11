@@ -11,7 +11,7 @@ export function TechStack() {
           eyebrow="Tech stack"
           title="The tools I reach for,"
           titleItalic="grouped by job."
-          description="A working stack across automation, backend, data, and applied AI — chosen for what ships, not what's trendy."
+          description="A working stack across automation, backend, data, and applied AI, chosen for what ships, not what's trendy."
         />
 
         <div className="divide-y divide-border border-y border-border">
