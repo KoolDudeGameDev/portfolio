@@ -1,16 +1,21 @@
 # n8n reference workflows
 
-Three n8n workflows that solve problems I kept hitting in production, written to be read
-rather than to be impressive. Each one is a single importable JSON file with the reasoning
+Six n8n workflows, written to be read rather than to be impressive. The first three came out
+of problems I hit in production. The last three are AI automation patterns I built from
+scratch to learn them properly. Each one is a single importable JSON file with the reasoning
 kept in sticky notes next to the nodes it explains.
 
-No client data, no credentials — every secret is an `$env` reference.
+No client data and no credentials. You attach your own, and every other secret is an `$env`
+reference.
 
 | Workflow | The problem it solves |
 |---|---|
 | [`idempotent-webhook-intake`](./idempotent-webhook-intake.json) | The same request arrives twice and creates two records |
 | [`endpoint-health-check`](./endpoint-health-check.json) | You find out a service is down because a customer told you |
 | [`workflow-backup-to-git`](./workflow-backup-to-git.json) | Your automation platform is the only copy of your automations |
+| [`rag-gmail-reply-assistant`](./rag-gmail-reply-assistant.json) | An AI that answers email makes up whatever it doesn't know |
+| [`invoice-intake-approval`](./invoice-intake-approval.json) | Invoices get paid twice, or wait forever in someone's inbox |
+| [`company-enrichment`](./company-enrichment.json) | Researching a list of companies by hand, one tab at a time |
 
 ## Import
 
@@ -60,6 +65,52 @@ rather than an orphan plus a new file — and because names are not unique and c
 characters that are not legal in a path. `active`, `versionId` and the timestamps are stripped
 before writing, since they change on their own and would otherwise produce a commit every night
 containing no actual change.
+
+### RAG Gmail reply assistant
+
+Drafts replies to inbound email from the company's own documents, and never sends one.
+
+That last part is the design. There is no send node anywhere in the workflow, so the most the
+model can do is leave a Gmail draft for a person to read and send. A wrong answer costs someone
+a minute of reading, not a customer.
+
+New mail is triaged before anything is retrieved. Complaints, anything about a specific account
+and anything the triage model is unsure of go straight to a person, so the agent only ever sees
+general questions. The agent must call the knowledge base before writing. If it finds nothing,
+it answers `ESCALATE` and the email is labelled for a person rather than guessed at.
+
+A second lane, run by hand, loads documents into the Qdrant collection. It uses the same
+embedding model as the question lane on purpose. Embed documents with one model and questions
+with another, and retrieval returns confident nonsense.
+
+### Invoice intake and approval queue
+
+Two lanes in one workflow, joined only by a sheet.
+
+**Intake** reads each invoice PDF from email, extracts the fields with a model, and queues it
+as `PENDING`. The duplicate key is a SHA-256 of vendor, invoice number and amount, so the same
+invoice forwarded twice is recognised instead of queued twice.
+
+**Approval** runs on a schedule and takes the oldest `PENDING` invoice, but only when nothing is
+`IN_REVIEW`. That one check is the whole queue lock. The approver gets a single Gmail
+approve/decline request, and the result goes to the masterfile and the accounts team, or marks
+the row `DISAPPROVED`.
+
+If nobody answers within two days, the invoice goes back to `PENDING` rather than being treated
+as declined. A missed email should delay an invoice, not reject it.
+
+### Company enrichment
+
+Fills in a sheet of companies from their own homepages: industry, audience, B2B or B2C, and the
+value proposition in one sentence.
+
+Each company is processed on its own. The fetch is set to `neverError`, so a dead or blocked site
+comes back as a status code, and its row is marked `failed` with that code while the loop moves
+on. One bad domain in a list of five hundred should cost one row.
+
+The model is told to answer `unknown` when the page doesn't say, and to report its confidence.
+A visible blank is more useful than a plausible guess that someone later mistakes for research.
+The two-second pause between sites is there to be polite to other people's servers.
 
 ## Licence
 
