@@ -3,7 +3,7 @@ import { site, mailtoHref } from "@/lib/site";
 
 // Every figure here traces back to a case study in content/work.ts.
 const stats = [
-  { value: "100+", label: "Automated workflows live" },
+  { value: "190+", label: "Workflows on the platform" },
   { value: "30+", label: "Pipeline stages automated" },
   { value: "1,900+", label: "CRM contacts consolidated" },
   { value: "5+", label: "Platforms integrated" },
@@ -38,7 +38,8 @@ export function Hero() {
           I&apos;m {site.name} — I ship production automation, backends, and web
           applications end to end, from REST API contracts and webhooks to
           access-control logic and CRM data architecture. Right now that&apos;s
-          100+ live workflows connecting GoHighLevel, n8n, Asana, and Supabase.
+          a platform of 190+ workflows connecting GoHighLevel, n8n, Asana, and
+          Supabase.
         </p>
 
         <div className="mt-10 flex flex-wrap items-center gap-4">

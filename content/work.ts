@@ -77,7 +77,7 @@ export const work: WorkItem[] = [
       {
         src: "ghl-workflow-scale.webp",
         caption:
-          "One nurture workflow zoomed out. The location carries roughly 105 of these across 19 pipelines.",
+          "One nurture workflow zoomed out, one of the 191 in the location.",
       },
       {
         src: "ghl-qualification-chatbot.webp",
@@ -99,7 +99,7 @@ export const work: WorkItem[] = [
     build:
       "Architected a scalable, version-controlled automation platform on n8n with dedicated webhook endpoints and REST payload contracts, driving bidirectional GoHighLevel↔Asana sync on the GHL v2 API.",
     results: [
-      "Runs across 19 pipelines and roughly 105 workflows for a 64-user brokerage",
+      "Runs across 19 pipelines for a 64-user brokerage: 191 workflows, 41 of them published, and 14.1K enrollments to date",
       "Mapped 30+ pipeline stages into auto-created tasks",
       "Engineered an authoritative-state check that killed the bidirectional echo loop causing duplicate updates",
       "Added follower-based broker routing that enforces per-broker data confidentiality",
