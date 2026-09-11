@@ -399,6 +399,105 @@ export const work: WorkItem[] = [
     ],
   },
   {
+    title: "RAG Gmail Reply Assistant",
+    org: "Open source n8n workflow",
+    image: "ref-rag-gmail.webp",
+    shots: [
+      {
+        src: "ref-rag-gmail.webp",
+        caption:
+          "Triage first, retrieval second, and no send step anywhere. The best this workflow can do is leave a draft for a person to send.",
+      },
+    ],
+    group: "Automation",
+    category: "Open Source",
+    status: "Shipped",
+    problem:
+      "Most inbound email is the same handful of questions, answered by hand from documents the business already has. A model answering from general knowledge will invent whatever those documents would have told it.",
+    build:
+      "An n8n workflow that triages each new email, lets an AI agent look the answer up in a Qdrant knowledge base built from the company's own documents, and saves the reply as a Gmail draft. A second lane loads documents into that knowledge base.",
+    results: [
+      "There is no send step, so the model can only ever produce a draft that a person reads and sends",
+      "Triage runs before retrieval, so complaints and account-specific mail go straight to a person and never reach the agent",
+      "When the knowledge base has nothing, the agent answers ESCALATE and the email is labelled for a human instead of guessed at",
+      "The document lane and the question lane share one embedding model, because mixing two makes retrieval return confident nonsense",
+    ],
+    tech: ["n8n", "RAG", "Qdrant", "Gemini", "Gmail"],
+    links: [
+      {
+        label: "Workflow JSON",
+        href: "https://github.com/KoolDudeGameDev/portfolio/blob/main/n8n-workflows/rag-gmail-reply-assistant.json",
+        icon: "github",
+      },
+    ],
+  },
+  {
+    title: "Invoice Intake & Approval Queue",
+    org: "Open source n8n workflow",
+    image: "ref-invoice-queue.webp",
+    shots: [
+      {
+        src: "ref-invoice-queue.webp",
+        caption:
+          "Two lanes: intake keeps queueing while approval takes the oldest invoice, one at a time.",
+      },
+    ],
+    group: "Automation",
+    category: "Open Source",
+    status: "Shipped",
+    problem:
+      "Invoices arrive by email faster than anyone approves them. Approving straight from the inbox means a duplicate can be paid twice, nothing records what was decided, and a request nobody answered simply disappears.",
+    build:
+      "Two lanes in one n8n workflow. Intake reads each invoice PDF, extracts its fields with a model and queues it. Approval hands the oldest queued invoice to an approver, one at a time, and records the outcome in a masterfile.",
+    results: [
+      "Intake never waits on approval, so invoices keep queueing while one is in review",
+      "Only one invoice is ever in review: the approval lane does nothing while any row is IN_REVIEW, and that single check is the whole queue lock",
+      "A SHA-256 of vendor, invoice number and amount means the same PDF forwarded twice is recognised rather than queued again",
+      "No answer within two days releases the invoice back to the queue, so a missed email never silently rejects it",
+    ],
+    tech: ["n8n", "Gemini", "Google Sheets", "Gmail", "SHA-256"],
+    links: [
+      {
+        label: "Workflow JSON",
+        href: "https://github.com/KoolDudeGameDev/portfolio/blob/main/n8n-workflows/invoice-intake-approval.json",
+        icon: "github",
+      },
+    ],
+  },
+  {
+    title: "Company Enrichment",
+    org: "Open source n8n workflow",
+    image: "ref-company-enrichment.webp",
+    shots: [
+      {
+        src: "ref-company-enrichment.webp",
+        caption:
+          "Each company is fetched, profiled and written back on its own, so a dead website only fails its own row.",
+      },
+    ],
+    group: "Automation",
+    category: "Open Source",
+    status: "Shipped",
+    problem:
+      "Researching a list of companies by hand (what they sell, to whom, B2B or B2C) is slow. Scripts that automate it tend to die on the first dead website and take the rest of the batch down with them.",
+    build:
+      "An n8n workflow that reads companies from a sheet, fetches each homepage, has a model profile the company from its own text against a fixed schema, and writes the profile back to the sheet.",
+    results: [
+      "A dead site fails its own row, not the batch. The fetch never throws, so the row is marked failed with its status code and the loop moves on",
+      "The model may answer unknown and reports its confidence, because a visible blank beats a guess someone later mistakes for research",
+      "Structured output means every row comes back in the same shape, ready to filter",
+      "Requests are paced so a long list doesn't hammer anyone's site",
+    ],
+    tech: ["n8n", "Gemini", "Google Sheets", "HTTP", "Structured Output"],
+    links: [
+      {
+        label: "Workflow JSON",
+        href: "https://github.com/KoolDudeGameDev/portfolio/blob/main/n8n-workflows/company-enrichment.json",
+        icon: "github",
+      },
+    ],
+  },
+  {
     title: "BaiAcademy Learning Platform",
     org: "Bai Finance",
     image: "baiacademy-lms.webp",
