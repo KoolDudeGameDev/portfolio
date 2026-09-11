@@ -133,7 +133,7 @@ export const work: WorkItem[] = [
     status: "Active",
     featured: true,
     problem:
-      "A Malaysian ecommerce brand's affiliate-management platform — storefront, dashboards, payouts, messaging — had one engineer available to keep it alive, and its failures surfaced as wrong numbers rather than as errors.",
+      "An ecommerce brand's affiliate-management platform — storefront, dashboards, payouts, messaging — had one engineer available to keep it alive, and its failures surfaced as wrong numbers rather than as errors.",
     build:
       "Took sole ownership of production: uptime monitoring, incident response, security review, database maintenance, and feature work across 17 Supabase Edge Functions, two role-gated dashboards, and a self-hosted automation stack.",
     results: [
