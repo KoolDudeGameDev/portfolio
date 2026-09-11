@@ -189,17 +189,17 @@ export const work: WorkItem[] = [
   {
     title: "Automation Training Series",
     org: "Bai Finance",
-    image: "training-orientation.webp",
+    image: "training-ghl-asana.webp",
     shots: [
-      {
-        src: "training-orientation.webp",
-        caption:
-          "Part 0 sets the ground rules first. The practice server is the production server, so the sandbox rules come before any login.",
-      },
       {
         src: "training-ghl-asana.webp",
         caption:
           "Part 1: a hands-on GHL → n8n → Asana sync. The point is learning to read an API reference and wire unfamiliar tools together, not the sync itself.",
+      },
+      {
+        src: "training-crm.webp",
+        caption:
+          "Part 3, CRM configuration. Its recurring theme is that mistakes come out blank rather than broken, so configuration is verified by sending a real test, not by looking at it.",
       },
       {
         src: "training-debugging.webp",
@@ -211,11 +211,11 @@ export const work: WorkItem[] = [
     category: "Enablement",
     status: "Shipped",
     problem:
-      "New engineers were joining a team whose practice server is also its production server. Every workflow they built would sit next to ones moving real client data, and nothing technical stopped a practice run from breaking a live automation.",
+      "New engineers had to learn three unfamiliar systems (GoHighLevel, n8n and Asana) by building real integrations between them, without their practice runs getting anywhere near live client data.",
     build:
-      "Wrote a six-part, hands-on training series: orientation and sandbox rules, a GHL → n8n → Asana sync and its reverse, CRM configuration, contact data and tagging, and a debugging and operations handbook. Each part ends in something the engineer builds and tests.",
+      "Wrote a six-part, hands-on training series: orientation and ground rules, a GHL → n8n → Asana sync and its reverse, CRM configuration, contact data and tagging, and a debugging and operations handbook. Each part ends in something the engineer builds and tests.",
     results: [
-      "Sandbox rules and a naming convention are the real boundary on a shared live server, written as rules because a personal API key can still reach every workflow on it",
+      "Interns work in a separate testing account set up for the programme, so they can test and implement as much as they need without touching live data",
       "Both directions of a real integration are built against the actual APIs: reading the reference, finding the IDs, mapping the fields",
       "The debugging handbook comes from failures that actually happened: fixes left in draft, swallowed errors, test versus production URLs, automations triggering each other, and matching on names instead of IDs",
       "Every part ends in a deliverable, and fixes are written up as runbook entries in one fixed shape",
