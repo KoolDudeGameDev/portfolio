@@ -224,20 +224,48 @@ const edges = [];
 for (const [from, outputs] of Object.entries(wf.connections ?? {})) {
   const src = byName.get(from);
   if (!src) continue;
-  (outputs.main ?? []).forEach((branch, branchIndex) => {
-    (branch ?? []).forEach((link) => {
-      const dst = byName.get(link.node);
-      if (!dst) return;
-      edges.push({ src, dst, branchIndex });
+  for (const [kind, branches] of Object.entries(outputs)) {
+    (branches ?? []).forEach((branch, branchIndex) => {
+      (branch ?? []).forEach((link) => {
+        const dst = byName.get(link.node);
+        if (!dst) return;
+        edges.push({ src, dst, branchIndex, sub: kind !== "main" });
+      });
     });
-  });
+  }
 }
 
-const edgeGeometry = edges.map(({ src, dst, branchIndex }) => {
+const edgeGeometry = edges.map(({ src, dst, branchIndex, sub }) => {
+  if (sub) {
+    // AI sub-nodes (model, tool, memory, store) hang BELOW the node that uses them
+    // and plug into its underside, as they do in the editor.
+    const x1 = tx(src.position[0] + NODE_W / 2);
+    const y1 = ty(src.position[1]);
+    const x2 = tx(dst.position[0] + NODE_W / 2);
+    const y2 = ty(dst.position[1] + NODE_H);
+    const bend = Math.max(18, Math.abs(y1 - y2) * 0.5);
+    const d = `M${x1.toFixed(1)},${y1.toFixed(1)} C${x1.toFixed(1)},${(y1 - bend).toFixed(1)} ${x2.toFixed(1)},${(y2 + bend).toFixed(1)} ${x2.toFixed(1)},${y2.toFixed(1)}`;
+    return { d, branchIndex: 1, sub };
+  }
   const x1 = tx(src.position[0] + NODE_W);
   const y1 = ty(src.position[1] + NODE_H / 2);
   const x2 = tx(dst.position[0]);
   const y2 = ty(dst.position[1] + NODE_H / 2);
+  if (dst.position[0] < src.position[0] + NODE_W) {
+    // A loop back (split-in-batches "next item"): run it under every node it
+    // spans instead of slashing a diagonal back across the graph.
+    const lo = Math.min(dst.position[0], src.position[0]);
+    const hi = Math.max(dst.position[0], src.position[0]) + NODE_W;
+    const floor = Math.max(
+      ...nodes
+        .filter((n) => n.position[0] + NODE_W > lo && n.position[0] < hi)
+        .map((n) => n.position[1] + NODE_H),
+    );
+    const yb = ty(floor + 36);
+    const k = Math.max(10, 28 * scale);
+    const d = `M${x1.toFixed(1)},${y1.toFixed(1)} C${(x1 + k).toFixed(1)},${y1.toFixed(1)} ${(x1 + k).toFixed(1)},${yb.toFixed(1)} ${x1.toFixed(1)},${yb.toFixed(1)} L${x2.toFixed(1)},${yb.toFixed(1)} C${(x2 - k).toFixed(1)},${yb.toFixed(1)} ${(x2 - k).toFixed(1)},${y2.toFixed(1)} ${x2.toFixed(1)},${y2.toFixed(1)}`;
+    return { d, branchIndex: 1 };
+  }
   const bend = Math.max(26, Math.abs(x2 - x1) * 0.45);
   const d = `M${x1.toFixed(1)},${y1.toFixed(1)} C${(x1 + bend).toFixed(1)},${y1.toFixed(1)} ${(x2 - bend).toFixed(1)},${y2.toFixed(1)} ${x2.toFixed(1)},${y2.toFixed(1)}`;
   return { d, branchIndex };
