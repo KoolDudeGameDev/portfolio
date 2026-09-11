@@ -57,12 +57,12 @@ export const work: WorkItem[] = [
       {
         src: "workflow-stage-sync.webp",
         caption:
-          "The n8n side of the same sync. The coloured lanes are the workflow's own regions: trigger, mapping logic, then the success and error paths.",
+          "The n8n side, in both directions. Each side reads where the record already is before writing; if it's already at that stage the run stops, and that check is what ended the echo loop.",
       },
       {
         src: "workflow-broker-routing.webp",
         caption:
-          "Broker assignment: a new client is routed to the owning broker by originating BDA, added as a follower, and notified by email.",
+          "Broker assignment: a new client is routed to the owning broker by originating BDA, and only a newly assigned broker is added as a follower and emailed.",
       },
       {
         src: "ghl-workflow-list.webp",
@@ -286,6 +286,13 @@ export const work: WorkItem[] = [
     title: "QR Lead-Capture Flow",
     org: "Bai Finance",
     image: "workflow-qr-capture.webp",
+    shots: [
+      {
+        src: "workflow-qr-capture.webp",
+        caption:
+          "A scan becomes a routed contact and a welcome email that lands: sent from the verified domain, with the owning broker as Reply-To.",
+      },
+    ],
     group: "Automation",
     category: "Automation",
     status: "Shipped",

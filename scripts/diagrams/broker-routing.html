@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Broker routing</title>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #171a24; font-family: 'Geist', system-ui, sans-serif; }
+    svg#d { width: 1200px; height: 675px; display: block; }
+  </style>
+</head>
+<body>
+  <svg id="d" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg"
+       role="img" aria-labelledby="br-title br-desc">
+    <title id="br-title">Broker routing</title>
+    <desc id="br-desc">A new client arrives from GoHighLevel. The opportunity is fetched, the owning broker is worked out from the originating BDA, the contact is given that owner and tagged, and only a newly assigned broker is added as a follower and emailed.</desc>
+
+    <defs>
+      <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#9aa4bd"/></marker>
+      <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#ea4b71"/></marker>
+      <marker id="arrow-soft" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6b7590"/></marker>
+      <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="rgba(232,236,245,0.07)"/></pattern>
+    </defs>
+
+    <rect width="100%" height="100%" fill="#171a24"/>
+    <rect width="100%" height="100%" fill="url(#dots)"/>
+
+    <!-- spine -->
+    <line x1="208" y1="232" x2="252" y2="232" stroke="#9aa4bd" stroke-width="1.4" marker-end="url(#arrow)"/>
+    <line x1="392" y1="232" x2="436" y2="232" stroke="#9aa4bd" stroke-width="1.4" marker-end="url(#arrow)"/>
+    <line x1="576" y1="232" x2="620" y2="232" stroke="#9aa4bd" stroke-width="1.4" marker-end="url(#arrow)"/>
+    <line x1="760" y1="232" x2="804" y2="232" stroke="#9aa4bd" stroke-width="1.4" marker-end="url(#arrow)"/>
+    <line x1="944" y1="232" x2="988" y2="232" stroke="#ea4b71" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+    <text x="952" y="222" fill="#7f8aa5" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.08em">YES</text>
+
+    <line x1="1060" y1="264" x2="1060" y2="364" stroke="#9aa4bd" stroke-width="1.4" marker-end="url(#arrow)"/>
+
+    <path d="M876,280 V368" fill="none" stroke="#6b7590" stroke-width="1.2" marker-end="url(#arrow-soft)"/>
+    <rect x="884" y="316" width="96" height="14" rx="2" fill="#171a24"/>
+    <text x="888" y="327" fill="#7f8aa5" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.08em">SAME BROKER</text>
+
+    <!-- 1 -->
+    <rect x="72" y="200" width="136" height="64" rx="32" fill="#171a24"/>
+    <rect x="72" y="200" width="136" height="64" rx="32" fill="rgba(52,211,153,0.06)" stroke="#34d399" stroke-width="1"/>
+    <circle cx="140" cy="216" r="4" fill="#34d399"/>
+    <text x="140" y="240" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">New client</text>
+    <text x="140" y="254" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">GHL webhook</text>
+
+    <!-- 2 -->
+    <rect x="256" y="200" width="136" height="64" rx="6" fill="#171a24"/>
+    <rect x="256" y="200" width="136" height="64" rx="6" fill="#232838" stroke="#39415a" stroke-width="1"/>
+    <circle cx="324" cy="216" r="4" fill="#c084fc"/>
+    <text x="324" y="240" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">Fetch opportunity</text>
+    <text x="324" y="254" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">GHL v2 API</text>
+
+    <!-- 3 -->
+    <rect x="440" y="200" width="136" height="64" rx="6" fill="#171a24"/>
+    <rect x="440" y="200" width="136" height="64" rx="6" fill="#232838" stroke="#39415a" stroke-width="1"/>
+    <circle cx="508" cy="216" r="4" fill="#818cf8"/>
+    <text x="508" y="240" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">Map the broker</text>
+    <text x="508" y="254" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">by originating BDA</text>
+
+    <!-- 4 -->
+    <rect x="624" y="200" width="136" height="64" rx="6" fill="#171a24"/>
+    <rect x="624" y="200" width="136" height="64" rx="6" fill="#232838" stroke="#39415a" stroke-width="1"/>
+    <circle cx="692" cy="216" r="4" fill="#c084fc"/>
+    <text x="692" y="240" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">Set owner + tag</text>
+    <text x="692" y="254" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">on the contact</text>
+
+    <!-- 5 gate -->
+    <polygon points="876,184 944,232 876,280 808,232" fill="#171a24"/>
+    <polygon points="876,184 944,232 876,280 808,232" fill="#232838" stroke="#39415a" stroke-width="1"/>
+    <circle cx="876" cy="208" r="4" fill="#fbbf24"/>
+    <text x="876" y="240" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">Newly assigned?</text>
+
+    <!-- 6 FOCAL: visibility is the confidentiality boundary -->
+    <rect x="992" y="200" width="136" height="64" rx="6" fill="#171a24"/>
+    <rect x="992" y="200" width="136" height="64" rx="6" fill="rgba(234,75,113,0.10)" stroke="#ea4b71" stroke-width="1.2"/>
+    <circle cx="1060" cy="216" r="4" fill="#c084fc"/>
+    <text x="1060" y="240" fill="#ffffff" font-size="12" font-weight="600" text-anchor="middle">Add as follower</text>
+    <text x="1060" y="254" fill="#f3aec0" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">sees only their own</text>
+
+    <!-- 7 -->
+    <rect x="992" y="368" width="136" height="64" rx="6" fill="#171a24"/>
+    <rect x="992" y="368" width="136" height="64" rx="6" fill="#232838" stroke="#39415a" stroke-width="1"/>
+    <circle cx="1060" cy="384" r="4" fill="#f87171"/>
+    <text x="1060" y="408" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">Email the broker</text>
+    <text x="1060" y="422" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">once, not per update</text>
+
+    <!-- no-op exit -->
+    <rect x="796" y="372" width="160" height="56" rx="28" fill="#171a24"/>
+    <rect x="796" y="372" width="160" height="56" rx="28" fill="rgba(154,164,189,0.06)" stroke="#6b7590" stroke-width="1"/>
+    <text x="876" y="398" fill="#c8cfdf" font-size="12" font-weight="600" text-anchor="middle">Done</text>
+    <text x="876" y="412" fill="#7f8aa5" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">no repeat email</text>
+
+    <!-- legend -->
+    <line x1="72" y1="560" x2="1128" y2="560" stroke="rgba(232,236,245,0.12)" stroke-width="0.8"/>
+    <text x="72" y="584" fill="#7f8aa5" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">N8N NODE</text>
+    <circle cx="216" cy="580" r="4" fill="#34d399"/>
+    <text x="228" y="584" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace">trigger</text>
+    <circle cx="352" cy="580" r="4" fill="#c084fc"/>
+    <text x="364" y="584" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace">http</text>
+    <circle cx="464" cy="580" r="4" fill="#818cf8"/>
+    <text x="476" y="584" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace">code</text>
+    <circle cx="576" cy="580" r="4" fill="#fbbf24"/>
+    <text x="588" y="584" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace">if</text>
+    <circle cx="672" cy="580" r="4" fill="#f87171"/>
+    <text x="684" y="584" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace">email</text>
+  </svg>
+</body>
+</html>

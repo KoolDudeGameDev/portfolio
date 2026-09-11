@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>QR lead capture</title>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #171a24; font-family: 'Geist', system-ui, sans-serif; }
+    svg#d { width: 1200px; height: 675px; display: block; }
+  </style>
+</head>
+<body>
+  <svg id="d" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg"
+       role="img" aria-labelledby="qr-title qr-desc">
+    <title id="qr-title">QR lead capture</title>
+    <desc id="qr-desc">A prospect scans a broker's business card. The contact is upserted into GoHighLevel, routed to the owning broker, its phone number repaired if it needs it, and a welcome email goes out from a verified sender with the broker as Reply-To.</desc>
+
+    <defs>
+      <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#9aa4bd"/></marker>
+      <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#ea4b71"/></marker>
+      <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="rgba(232,236,245,0.07)"/></pattern>
+    </defs>
+
+    <rect width="100%" height="100%" fill="#171a24"/>
+    <rect width="100%" height="100%" fill="url(#dots)"/>
+
+    <!-- spine -->
+    <line x1="208" y1="280" x2="252" y2="280" stroke="#9aa4bd" stroke-width="1.4" marker-end="url(#arrow)"/>
+    <line x1="392" y1="280" x2="436" y2="280" stroke="#9aa4bd" stroke-width="1.4" marker-end="url(#arrow)"/>
+    <line x1="576" y1="280" x2="616" y2="280" stroke="#9aa4bd" stroke-width="1.4" marker-end="url(#arrow)"/>
+    <line x1="756" y1="280" x2="988" y2="280" stroke="#ea4b71" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+    <rect x="836" y="264" width="44" height="14" rx="2" fill="#171a24"/>
+    <text x="840" y="275" fill="#7f8aa5" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.08em">CLEAN</text>
+
+    <!-- repair branch -->
+    <path d="M688,232 V168 a8,8 0 0 1 8,-8 H796"
+          fill="none" stroke="#9aa4bd" stroke-width="1.4" marker-end="url(#arrow)"/>
+    <path d="M936,160 H1052 a8,8 0 0 1 8,8 V244"
+          fill="none" stroke="#9aa4bd" stroke-width="1.4" marker-end="url(#arrow)"/>
+    <rect x="696" y="190" width="84" height="14" rx="2" fill="#171a24"/>
+    <text x="700" y="201" fill="#7f8aa5" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.08em">NEEDS FIXING</text>
+
+    <!-- 1. scan -->
+    <rect x="72" y="248" width="136" height="64" rx="32" fill="#171a24"/>
+    <rect x="72" y="248" width="136" height="64" rx="32" fill="rgba(52,211,153,0.06)" stroke="#34d399" stroke-width="1"/>
+    <circle cx="140" cy="264" r="4" fill="#34d399"/>
+    <text x="140" y="288" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">Card scanned</text>
+    <text x="140" y="302" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">QR form webhook</text>
+
+    <!-- 2. upsert -->
+    <rect x="256" y="248" width="136" height="64" rx="6" fill="#171a24"/>
+    <rect x="256" y="248" width="136" height="64" rx="6" fill="#232838" stroke="#39415a" stroke-width="1"/>
+    <circle cx="324" cy="264" r="4" fill="#c084fc"/>
+    <text x="324" y="288" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">Upsert prospect</text>
+    <text x="324" y="302" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">GHL contacts</text>
+
+    <!-- 3. route -->
+    <rect x="440" y="248" width="136" height="64" rx="6" fill="#171a24"/>
+    <rect x="440" y="248" width="136" height="64" rx="6" fill="#232838" stroke="#39415a" stroke-width="1"/>
+    <circle cx="508" cy="264" r="4" fill="#818cf8"/>
+    <text x="508" y="288" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">Route to broker</text>
+    <text x="508" y="302" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">owner guard</text>
+
+    <!-- 4. phone gate -->
+    <polygon points="688,232 756,280 688,328 620,280" fill="#171a24"/>
+    <polygon points="688,232 756,280 688,328 620,280" fill="#232838" stroke="#39415a" stroke-width="1"/>
+    <circle cx="688" cy="256" r="4" fill="#fbbf24"/>
+    <text x="688" y="288" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">Phone OK?</text>
+
+    <!-- 5. repair -->
+    <rect x="800" y="128" width="136" height="64" rx="6" fill="#171a24"/>
+    <rect x="800" y="128" width="136" height="64" rx="6" fill="#232838" stroke="#39415a" stroke-width="1"/>
+    <circle cx="868" cy="144" r="4" fill="#c084fc"/>
+    <text x="868" y="168" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">Fix the phone</text>
+    <text x="868" y="182" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">E.164, in GHL</text>
+
+    <!-- 6. FOCAL: the email that has to land -->
+    <rect x="992" y="248" width="136" height="64" rx="6" fill="#171a24"/>
+    <rect x="992" y="248" width="136" height="64" rx="6" fill="rgba(234,75,113,0.10)" stroke="#ea4b71" stroke-width="1.2"/>
+    <circle cx="1060" cy="264" r="4" fill="#f87171"/>
+    <text x="1060" y="288" fill="#ffffff" font-size="12" font-weight="600" text-anchor="middle">Welcome email</text>
+    <text x="1060" y="302" fill="#f3aec0" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">verified sender</text>
+
+    <!-- what makes it land -->
+    <line x1="1060" y1="312" x2="1060" y2="368" stroke="rgba(232,236,245,0.18)" stroke-width="1" stroke-dasharray="3 3"/>
+    <text x="1128" y="388" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">From: the verified domain</text>
+    <text x="1128" y="404" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">Reply-To: the owning broker</text>
+    <text x="1128" y="420" fill="#7f8aa5" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.08em" text-anchor="end">SPF · DKIM · DMARC ALIGNED</text>
+
+    <!-- legend -->
+    <line x1="72" y1="560" x2="1128" y2="560" stroke="rgba(232,236,245,0.12)" stroke-width="0.8"/>
+    <text x="72" y="584" fill="#7f8aa5" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">N8N NODE</text>
+    <circle cx="216" cy="580" r="4" fill="#34d399"/>
+    <text x="228" y="584" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace">trigger</text>
+    <circle cx="352" cy="580" r="4" fill="#c084fc"/>
+    <text x="364" y="584" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace">http</text>
+    <circle cx="464" cy="580" r="4" fill="#818cf8"/>
+    <text x="476" y="584" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace">code</text>
+    <circle cx="576" cy="580" r="4" fill="#fbbf24"/>
+    <text x="588" y="584" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace">if</text>
+    <circle cx="672" cy="580" r="4" fill="#f87171"/>
+    <text x="684" y="584" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace">email</text>
+  </svg>
+</body>
+</html>
