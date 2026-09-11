@@ -18,7 +18,12 @@ export function Hero() {
     >
       <div className="relative mx-auto max-w-6xl">
         <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-4 py-1.5 text-xs uppercase tracking-[0.18em] text-muted">
-          <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+          {/* A live "available" signal. The halo pulses only for users who
+              haven't asked for reduced motion; everyone else sees a still dot. */}
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="absolute inline-flex h-full w-full rounded-full bg-live opacity-60 motion-safe:animate-ping" />
+            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-live" />
+          </span>
           {site.role}
         </div>
 

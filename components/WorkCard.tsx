@@ -12,7 +12,11 @@ function StatusBadge({ status }: { status: WorkItem["status"] }) {
     <span
       className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[0.7rem] font-medium uppercase tracking-wide ${tone}`}
     >
-      <span className="h-1.5 w-1.5 rounded-full bg-current" />
+      {/* Green only for Active: it means "running right now", so it would stop
+          meaning anything if Shipped and Research wore it too. */}
+      <span
+        className={`h-1.5 w-1.5 rounded-full ${status === "Active" ? "bg-live" : "bg-current"}`}
+      />
       {status}
     </span>
   );

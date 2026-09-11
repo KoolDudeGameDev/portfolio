@@ -4,8 +4,10 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ==================== DESIGN TOKENS ==================== */
-/* Monochrome editorial. There is no hue anywhere: `--accent` is ink, so
-   emphasis is carried by contrast, weight, and the italic serif — not color. */
+/* Monochrome editorial: `--accent` is ink, so emphasis is carried by contrast,
+   weight, and the italic serif — not color. One deliberate exception: `--live`,
+   a green reserved for "running right now" indicators (the hero status dot and
+   Active badges). It is the only hue on the site, so it only ever means that. */
 :root {
   /* Paper (light, default) */
   --bg: #fafaf9;
@@ -16,6 +18,7 @@
   --border: #e4e4e2;
   --accent: #0c0c0c;
   --accent-fg: #fafafa;
+  --live: #16a34a;
 }
 
 .dark {
@@ -28,6 +31,8 @@
   --border: #262626;
   --accent: #fafafa;
   --accent-fg: #0a0a0a;
+  /* Brighter than the light-mode green so it holds contrast on near-black. */
+  --live: #4ade80;
 }
 
 /* Map semantic tokens to Tailwind utilities. `inline` keeps the var reference
@@ -41,6 +46,7 @@
   --color-border: var(--border);
   --color-accent: var(--accent);
   --color-accent-fg: var(--accent-fg);
+  --color-live: var(--live);
 
   --font-sans: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-fraunces), ui-serif, Georgia, serif;
