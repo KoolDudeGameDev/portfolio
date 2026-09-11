@@ -142,13 +142,8 @@ export const work: WorkItem[] = [
   {
     title: "Leave Application Platform",
     org: "Bai Finance",
-    image: "leave-intake-form.webp",
+    image: "n8n-leave-intake.webp",
     shots: [
-      {
-        src: "leave-intake-form.webp",
-        caption:
-          "The intake page, served by n8n itself so the page and its API share an origin.",
-      },
       {
         src: "n8n-leave-intake.webp",
         caption:
@@ -158,6 +153,11 @@ export const work: WorkItem[] = [
         src: "n8n-leave-approval.webp",
         caption:
           "Approval. The top path only renders a confirmation page; the bottom path is the only one that records a decision.",
+      },
+      {
+        src: "leave-intake-form.webp",
+        caption:
+          "The intake page, served by n8n itself so the page and its API share an origin.",
       },
     ],
     group: "Automation",
@@ -420,10 +420,10 @@ export const work: WorkItem[] = [
   {
     title: "RAG Gmail Reply Assistant",
     org: "Open source n8n workflow",
-    image: "ref-rag-gmail.webp",
+    image: "n8n-rag-gmail.webp",
     shots: [
       {
-        src: "ref-rag-gmail.webp",
+        src: "n8n-rag-gmail.webp",
         caption:
           "Triage first, retrieval second, and no send step anywhere. The best this workflow can do is leave a draft for a person to send.",
       },
@@ -453,10 +453,10 @@ export const work: WorkItem[] = [
   {
     title: "Invoice Intake & Approval Queue",
     org: "Open source n8n workflow",
-    image: "ref-invoice-queue.webp",
+    image: "n8n-invoice-queue.webp",
     shots: [
       {
-        src: "ref-invoice-queue.webp",
+        src: "n8n-invoice-queue.webp",
         caption:
           "Two lanes: intake keeps queueing while approval takes the oldest invoice, one at a time.",
       },
@@ -486,10 +486,10 @@ export const work: WorkItem[] = [
   {
     title: "Company Enrichment",
     org: "Open source n8n workflow",
-    image: "ref-company-enrichment.webp",
+    image: "n8n-company-enrichment.webp",
     shots: [
       {
-        src: "ref-company-enrichment.webp",
+        src: "n8n-company-enrichment.webp",
         caption:
           "Each company is fetched, profiled and written back on its own, so a dead website only fails its own row.",
       },
