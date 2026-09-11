@@ -300,44 +300,100 @@ export const work: WorkItem[] = [
     tech: ["n8n", "GoHighLevel", "Email Deliverability", "DNS"],
   },
   {
-    title: "n8n Reference Workflows",
-    org: "Open source",
+    title: "Idempotent Webhook Intake",
+    org: "Open source n8n workflow",
     image: "ref-idempotent-intake.webp",
     shots: [
       {
         src: "ref-idempotent-intake.webp",
         caption:
-          "Idempotent intake. Three deliberate replies — unusable, already have it, created — so the caller can act on each one instead of guessing.",
-      },
-      {
-        src: "ref-health-check.webp",
-        caption:
-          "The health check probes every target before it reports anything, so one dead endpoint can't hide the others behind it.",
-      },
-      {
-        src: "ref-workflow-backup.webp",
-        caption:
-          "Nightly export of every workflow to a git repository — the backup that has to live somewhere other than the machine it protects.",
+          "Three deliberate replies — unusable, already have it, created — so the caller can act on each one instead of guessing.",
       },
     ],
-    group: "Automation",
+    group: "Backend & Data",
     category: "Open Source",
     status: "Shipped",
     problem:
-      "Three problems turn up on every automation project and get solved badly under time pressure: a retried webhook quietly creating two records, an outage nobody notices until a customer mentions it, and an automation platform that is the only copy of its own automations.",
+      "Senders retry, and networks drop the response after the write has already happened. Any endpoint that creates something will eventually be called twice with the same payload — and quietly create two records.",
     build:
-      "Three importable n8n workflows, each a single JSON file, with the reasoning kept in sticky notes beside the nodes it explains rather than in a README nobody opens. No client data — every secret is an environment reference.",
+      "An importable n8n workflow that keys every request on a hash of the caller's own fields, checks that key before writing, and answers in a way the caller can act on. The reasoning sits in sticky notes beside the nodes it explains.",
     results: [
-      "The idempotency key is a hash of the caller's own fields, never a timestamp, so a retry produces the same key — and a unique index still catches the race the lookup misses",
-      "The health check collects every result before sending one digest, because ten alerts for ten dead endpoints is an inbox nobody reads",
-      "The backup names files by workflow id and strips the fields that change on their own, so a nightly run only produces a diff when something really changed",
-      "Written to be read rather than just imported — each choice has the failure that motivated it next to it",
+      "The key is a SHA-256 of the caller's identifying fields — never a timestamp or a random value, because a retry has to produce the same key",
+      "A unique index on the key backs up the lookup, so a race that slips past the check still can't create a second row",
+      "Answers 400 when retrying won't help, 200 when the record already exists, and 201 when something was created",
+      "No client data and no credentials — every secret is an environment reference",
     ],
-    tech: ["n8n", "Webhooks", "REST APIs", "GitHub API", "SHA-256"],
+    tech: ["n8n", "Webhooks", "SHA-256", "Supabase"],
     links: [
       {
-        label: "Repository",
-        href: "https://github.com/KoolDudeGameDev/n8n-reference-workflows",
+        label: "Workflow JSON",
+        href: "https://github.com/KoolDudeGameDev/portfolio/blob/main/n8n-workflows/idempotent-webhook-intake.json",
+        icon: "github",
+      },
+    ],
+  },
+  {
+    title: "Endpoint Health Check",
+    org: "Open source n8n workflow",
+    image: "ref-health-check.webp",
+    shots: [
+      {
+        src: "ref-health-check.webp",
+        caption:
+          "Every target is probed before anything is reported, so one dead endpoint can't hide the others behind it.",
+      },
+    ],
+    group: "Infrastructure & Reliability",
+    category: "Open Source",
+    status: "Shipped",
+    problem:
+      "Most teams find out a service is down because a customer tells them. Monitoring that does exist tends to fire one alert per failure, which turns a real outage into an inbox nobody reads.",
+    build:
+      "A scheduled n8n workflow that probes a list of endpoints and sends a single digest only when something is actually down. Silence is the success case.",
+    results: [
+      "Every probe runs with errors captured as data, so one outage can't abort the run and mask the rest",
+      "Failures are collected before anything is sent — one digest for ten dead endpoints, not ten alerts",
+      "Nothing is sent when everything is up, so the channel stays worth reading",
+      "Flap suppression is deliberately left out and documented as the next step, rather than half-built",
+    ],
+    tech: ["n8n", "Scheduling", "HTTP", "Uptime Monitoring"],
+    links: [
+      {
+        label: "Workflow JSON",
+        href: "https://github.com/KoolDudeGameDev/portfolio/blob/main/n8n-workflows/endpoint-health-check.json",
+        icon: "github",
+      },
+    ],
+  },
+  {
+    title: "Workflow Backup to Git",
+    org: "Open source n8n workflow",
+    image: "ref-workflow-backup.webp",
+    shots: [
+      {
+        src: "ref-workflow-backup.webp",
+        caption:
+          "A nightly export of every workflow to a git repository — the backup that has to live somewhere other than the machine it protects.",
+      },
+    ],
+    group: "Infrastructure & Reliability",
+    category: "Open Source",
+    status: "Shipped",
+    problem:
+      "An automation platform is usually the only copy of its own automations. When a hosted n8n plan ended and took its database with it, the workflows survived only because their JSON was already committed somewhere else.",
+    build:
+      "A nightly n8n workflow that exports every workflow through the n8n API and commits each one to a repository, so the running instance is reproducible rather than irreplaceable.",
+    results: [
+      "Files are named by workflow id, not name, so a rename produces a diff instead of an orphan plus a new file",
+      "Fields that change on their own — active state, version id, timestamps — are stripped, so a nightly run only commits when something really changed",
+      "Reads the current file SHA before writing, so an update never collides with the commit before it",
+      "Built from the recovery that actually happened, not a hypothetical one",
+    ],
+    tech: ["n8n", "GitHub API", "REST APIs", "Backups"],
+    links: [
+      {
+        label: "Workflow JSON",
+        href: "https://github.com/KoolDudeGameDev/portfolio/blob/main/n8n-workflows/workflow-backup-to-git.json",
         icon: "github",
       },
     ],
