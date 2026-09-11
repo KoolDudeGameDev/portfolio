@@ -127,6 +127,11 @@ export const work: WorkItem[] = [
         caption:
           "The messaging engine — thirteen notification types routed to one delivery path, deduplicated by hashed message content so a retry can't send twice.",
       },
+      {
+        src: "health-check.webp",
+        caption:
+          "The daily health check. A signup and a login run through production for real and clean up after themselves; the rest are read-only probes. One report says what each status is and how it was proven.",
+      },
     ],
     group: "Infrastructure & Reliability",
     category: "Reliability",
@@ -139,7 +144,7 @@ export const work: WorkItem[] = [
     results: [
       "Removed an unauthenticated endpoint that could write directly to the live database, closing a path to forged commission records",
       "Root-caused an analytics endpoint that had silently returned zeros since launch, and rebuilt it to fail closed",
-      "Built a daily end-to-end health check spanning the server, automation workflows, and message delivery",
+      "Wrote a daily end-to-end health check that runs a real signup and a real login through production, probes every Edge Function, and sweeps every workflow's failed runs into one morning report",
       "Traced a same-day outage of two separate systems to one shared-host failure and restored both",
     ],
     tech: ["Supabase", "PostgreSQL", "React", "TypeScript", "Deno", "n8n"],
