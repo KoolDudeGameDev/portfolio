@@ -1,0 +1,610 @@
+{
+  "name": "RAG Gmail Reply Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Reply lane: drafts, never sends\n\nNew mail is triaged first, so newsletters and complaints never reach retrieval. Only general questions go to the agent, and it has to look the answer up in the knowledge base before writing.\n\n**There is no send step.** The best outcome is a Gmail draft that a person reads and sends. When the knowledge base has nothing, the agent answers ESCALATE and the email is labelled for a person instead of guessed at.\n\nSet NEEDS_PERSON_LABEL_ID to the Gmail label that marks mail for a human.",
+        "color": 7,
+        "width": 420,
+        "height": 390
+      },
+      "id": "86dfd7a7-2c41-41bc-ab80-9d0e1a44d08f",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -460,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Knowledge lane: what the agent is allowed to know\n\nRun it by hand to add a document. The file is chunked (1,000 characters, 150 overlap) and embedded into the Qdrant collection company-knowledge.\n\nInsert and query use the **same** embedding model. Mix two and retrieval returns confident nonsense.",
+        "color": 5,
+        "width": 420,
+        "height": 236
+      },
+      "id": "7169c724-b39d-40c8-9915-37b89ca05b1f",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -460,
+        960
+      ]
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 5,
+              "unit": "minutes"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "q": "is:unread -category:promotions -category:social -category:updates",
+          "readStatus": "unread"
+        }
+      },
+      "id": "ede6a4d6-d6a1-48cd-adc3-5dc955469090",
+      "name": "[G0] New Email",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Subject: {{ $json.subject }}\nFrom: {{ $json.from.value[0].address }}\n\n{{ $json.text }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "type": "SystemMessagePromptTemplate",
+              "message": "You triage inbound email for a small business. Return route \"answer\" only when the email is a general question that the company documents could answer: services, process, requirements or policy. Return route \"human\" for complaints, anything about a specific account or person, legal or financial advice, or anything you are unsure about. When in doubt, choose \"human\"."
+            }
+          ]
+        }
+      },
+      "id": "d4673bb5-821c-45fd-ad58-929b08067116",
+      "name": "[G1] Triage Email",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        260,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {
+          "temperature": 0
+        }
+      },
+      "id": "0fba60c8-4d08-479c-996e-78a0d9c100b6",
+      "name": "Triage Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        140,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "fromJson",
+        "jsonSchemaExample": "{ \"route\": \"answer\", \"reason\": \"A general question about which documents are required\" }"
+      },
+      "id": "91c86e57-0ce0-47f5-898f-7c8817045918",
+      "name": "Triage Result",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        380,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.output.route }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "rightValue": "answer"
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "3ba212e2-85bf-45fd-84c2-25b2ef8a4ad9",
+      "name": "[G2] Answerable?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        520,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Write a reply to this email.\n\nSubject: {{ $(\"[G0] New Email\").item.json.subject }}\n\n{{ $(\"[G0] New Email\").item.json.text }}",
+        "options": {
+          "systemMessage": "You draft email replies for a small business. Always call the company_knowledge tool before writing, and base every factual statement on what it returns. If the knowledge base does not contain the answer, reply with exactly ESCALATE and nothing else. Never invent prices, timelines or policies. Keep replies short and plain, and sign off as \"The Team\"."
+        }
+      },
+      "id": "41ebc28b-b526-4294-a366-a68ef3f419e3",
+      "name": "[G3] Draft Reply",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        780,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-pro-preview",
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "id": "1f57701f-e13a-446c-b936-83aefd9fb7f3",
+      "name": "Drafting Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        660,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "description": "the company service, process and policy documents",
+        "topK": 4
+      },
+      "id": "189bce52-e1ff-497e-9978-6c553ebe5750",
+      "name": "company_knowledge",
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1.1,
+      "position": [
+        900,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {
+          "temperature": 0
+        }
+      },
+      "id": "52050129-f70d-4654-bcfa-aae396990eb8",
+      "name": "Retrieval Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        780,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "retrieve",
+        "qdrantCollection": {
+          "__rl": true,
+          "mode": "id",
+          "value": "company-knowledge"
+        }
+      },
+      "id": "2c0a7df4-3e7f-420c-9980-41b4056a2fb1",
+      "name": "Company Knowledge",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1.3,
+      "position": [
+        1020,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-embedding-001"
+      },
+      "id": "5c319c95-d6ba-468d-9ecf-4c70281e778b",
+      "name": "Query Embeddings",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1020,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.output }}",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              },
+              "rightValue": "ESCALATE"
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "5841df6d-5f3a-4831-98a0-dbfa42d9d07d",
+      "name": "[G4] Grounded?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1040,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "operation": "create",
+        "subject": "=Re: {{ $(\"[G0] New Email\").item.json.subject }}",
+        "emailType": "text",
+        "message": "={{ $json.output }}",
+        "options": {
+          "threadId": "={{ $(\"[G0] New Email\").item.json.threadId }}",
+          "sendTo": "={{ $(\"[G0] New Email\").item.json.from.value[0].address }}"
+        }
+      },
+      "id": "5fa815b2-3ddf-49ce-87d4-d60533c583f8",
+      "name": "[G5] Save as Draft",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1300,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "addLabels",
+        "messageId": "={{ $(\"[G0] New Email\").item.json.id }}",
+        "labelIds": [
+          "={{ $env.NEEDS_PERSON_LABEL_ID }}"
+        ]
+      },
+      "id": "dcca6918-fa3a-441d-b526-d14b33ed9c98",
+      "name": "[G6] Flag for a Person",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1300,
+        360
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "df00a19b-ded7-4da6-bd5c-f7eb9cebe1f9",
+      "name": "[K0] Add a Document",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        1000
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "<__PLACEHOLDER_VALUE__Link to a PDF or text document to add to the knowledge base__>",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "5e681eaf-c6c3-4c94-887f-f77fa52c8462",
+      "name": "[K1] Fetch Document",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        260,
+        1000
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "qdrantCollection": {
+          "__rl": true,
+          "mode": "id",
+          "value": "company-knowledge"
+        }
+      },
+      "id": "639afbf1-bf1b-492c-ac62-8c102e7dea3a",
+      "name": "[K2] Store in Knowledge Base",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1.3,
+      "position": [
+        520,
+        1000
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-embedding-001"
+      },
+      "id": "ec654199-759f-4691-8d24-7b968cb21177",
+      "name": "Document Embeddings",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        400,
+        1200
+      ]
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "binaryMode": "allInputData",
+        "loader": "auto",
+        "textSplittingMode": "custom"
+      },
+      "id": "fafc2982-3b9b-4925-92a2-b58b6a6a18d2",
+      "name": "Read Document",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        640,
+        1200
+      ]
+    },
+    {
+      "parameters": {
+        "chunkSize": 1000,
+        "chunkOverlap": 150
+      },
+      "id": "534f6620-c307-435b-8471-c03f31f9f364",
+      "name": "Chunk Text",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        640,
+        1380
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "[G0] New Email": {
+      "main": [
+        [
+          {
+            "node": "[G1] Triage Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[G1] Triage Email": {
+      "main": [
+        [
+          {
+            "node": "[G2] Answerable?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Triage Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "[G1] Triage Email",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Triage Result": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "[G1] Triage Email",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[G2] Answerable?": {
+      "main": [
+        [
+          {
+            "node": "[G3] Draft Reply",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "[G6] Flag for a Person",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[G3] Draft Reply": {
+      "main": [
+        [
+          {
+            "node": "[G4] Grounded?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Drafting Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "[G3] Draft Reply",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "company_knowledge": {
+      "ai_tool": [
+        [
+          {
+            "node": "[G3] Draft Reply",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieval Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "company_knowledge",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Company Knowledge": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "company_knowledge",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query Embeddings": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Company Knowledge",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[G4] Grounded?": {
+      "main": [
+        [
+          {
+            "node": "[G5] Save as Draft",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "[G6] Flag for a Person",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[K0] Add a Document": {
+      "main": [
+        [
+          {
+            "node": "[K1] Fetch Document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[K1] Fetch Document": {
+      "main": [
+        [
+          {
+            "node": "[K2] Store in Knowledge Base",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Document Embeddings": {
+      "ai_embedding": [
+        [
+          {
+            "node": "[K2] Store in Knowledge Base",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Document": {
+      "ai_document": [
+        [
+          {
+            "node": "[K2] Store in Knowledge Base",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chunk Text": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Read Document",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": []
+}

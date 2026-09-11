@@ -1,0 +1,855 @@
+{
+  "name": "Invoice Intake and Approval Queue",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Lane 1: intake never waits\n\nEvery invoice email is read, its fields extracted, and it joins the queue as PENDING, even while another invoice is waiting for a decision.\n\nThe duplicate key is a SHA-256 of vendor, invoice number and amount. The same PDF forwarded twice produces the same key, so it is recognised instead of queued again.",
+        "color": 7,
+        "width": 420,
+        "height": 280
+      },
+      "id": "57483918-23cc-49d4-b5e0-2761ea01df2f",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -460,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Lane 2: one decision at a time\n\nEvery 15 minutes the oldest PENDING invoice goes to the approver. **If any invoice is already IN_REVIEW, the run does nothing.** That one check is the whole queue lock.\n\nApprove records it in the masterfile and tells accounts. Decline marks it DISAPPROVED. No answer within two days puts it back to PENDING, so a missed email never silently rejects an invoice.\n\nSet INVOICE_APPROVER_EMAIL and ACCOUNTS_TEAM_EMAIL. The spreadsheet needs a Queue sheet and a Masterfile sheet.",
+        "color": 5,
+        "width": 420,
+        "height": 390
+      },
+      "id": "78ed315f-9f2b-46a5-84f9-67f378a08606",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -460,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 5,
+              "unit": "minutes"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "q": "has:attachment filename:pdf subject:invoice",
+          "readStatus": "unread"
+        },
+        "options": {
+          "downloadAttachments": true,
+          "dataPropertyAttachmentsPrefixName": "attachment_"
+        }
+      },
+      "id": "b6beeb41-affe-4357-b943-7ac1b98498da",
+      "name": "[I0] Invoice Email",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "attachment_0",
+        "options": {
+          "joinPages": true
+        }
+      },
+      "id": "c3b87db6-0a14-4ee0-9959-af9e9eb9a694",
+      "name": "[I1] Read PDF",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        260,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.text }}",
+        "schemaType": "fromAttributes",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "vendor",
+              "type": "string",
+              "description": "The company that issued the invoice",
+              "required": true
+            },
+            {
+              "name": "invoiceNumber",
+              "type": "string",
+              "description": "The invoice number exactly as printed",
+              "required": true
+            },
+            {
+              "name": "amount",
+              "type": "number",
+              "description": "The total amount due, as a number with no currency symbol",
+              "required": true
+            },
+            {
+              "name": "currency",
+              "type": "string",
+              "description": "The three-letter currency code, for example MYR"
+            },
+            {
+              "name": "dueDate",
+              "type": "date",
+              "description": "The payment due date"
+            }
+          ]
+        }
+      },
+      "id": "8e8b9859-4f31-4c45-9afe-203b7a7ac589",
+      "name": "[I2] Extract Invoice Fields",
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {
+          "temperature": 0
+        }
+      },
+      "id": "efb8bf76-2eed-4bd3-90b8-d9f2a7561d01",
+      "name": "Extraction Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        520,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "action": "hash",
+        "type": "SHA256",
+        "value": "={{ $json.output.vendor.toLowerCase().trim() }}|{{ $json.output.invoiceNumber.trim() }}|{{ $json.output.amount }}",
+        "dataPropertyName": "invoiceKey"
+      },
+      "id": "88684cd6-0db1-4c6b-99ce-2b68db16b090",
+      "name": "[I3] Invoice Key",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 2,
+      "position": [
+        780,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Queue"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "invoiceKey",
+              "lookupValue": "={{ $json.invoiceKey }}"
+            }
+          ]
+        }
+      },
+      "id": "3b243e1a-c50b-42df-9941-3ec750fb2ab7",
+      "name": "[I4] Already Queued?",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1040,
+        160
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.invoiceKey }}",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "a5981891-d00e-4066-b6d0-3ba1ec392760",
+      "name": "[I5] New Invoice?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1300,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "sheet",
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Queue"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "invoiceKey": "={{ $(\"[I3] Invoice Key\").item.json.invoiceKey }}",
+            "vendor": "={{ $(\"[I2] Extract Invoice Fields\").item.json.output.vendor }}",
+            "invoiceNumber": "={{ $(\"[I2] Extract Invoice Fields\").item.json.output.invoiceNumber }}",
+            "amount": "={{ $(\"[I2] Extract Invoice Fields\").item.json.output.amount }}",
+            "currency": "={{ $(\"[I2] Extract Invoice Fields\").item.json.output.currency }}",
+            "dueDate": "={{ $(\"[I2] Extract Invoice Fields\").item.json.output.dueDate }}",
+            "status": "PENDING",
+            "receivedAt": "={{ $now.toISO() }}"
+          },
+          "matchingColumns": [
+            "invoiceKey"
+          ],
+          "schema": []
+        }
+      },
+      "id": "ef2a84be-8be1-4000-83c2-81d6f55fdeec",
+      "name": "[I6] Queue as Pending",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1560,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "markAsRead",
+        "messageId": "={{ $(\"[I0] Invoice Email\").item.json.id }}"
+      },
+      "id": "4d1863e0-c940-4611-9fd9-82172ae77b19",
+      "name": "[I7] Mark Email Read",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1820,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "id": "6e2b035c-bd97-458e-a0e3-52fe412764e2",
+      "name": "[A0] Every 15 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        660
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Queue"
+        }
+      },
+      "id": "3b445c00-2c98-4142-a2a3-5f122afb013c",
+      "name": "[A1] Read Queue",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        260,
+        660
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const rows = $input.all().map(i => i.json).filter(r => r.invoiceKey);\nif (rows.some(r => r.status === \"IN_REVIEW\")) return [];\nconst next = rows\n  .filter(r => r.status === \"PENDING\")\n  .sort((a, b) => String(a.receivedAt).localeCompare(String(b.receivedAt)))[0];\nreturn next ? [{ json: next }] : [];"
+      },
+      "id": "8ec0bc67-2f48-4b6f-91a0-c90306672494",
+      "name": "[A2] Pick Next Invoice",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        660
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "sheet",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Queue"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "invoiceKey": "={{ $json.invoiceKey }}",
+            "status": "IN_REVIEW"
+          },
+          "matchingColumns": [
+            "invoiceKey"
+          ],
+          "schema": []
+        }
+      },
+      "id": "34de5d7c-6f09-4ff9-a51a-2acd4e137077",
+      "name": "[A3] Mark In Review",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        780,
+        660
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "sendAndWait",
+        "sendTo": "={{ $env.INVOICE_APPROVER_EMAIL }}",
+        "subject": "=Approve invoice {{ $(\"[A2] Pick Next Invoice\").item.json.invoiceNumber }} from {{ $(\"[A2] Pick Next Invoice\").item.json.vendor }}?",
+        "message": "=Vendor: {{ $(\"[A2] Pick Next Invoice\").item.json.vendor }}\nInvoice: {{ $(\"[A2] Pick Next Invoice\").item.json.invoiceNumber }}\nAmount: {{ $(\"[A2] Pick Next Invoice\").item.json.amount }} {{ $(\"[A2] Pick Next Invoice\").item.json.currency }}\nDue: {{ $(\"[A2] Pick Next Invoice\").item.json.dueDate }}",
+        "responseType": "approval",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double",
+            "approveLabel": "Approve",
+            "disapproveLabel": "Decline"
+          }
+        },
+        "options": {
+          "limitWaitTime": {
+            "values": {
+              "limitType": "afterTimeInterval",
+              "resumeAmount": 2,
+              "resumeUnit": "days"
+            }
+          },
+          "appendAttribution": false
+        }
+      },
+      "id": "f8ee29c8-ed01-41c2-b849-0af71781c548",
+      "name": "[A4] Ask the Approver",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1040,
+        660
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.data.approved }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "f7f51fa0-9209-40eb-9f00-225e53d4a2c1",
+      "name": "[A5] Approved?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1300,
+        660
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "sheet",
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Masterfile"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "invoiceKey": "={{ $(\"[A2] Pick Next Invoice\").item.json.invoiceKey }}",
+            "vendor": "={{ $(\"[A2] Pick Next Invoice\").item.json.vendor }}",
+            "invoiceNumber": "={{ $(\"[A2] Pick Next Invoice\").item.json.invoiceNumber }}",
+            "amount": "={{ $(\"[A2] Pick Next Invoice\").item.json.amount }}",
+            "currency": "={{ $(\"[A2] Pick Next Invoice\").item.json.currency }}",
+            "dueDate": "={{ $(\"[A2] Pick Next Invoice\").item.json.dueDate }}",
+            "approvedAt": "={{ $now.toISO() }}"
+          },
+          "matchingColumns": [
+            "invoiceKey"
+          ],
+          "schema": []
+        }
+      },
+      "id": "a34ff927-306a-40e0-9f91-1d28fa09f719",
+      "name": "[A6] Add to Masterfile",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1560,
+        540
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "sheet",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Queue"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "invoiceKey": "={{ $(\"[A2] Pick Next Invoice\").item.json.invoiceKey }}",
+            "status": "PROCESSED"
+          },
+          "matchingColumns": [
+            "invoiceKey"
+          ],
+          "schema": []
+        }
+      },
+      "id": "9ce94a68-8c3e-4d50-b66a-f53e69379bed",
+      "name": "[A7] Mark Processed",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1820,
+        540
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $env.ACCOUNTS_TEAM_EMAIL }}",
+        "subject": "=Approved for payment: {{ $(\"[A2] Pick Next Invoice\").item.json.invoiceNumber }}",
+        "emailType": "text",
+        "message": "={{ $(\"[A2] Pick Next Invoice\").item.json.vendor }} invoice {{ $(\"[A2] Pick Next Invoice\").item.json.invoiceNumber }} for {{ $(\"[A2] Pick Next Invoice\").item.json.amount }} {{ $(\"[A2] Pick Next Invoice\").item.json.currency }} was approved and added to the masterfile. Due {{ $(\"[A2] Pick Next Invoice\").item.json.dueDate }}.",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "61a90068-380e-4ed9-91eb-12712b6b1076",
+      "name": "[A8] Tell Accounts",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2080,
+        540
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.data.approved }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "cd7198ab-dd8a-414d-b367-795a27771640",
+      "name": "[A9] Declined?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1560,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "sheet",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Queue"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "invoiceKey": "={{ $(\"[A2] Pick Next Invoice\").item.json.invoiceKey }}",
+            "status": "DISAPPROVED"
+          },
+          "matchingColumns": [
+            "invoiceKey"
+          ],
+          "schema": []
+        }
+      },
+      "id": "5542e590-1441-4762-bf9e-6b4a21304c18",
+      "name": "[A10] Mark Disapproved",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1820,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "sheet",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Queue"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "invoiceKey": "={{ $(\"[A2] Pick Next Invoice\").item.json.invoiceKey }}",
+            "status": "PENDING"
+          },
+          "matchingColumns": [
+            "invoiceKey"
+          ],
+          "schema": []
+        }
+      },
+      "id": "60051f99-87e8-47dd-b607-f6deece00ade",
+      "name": "[A11] No Answer: Release",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1820,
+        900
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "[I0] Invoice Email": {
+      "main": [
+        [
+          {
+            "node": "[I1] Read PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[I1] Read PDF": {
+      "main": [
+        [
+          {
+            "node": "[I2] Extract Invoice Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[I2] Extract Invoice Fields": {
+      "main": [
+        [
+          {
+            "node": "[I3] Invoice Key",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraction Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "[I2] Extract Invoice Fields",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[I3] Invoice Key": {
+      "main": [
+        [
+          {
+            "node": "[I4] Already Queued?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[I4] Already Queued?": {
+      "main": [
+        [
+          {
+            "node": "[I5] New Invoice?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[I5] New Invoice?": {
+      "main": [
+        [
+          {
+            "node": "[I6] Queue as Pending",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "[I7] Mark Email Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[I6] Queue as Pending": {
+      "main": [
+        [
+          {
+            "node": "[I7] Mark Email Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[A0] Every 15 Minutes": {
+      "main": [
+        [
+          {
+            "node": "[A1] Read Queue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[A1] Read Queue": {
+      "main": [
+        [
+          {
+            "node": "[A2] Pick Next Invoice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[A2] Pick Next Invoice": {
+      "main": [
+        [
+          {
+            "node": "[A3] Mark In Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[A3] Mark In Review": {
+      "main": [
+        [
+          {
+            "node": "[A4] Ask the Approver",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[A4] Ask the Approver": {
+      "main": [
+        [
+          {
+            "node": "[A5] Approved?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[A5] Approved?": {
+      "main": [
+        [
+          {
+            "node": "[A6] Add to Masterfile",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "[A9] Declined?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[A6] Add to Masterfile": {
+      "main": [
+        [
+          {
+            "node": "[A7] Mark Processed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[A7] Mark Processed": {
+      "main": [
+        [
+          {
+            "node": "[A8] Tell Accounts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[A9] Declined?": {
+      "main": [
+        [
+          {
+            "node": "[A10] Mark Disapproved",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "[A11] No Answer: Release",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": []
+}

@@ -1,0 +1,469 @@
+{
+  "name": "Company Enrichment",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Company enrichment: one row fails alone\n\nReads companies marked pending, fetches each homepage, and has a model fill in industry, audience, B2B or B2C and value proposition, then writes them back.\n\n**A dead site fails its own row, not the batch.** The fetch never throws, so an unreachable site is marked failed with its status code and the loop moves on.\n\nThe model is allowed to answer unknown. A visible blank beats a confident guess that someone later mistakes for research.\n\nSheet columns: website, status, industry, targetAudience, businessModel, valueProposition, confidence, note, enrichedAt.",
+        "color": 7,
+        "width": 420,
+        "height": 456
+      },
+      "id": "828ade41-d022-46c3-a881-77ecb1dbaf88",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -460,
+        60
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "8d693aa0-7034-4ca2-b199-23046feb785b",
+      "name": "[E0] Run Enrichment",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Companies"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "status",
+              "lookupValue": "pending"
+            }
+          ]
+        },
+        "options": {
+          "returnAllMatches": "returnAllMatches"
+        }
+      },
+      "id": "9325ceec-3208-4e60-8c41-a66ecbaaf917",
+      "name": "[E1] Companies to Enrich",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        240,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $json.website.startsWith(\"http\") ? $json.website : \"https://\" + $json.website }}",
+        "options": {
+          "timeout": 15000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": true
+            }
+          },
+          "response": {
+            "response": {
+              "neverError": true,
+              "fullResponse": true,
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "id": "f6c12fd3-8cbd-429c-91f3-d60b4e82a353",
+      "name": "[E3] Fetch Homepage",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        720,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.statusCode }}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              },
+              "rightValue": 400
+            },
+            {
+              "leftValue": "={{ $json.body }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "ad9e7407-8988-442c-8ad6-446e05c94844",
+      "name": "[E4] Site Reachable?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        960,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "sourceData": "json",
+        "dataPropertyName": "body",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "pageText",
+              "cssSelector": "body",
+              "returnValue": "text",
+              "skipSelectors": "script,style,nav,footer,noscript,svg"
+            }
+          ]
+        },
+        "options": {
+          "trimValues": true,
+          "cleanUpText": true
+        }
+      },
+      "id": "b9e316da-0cc3-4f37-9e9b-68425efbbb67",
+      "name": "[E5] Page Text",
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        1200,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Website: {{ $(\"[E2] One Company at a Time\").item.json.website }}\n\nPage text:\n{{ ($json.pageText || \"\").slice(0, 6000) }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "type": "SystemMessagePromptTemplate",
+              "message": "You profile a company using only the text from its own website. If the text does not make a field clear, answer \"unknown\" for that field rather than guessing. businessModel must be one of B2B, B2C, both or unknown. Keep valueProposition to one plain sentence. confidence is high, medium or low, and reflects how much the text actually said."
+            }
+          ]
+        }
+      },
+      "id": "5b67180f-e5b8-4765-bbea-f4a5d47369fb",
+      "name": "[E6] Profile the Company",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1440,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {
+          "temperature": 0
+        }
+      },
+      "id": "f0ef8d1e-48fd-4ce8-8dda-183c6ffce4c1",
+      "name": "Classification Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        1320,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "fromJson",
+        "jsonSchemaExample": "{ \"industry\": \"Logistics software\", \"targetAudience\": \"Mid-size freight forwarders\", \"businessModel\": \"B2B\", \"valueProposition\": \"Shipment tracking customers can check without calling the office.\", \"confidence\": \"high\" }"
+      },
+      "id": "830dd534-b568-42b9-8e3b-5572de78dd6e",
+      "name": "Company Profile",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1560,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "sheet",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Companies"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "website": "={{ $(\"[E2] One Company at a Time\").item.json.website }}",
+            "industry": "={{ $json.output.industry }}",
+            "targetAudience": "={{ $json.output.targetAudience }}",
+            "businessModel": "={{ $json.output.businessModel }}",
+            "valueProposition": "={{ $json.output.valueProposition }}",
+            "confidence": "={{ $json.output.confidence }}",
+            "status": "enriched",
+            "enrichedAt": "={{ $now.toISO() }}"
+          },
+          "matchingColumns": [
+            "website"
+          ],
+          "schema": []
+        }
+      },
+      "id": "a1fee6d1-a067-44b9-b5a3-a522ad5c4107",
+      "name": "[E7] Write Profile",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1680,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "resume": "timeInterval",
+        "amount": 2,
+        "unit": "seconds"
+      },
+      "id": "de02ec22-7392-4f5f-9e93-c91783f57119",
+      "name": "[E8] Pause Between Sites",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1920,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 1
+      },
+      "id": "2795ec6e-86da-40f4-8972-cdba6787edcf",
+      "name": "[E2] One Company at a Time",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        480,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "sheet",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Companies"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "website": "={{ $(\"[E2] One Company at a Time\").item.json.website }}",
+            "status": "failed",
+            "note": "=Unreachable: HTTP {{ $json.statusCode || \"no response\" }}"
+          },
+          "matchingColumns": [
+            "website"
+          ],
+          "schema": []
+        }
+      },
+      "id": "5948796d-eb6f-4e63-a2d5-6eee4b99d811",
+      "name": "[E9] Mark Unreachable",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1200,
+        440
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "[E0] Run Enrichment": {
+      "main": [
+        [
+          {
+            "node": "[E1] Companies to Enrich",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[E1] Companies to Enrich": {
+      "main": [
+        [
+          {
+            "node": "[E2] One Company at a Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[E3] Fetch Homepage": {
+      "main": [
+        [
+          {
+            "node": "[E4] Site Reachable?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[E4] Site Reachable?": {
+      "main": [
+        [
+          {
+            "node": "[E5] Page Text",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "[E9] Mark Unreachable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[E5] Page Text": {
+      "main": [
+        [
+          {
+            "node": "[E6] Profile the Company",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[E6] Profile the Company": {
+      "main": [
+        [
+          {
+            "node": "[E7] Write Profile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classification Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "[E6] Profile the Company",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Company Profile": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "[E6] Profile the Company",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[E7] Write Profile": {
+      "main": [
+        [
+          {
+            "node": "[E8] Pause Between Sites",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[E8] Pause Between Sites": {
+      "main": [
+        [
+          {
+            "node": "[E2] One Company at a Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[E2] One Company at a Time": {
+      "main": [
+        [],
+        [
+          {
+            "node": "[E3] Fetch Homepage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[E9] Mark Unreachable": {
+      "main": [
+        [
+          {
+            "node": "[E2] One Company at a Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": []
+}
