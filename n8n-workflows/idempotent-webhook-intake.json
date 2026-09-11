@@ -1,0 +1,203 @@
+{
+  "name": "Idempotent Webhook Intake",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Idempotent webhook intake\n\nThe same request delivered twice must create one record, not two.\n\nSenders retry. Networks time out after the write but before the response. Any endpoint that creates something needs to survive that, and the cheapest way is to make the caller's own payload decide the key.\n\n**Three replies, all deliberate:**\n- `400` the payload is unusable — retrying will not help\n- `200 duplicate` we already have this one — the caller can stop\n- `201` created\n\nSet `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`, and point it at a table with a UNIQUE index on `idempotency_key`. The index is what actually guarantees this; the lookup below just saves a round trip and returns a friendlier answer.",
+        "height": 420,
+        "width": 420,
+        "color": 7
+      },
+      "id": "note-intro",
+      "name": "Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-560, -160]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "intake",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "w0-receive",
+      "name": "[W0] Receive",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-80, 0],
+      "webhookId": "3f1c9a52-6d84-4f0b-9d2e-8c5a1b7e4d30"
+    },
+    {
+      "parameters": {
+        "jsCode": "// The key is derived from the CALLER'S data, never from a timestamp or a\n// random value — a retry has to produce the same key or none of this works.\nconst crypto = require('crypto');\n\nconst body = $input.first().json.body ?? {};\nconst errors = [];\n\nconst reference = String(body.reference ?? '').trim();\nconst amount = Number(body.amount);\nconst email = String(body.email ?? '').trim().toLowerCase();\n\nif (!reference) errors.push('reference is required');\nif (!Number.isFinite(amount) || amount <= 0) errors.push('amount must be a positive number');\nif (!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(email)) errors.push('email is not a valid address');\n\n// Only the fields that identify the request go into the key. Adding anything\n// incidental (a User-Agent, a received-at time) would defeat the whole thing.\nconst idempotencyKey = crypto\n  .createHash('sha256')\n  .update([reference, amount.toFixed(2), email].join('|'))\n  .digest('hex');\n\nreturn [{ json: { valid: errors.length === 0, errors, reference, amount, email, idempotencyKey } }];"
+      },
+      "id": "w1-validate",
+      "name": "[W1] Validate & Key",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [140, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose", "version": 2 },
+          "conditions": [
+            {
+              "id": "c-valid",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": "",
+              "operator": { "type": "boolean", "operation": "true", "singleValue": true }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "w2-usable",
+      "name": "[W2] Usable?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [360, 0]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: false, errors: $json.errors }) }}",
+        "options": { "responseCode": 400 }
+      },
+      "id": "w-e400",
+      "name": "[W-400] Unusable",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [580, 160]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SUPABASE_URL + '/rest/v1/intake' }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "idempotency_key", "value": "=eq.{{ $json.idempotencyKey }}" },
+            { "name": "select", "value": "id" },
+            { "name": "limit", "value": "1" }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}" },
+            { "name": "Authorization", "value": "={{ 'Bearer ' + $env.SUPABASE_SERVICE_ROLE_KEY }}" }
+          ]
+        },
+        "options": {
+          "response": { "response": { "neverError": true, "responseFormat": "json" } },
+          "timeout": 8000
+        }
+      },
+      "id": "w3-seen",
+      "name": "[W3] Seen This Key?",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [580, -80],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose", "version": 2 },
+          "conditions": [
+            {
+              "id": "c-dup",
+              "leftValue": "={{ Array.isArray($json) ? $json.length : 0 }}",
+              "rightValue": 0,
+              "operator": { "type": "number", "operation": "gt" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "w4-duplicate",
+      "name": "[W4] Already Have It?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [800, -80]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: true, duplicate: true, idempotencyKey: $('[W1] Validate & Key').first().json.idempotencyKey }) }}",
+        "options": { "responseCode": 200 }
+      },
+      "id": "w-dup",
+      "name": "[W-200] Duplicate",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1020, -200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL + '/rest/v1/intake' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}" },
+            { "name": "Authorization", "value": "={{ 'Bearer ' + $env.SUPABASE_SERVICE_ROLE_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Prefer", "value": "return=representation" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ idempotency_key: $('[W1] Validate & Key').first().json.idempotencyKey, reference: $('[W1] Validate & Key').first().json.reference, amount: $('[W1] Validate & Key').first().json.amount, email: $('[W1] Validate & Key').first().json.email }) }}",
+        "options": {
+          "response": { "response": { "fullResponse": true, "neverError": true, "responseFormat": "json" } },
+          "timeout": 10000
+        }
+      },
+      "id": "w5-store",
+      "name": "[W5] Store",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1020, -20],
+      "notes": "A 409 here means the UNIQUE index caught a race this flow's lookup missed. That is the index doing its job, and it is still a duplicate, not an error."
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: true, duplicate: $json.statusCode === 409, idempotencyKey: $('[W1] Validate & Key').first().json.idempotencyKey }) }}",
+        "options": { "responseCode": 201 }
+      },
+      "id": "w-created",
+      "name": "[W-201] Created",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1240, -20]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "[W0] Receive": { "main": [[{ "node": "[W1] Validate & Key", "type": "main", "index": 0 }]] },
+    "[W1] Validate & Key": { "main": [[{ "node": "[W2] Usable?", "type": "main", "index": 0 }]] },
+    "[W2] Usable?": {
+      "main": [
+        [{ "node": "[W3] Seen This Key?", "type": "main", "index": 0 }],
+        [{ "node": "[W-400] Unusable", "type": "main", "index": 0 }]
+      ]
+    },
+    "[W3] Seen This Key?": { "main": [[{ "node": "[W4] Already Have It?", "type": "main", "index": 0 }]] },
+    "[W4] Already Have It?": {
+      "main": [
+        [{ "node": "[W-200] Duplicate", "type": "main", "index": 0 }],
+        [{ "node": "[W5] Store", "type": "main", "index": 0 }]
+      ]
+    },
+    "[W5] Store": { "main": [[{ "node": "[W-201] Created", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "tags": []
+}

@@ -1,0 +1,128 @@
+{
+  "name": "Endpoint Health Check",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Endpoint health check\n\nChecks a list of URLs on a schedule and emails **once** when something is down.\n\nTwo things make this different from a loop that emails on every failure:\n\n1. **Every target is checked before anything is reported.** `neverError` keeps a dead endpoint from aborting the run, so one outage cannot hide the others.\n2. **One digest, not one email per failure.** Ten dead endpoints is one message. An inbox with ten alerts in it is an inbox nobody reads.\n\nEdit the list in `[H1] Targets`. Set `ALERT_TO` and attach an SMTP credential to `[H5] Send Digest`.\n\n**Not included on purpose:** flap suppression. If an endpoint is down for a day this sends a message every run. Add a state table before pointing it at anything noisy.",
+        "height": 420,
+        "width": 420,
+        "color": 7
+      },
+      "id": "note-intro",
+      "name": "Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-560, -160]
+    },
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "hours", "hoursInterval": 6 }] }
+      },
+      "id": "h0-schedule",
+      "name": "[H0] Every 6 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-80, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// One item per target: the HTTP node below then runs once per item, which is\n// what lets a single failure stay contained instead of ending the run.\nreturn [\n  { json: { name: 'Public site', url: 'https://example.com/' } },\n  { json: { name: 'API health', url: 'https://example.com/api/health' } },\n  { json: { name: 'Docs', url: 'https://example.com/docs' } },\n];"
+      },
+      "id": "h1-targets",
+      "name": "[H1] Targets",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [140, 0]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {
+          "response": { "response": { "fullResponse": true, "neverError": true } },
+          "timeout": 10000
+        }
+      },
+      "id": "h2-probe",
+      "name": "[H2] Probe",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [360, 0],
+      "alwaysOutputData": true,
+      "notes": "neverError is the point: a 500 or a timeout has to come back as data so the run continues to the next target."
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Judge every target, then decide once. Anything 2xx/3xx passes.\nconst targets = $('[H1] Targets').all().map(i => i.json);\nconst probes = $input.all();\n\nconst results = probes.map((p, i) => {\n  const status = Number(p.json?.statusCode ?? 0);\n  const ok = status >= 200 && status < 400;\n  return {\n    name: targets[i]?.name ?? `target ${i + 1}`,\n    url: targets[i]?.url ?? '',\n    status: status || 'no response',\n    ok,\n  };\n});\n\nconst failed = results.filter(r => !r.ok);\n\nreturn [{ json: {\n  checkedAt: new Date().toISOString(),\n  total: results.length,\n  failedCount: failed.length,\n  anyDown: failed.length > 0,\n  results,\n  // Plain text, because the value of an alert is being readable on a phone.\n  digest: failed.map(f => `DOWN  ${f.name}  (${f.status})  ${f.url}`).join('\\n'),\n} }];"
+      },
+      "id": "h3-judge",
+      "name": "[H3] Judge",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [580, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose", "version": 2 },
+          "conditions": [
+            {
+              "id": "c-down",
+              "leftValue": "={{ $json.anyDown }}",
+              "rightValue": "",
+              "operator": { "type": "boolean", "operation": "true", "singleValue": true }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "h4-anydown",
+      "name": "[H4] Anything Down?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [800, 0]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $env.ALERT_FROM }}",
+        "toEmail": "={{ $env.ALERT_TO }}",
+        "subject": "={{ $json.failedCount }} of {{ $json.total }} endpoints are down",
+        "text": "={{ $json.digest }}\n\nChecked {{ $json.checkedAt }}",
+        "options": {}
+      },
+      "id": "h5-send",
+      "name": "[H5] Send Digest",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1020, -80],
+      "webhookId": "5b2e7c14-9a6f-4d38-8e21-0c7f3a9b6e52",
+      "notes": "Needs an SMTP credential selecting in the UI."
+    },
+    {
+      "parameters": {},
+      "id": "h6-quiet",
+      "name": "[H6] All Clear",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [1020, 100],
+      "notes": "Silence is the success case. Nothing is sent when everything is up."
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "[H0] Every 6 Hours": { "main": [[{ "node": "[H1] Targets", "type": "main", "index": 0 }]] },
+    "[H1] Targets": { "main": [[{ "node": "[H2] Probe", "type": "main", "index": 0 }]] },
+    "[H2] Probe": { "main": [[{ "node": "[H3] Judge", "type": "main", "index": 0 }]] },
+    "[H3] Judge": { "main": [[{ "node": "[H4] Anything Down?", "type": "main", "index": 0 }]] },
+    "[H4] Anything Down?": {
+      "main": [
+        [{ "node": "[H5] Send Digest", "type": "main", "index": 0 }],
+        [{ "node": "[H6] All Clear", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": { "executionOrder": "v1" },
+  "tags": []
+}

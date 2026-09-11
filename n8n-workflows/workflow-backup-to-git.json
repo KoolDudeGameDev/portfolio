@@ -1,0 +1,134 @@
+{
+  "name": "Workflow Backup To Git",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Workflow backup to git\n\nExports every workflow from an n8n instance and commits each one to a repository.\n\nThis exists because of a specific failure: a hosted n8n plan ended and took its database with it. The workflows only survived because their JSON was already in a repo. A backup that lives on the machine it is backing up is not a backup.\n\n**Deliberate choices:**\n- **Filenames are the workflow id**, not the name. Renaming a workflow in the editor should produce a diff, not an orphaned file plus a new one.\n- **Ids are used because names are not unique** and can contain `/` and `:`, which are not legal in paths on every OS.\n- **`active` and `versionId` are stripped** before writing. They change on their own and would otherwise produce a commit every run with no real change in it.\n- It **PUTs unconditionally** — GitHub's contents API creates or updates from the same call, so no existence check is needed.\n\nSet `N8N_URL`, `N8N_API_KEY`, `GITHUB_REPO` (`owner/name`) and `GITHUB_TOKEN`.",
+        "height": 460,
+        "width": 440,
+        "color": 7
+      },
+      "id": "note-intro",
+      "name": "Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-580, -200]
+    },
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "cronExpression", "expression": "0 3 * * *" }] }
+      },
+      "id": "b0-nightly",
+      "name": "[B0] Nightly",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-80, 0]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.N8N_URL + '/api/v1/workflows' }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [{ "name": "limit", "value": "250" }]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [{ "name": "X-N8N-API-KEY", "value": "={{ $env.N8N_API_KEY }}" }]
+        },
+        "options": {
+          "response": { "response": { "responseFormat": "json" } },
+          "timeout": 30000
+        }
+      },
+      "id": "b1-list",
+      "name": "[B1] List Workflows",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [140, 0],
+      "notes": "The REST API speaks workflow JSON. The MCP endpoint does not — it speaks SDK code, which is not what you want in a backup."
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// One item per workflow, each already shaped as the GitHub contents API wants.\nconst payload = $input.first().json;\nconst workflows = Array.isArray(payload?.data) ? payload.data : (Array.isArray(payload) ? payload : []);\n\nif (!workflows.length) {\n  throw new Error('No workflows came back — check N8N_URL and N8N_API_KEY before assuming the instance is empty.');\n}\n\nreturn workflows.map((wf) => {\n  // Strip the fields that move on their own. Without this every run is a commit.\n  const { active, versionId, updatedAt, createdAt, ...stable } = wf;\n\n  const body = JSON.stringify(stable, null, 2);\n\n  return {\n    json: {\n      id: wf.id,\n      name: wf.name,\n      path: `workflows/${wf.id}.json`,\n      // GitHub takes file content base64-encoded.\n      contentBase64: Buffer.from(body, 'utf8').toString('base64'),\n    },\n  };\n});"
+      },
+      "id": "b2-shape",
+      "name": "[B2] Shape For Git",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [360, 0]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://api.github.com/repos/' + $env.GITHUB_REPO + '/contents/' + $json.path }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "={{ 'Bearer ' + $env.GITHUB_TOKEN }}" },
+            { "name": "Accept", "value": "application/vnd.github+json" },
+            { "name": "User-Agent", "value": "n8n-workflow-backup" }
+          ]
+        },
+        "options": {
+          "response": { "response": { "neverError": true, "responseFormat": "json" } },
+          "timeout": 20000
+        }
+      },
+      "id": "b3-current",
+      "name": "[B3] Current Sha",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [580, 0],
+      "alwaysOutputData": true,
+      "notes": "404 on the first run for a new workflow is expected and fine — it just means there is no sha to send."
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ 'https://api.github.com/repos/' + $env.GITHUB_REPO + '/contents/' + $('[B2] Shape For Git').item.json.path }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "={{ 'Bearer ' + $env.GITHUB_TOKEN }}" },
+            { "name": "Accept", "value": "application/vnd.github+json" },
+            { "name": "User-Agent", "value": "n8n-workflow-backup" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify(Object.assign({ message: 'backup: ' + $('[B2] Shape For Git').item.json.name, content: $('[B2] Shape For Git').item.json.contentBase64 }, $json.sha ? { sha: $json.sha } : {})) }}",
+        "options": {
+          "response": { "response": { "neverError": true, "fullResponse": true, "responseFormat": "json" } },
+          "timeout": 20000
+        }
+      },
+      "id": "b4-commit",
+      "name": "[B4] Commit",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [800, 0],
+      "notes": "Sending the sha only when one exists is what makes this both a create and an update. GitHub returns 200 when the content is identical, so unchanged workflows cost a call and produce no commit."
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// A backup job that fails quietly is worse than no backup job.\nconst results = $input.all().map(i => Number(i.json?.statusCode ?? 0));\nconst written = results.filter(s => s === 200 || s === 201).length;\nconst failed = results.length - written;\n\nif (failed > 0) {\n  throw new Error(`${failed} of ${results.length} workflows failed to back up.`);\n}\n\nreturn [{ json: { backedUp: written, at: new Date().toISOString() } }];"
+      },
+      "id": "b5-confirm",
+      "name": "[B5] Confirm",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1020, 0]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "[B0] Nightly": { "main": [[{ "node": "[B1] List Workflows", "type": "main", "index": 0 }]] },
+    "[B1] List Workflows": { "main": [[{ "node": "[B2] Shape For Git", "type": "main", "index": 0 }]] },
+    "[B2] Shape For Git": { "main": [[{ "node": "[B3] Current Sha", "type": "main", "index": 0 }]] },
+    "[B3] Current Sha": { "main": [[{ "node": "[B4] Commit", "type": "main", "index": 0 }]] },
+    "[B4] Commit": { "main": [[{ "node": "[B5] Confirm", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "tags": []
+}
