@@ -1,8 +1,12 @@
 export type StackItem = {
   name: string;
   /** simple-icons slug — see content/brandmarks.ts. Omit if the brand has no
-   *  mark in the set; `mono` is drawn instead. */
+   *  mark in the set; `img` or `mono` is drawn instead. */
   slug?: string;
+  /** Raster logo under public/assets, for brands with no vector anywhere. */
+  img?: string;
+  /** Paint `img`'s alpha in currentColor — for flat single-colour logos. */
+  mask?: boolean;
   mono?: string;
 };
 
@@ -18,18 +22,21 @@ export const techStack: StackGroup[] = [
     group: "Automation & Integration",
     items: [
       { name: "n8n", slug: "n8n" },
-      { name: "GoHighLevel", mono: "GHL" },
+      { name: "GoHighLevel", img: "mark-gohighlevel.png" },
       { name: "Asana", slug: "asana" },
       { name: "Zapier", slug: "zapier" },
       { name: "WhatsApp Business", slug: "whatsapp" },
       { name: "Apps Script", slug: "googleappsscript" },
-      { name: "LearnWorlds", mono: "LW" },
+      { name: "Slack", img: "mark-slack.png" },
+      { name: "LearnWorlds", img: "mark-learnworlds.png", mask: true },
     ],
     notes: [
       "GHL v2 API",
       "Webhooks",
       "REST payload contracts",
-      "Bidirectional sync",
+      // "Bidirectional sync" reads as jargon to the business owners this page
+      // is written for. Same capability, said plainly.
+      "Two-way data sync across platforms",
       "Email deliverability (SPF/DKIM/DMARC)",
     ],
   },
@@ -40,7 +47,8 @@ export const techStack: StackGroup[] = [
       { name: "Next.js", slug: "nextdotjs" },
       { name: "React", slug: "react" },
       { name: "TypeScript", slug: "typescript" },
-      { name: "JavaScript", slug: "javascript" },
+      { name: "JavaScript", img: "mark-javascript.png" },
+      { name: "Python", slug: "python" },
       { name: "Django", slug: "django" },
       { name: "FastAPI", slug: "fastapi" },
       { name: "Deno", slug: "deno" },
@@ -55,15 +63,14 @@ export const techStack: StackGroup[] = [
       { name: "PostgreSQL", slug: "postgresql" },
       { name: "Supabase", slug: "supabase" },
       { name: "pandas", slug: "pandas" },
-      { name: "Python", slug: "python" },
-      { name: "SQL", mono: "SQL" },
+      { name: "SQL", slug: "sql" },
     ],
     notes: ["Data modeling", "Migrations", "Deduplication pipelines"],
   },
   {
     group: "Testing, Security & Reliability",
     items: [
-      { name: "Playwright", mono: "PW" },
+      { name: "Playwright", img: "mark-playwright.png" },
       { name: "Vitest", slug: "vitest" },
     ],
     notes: [
@@ -80,8 +87,18 @@ export const techStack: StackGroup[] = [
     items: [
       { name: "Hugging Face", slug: "huggingface" },
       { name: "Gemini API", slug: "googlegemini" },
+      { name: "Claude", slug: "claude" },
+      { name: "Groq", img: "mark-groq.png", mask: true },
     ],
-    notes: ["Wav2Vec2-XLSR", "KenLM", "Speech recognition pipelines"],
+    // Deliberately the models and protocols built *with*, not the editors coded
+    // in: an MCP server is a service other systems call, not a coding habit.
+    notes: [
+      "MCP servers",
+      "RAG pipelines",
+      "Wav2Vec2-XLSR",
+      "KenLM",
+      "Speech recognition pipelines",
+    ],
   },
   {
     group: "Infrastructure & Tools",
@@ -89,10 +106,12 @@ export const techStack: StackGroup[] = [
       { name: "Git", slug: "git" },
       { name: "GitHub", slug: "github" },
       { name: "Docker", slug: "docker" },
-      { name: "Linux", slug: "linux" },
+      { name: "Linux", img: "mark-linux.png" },
       { name: "NGINX", slug: "nginx" },
       { name: "Cloudflare", slug: "cloudflare" },
       { name: "Google Cloud", slug: "googlecloud" },
+      { name: "OVHcloud", slug: "ovh" },
+      { name: "Hostinger", slug: "hostinger" },
       { name: "Railway", slug: "railway" },
       { name: "Shopify", slug: "shopify" },
       { name: "Jitsi", slug: "jitsi" },
@@ -107,7 +126,7 @@ export const techStack: StackGroup[] = [
  */
 export const featuredTools: StackItem[] = [
   { name: "n8n", slug: "n8n" },
-  { name: "GoHighLevel", mono: "GHL" },
+  { name: "GoHighLevel", img: "mark-gohighlevel.png" },
   { name: "Supabase", slug: "supabase" },
   { name: "Next.js", slug: "nextdotjs" },
   { name: "React", slug: "react" },

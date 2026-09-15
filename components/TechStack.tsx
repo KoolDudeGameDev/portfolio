@@ -35,6 +35,8 @@ export function TechStack() {
                         slug={item.slug}
                         name={item.name}
                         mono={item.mono}
+                        img={item.img}
+                        mask={item.mask}
                         className="brand-mark--color h-6 w-6 shrink-0"
                       />
                       <span className="truncate text-sm font-medium tracking-tight">
