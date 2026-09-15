@@ -34,7 +34,7 @@ export function Contact() {
       <div className="mx-auto max-w-6xl">
         <div className="rounded-3xl border border-border bg-card px-6 py-14 text-center md:px-16 md:py-20">
           <div className="mb-6 flex items-center justify-center gap-3 text-xs uppercase tracking-[0.2em] text-muted">
-            <span className="font-mono">06</span>
+            <span className="font-mono">07</span>
             <span className="h-px w-8 bg-border" />
             <span>Contact</span>
           </div>
@@ -51,7 +51,16 @@ export function Contact() {
             and technical questions are welcome too.
           </p>
 
-          <div className="mt-9">
+          {/* Mirrors the hero pill, at the point where someone decides to write. */}
+          <p className="mt-7 inline-flex items-center gap-2 text-sm font-medium">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-live opacity-60 motion-safe:animate-ping" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-live" />
+            </span>
+            Currently accepting new clients
+          </p>
+
+          <div className="mt-7">
             <a
               href={mailtoHref}
               className="group inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 text-sm font-medium text-accent-fg transition-opacity hover:opacity-90"
