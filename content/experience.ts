@@ -27,7 +27,7 @@ export const experience: ExperienceItem[] = [
     period: "Jun 2025 — May 2026",
     role: "Undergraduate Researcher",
     org: "Cebuano Speech-to-Text Capstone",
-    location: "Ginatilan, Cebu",
+    location: "Cebu, Philippines",
     summary:
       "Built and trained an end-to-end Cebuano ASR pipeline (Wav2Vec2-XLSR + KenLM) reaching 3.07% WER, and authored a conference paper on the results.",
   },
@@ -35,7 +35,7 @@ export const experience: ExperienceItem[] = [
     period: "Feb — May 2026",
     role: "Backend Developer",
     org: "AI Labeling Loop",
-    location: "Ginatilan, Cebu",
+    location: "Cebu, Philippines",
     summary:
       "Developed a Django CRUD application unifying audio upload, transcription, correction, and export, deployed for live user testing via Cloudflare Tunnel.",
   },

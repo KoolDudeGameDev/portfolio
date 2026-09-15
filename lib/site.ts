@@ -8,16 +8,26 @@ export function asset(path: string): string {
   return `${BASE_PATH}${clean}`;
 }
 
+/**
+ * Origin the site is served from. Social scrapers need absolute URLs, so this
+ * plus BASE_PATH is what makes the share card resolve. Override for a custom
+ * domain alongside NEXT_PUBLIC_BASE_PATH.
+ */
+export const SITE_ORIGIN =
+  process.env.NEXT_PUBLIC_SITE_ORIGIN ?? "https://kooldudegamedev.github.io";
+
 export const site = {
   name: "Kyle Gregory Ibo",
-  role: "Systems & Automation Engineer",
+  role: "Automation & Systems Integration Engineer",
   email: "gregoryibo7@gmail.com",
-  location: "Ginatilan, Cebu, Philippines",
+  location: "Cebu, Philippines",
   socials: {
     github: "https://github.com/KoolDudeGameDev",
     linkedin: "https://www.linkedin.com/in/kyle-gregory-ibo-a89455301/",
     facebook: "https://www.facebook.com/profile.php?id=61577563267705",
-    maps: "https://www.google.com/maps/place/9%C2%B034'09.0%22N+123%C2%B019'04.2%22E/@9.5691561,123.314551,368m/data=!3m1!1e3!4m4!3m3!8m2!3d9.5691667!4d123.3178333",
+    // Province-level on purpose. This used to be a pin on exact GPS
+    // coordinates at street zoom, which is a home address in all but name.
+    maps: "https://www.google.com/maps/place/Cebu,+Philippines",
   },
 } as const;
 
