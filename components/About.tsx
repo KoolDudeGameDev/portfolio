@@ -10,6 +10,8 @@ export function About() {
             <img
               src={asset("/assets/photo.webp")}
               alt={site.name}
+              width={800}
+              height={998}
               loading="lazy"
               decoding="async"
               className="w-full object-cover"
