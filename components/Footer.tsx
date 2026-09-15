@@ -1,5 +1,6 @@
+import type { CSSProperties } from "react";
 import { Github, Linkedin, Facebook, Mail } from "./Icons";
-import { site } from "@/lib/site";
+import { site, asset } from "@/lib/site";
 
 const socials = [
   { icon: Github, href: site.socials.github, label: "GitHub" },
@@ -12,9 +13,22 @@ export function Footer() {
   return (
     <footer className="border-t border-border px-6 py-12">
       <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 text-center sm:flex-row sm:justify-between sm:text-left">
-        <div>
-          <p className="font-serif text-lg">{site.name}</p>
-          <p className="text-sm text-muted">{site.role}</p>
+        {/* The monogram signs off here rather than in the navbar, where it only
+            repeated the wordmark sitting next to it. */}
+        <div className="flex items-center gap-4">
+          <span
+            aria-hidden
+            className="mask-mark h-9 w-9 shrink-0"
+            style={
+              {
+                "--mark-src": `url(${asset("/assets/kg-mark.png")})`,
+              } as CSSProperties
+            }
+          />
+          <div>
+            <p className="font-serif text-lg">{site.name}</p>
+            <p className="text-sm text-muted">{site.role}</p>
+          </div>
         </div>
 
         <div className="flex items-center gap-3">
