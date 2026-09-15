@@ -398,67 +398,44 @@ export const work: WorkItem[] = [
     ],
   },
   {
-    title: "Endpoint Health Check",
-    org: "Open source n8n workflow",
+    title: "More Open-Source Workflows",
+    org: "Open source n8n workflows",
     image: "ref-health-check.webp",
     shots: [
       {
         src: "ref-health-check.webp",
         caption:
-          "Every target is probed before anything is reported, so one dead endpoint can't hide the others behind it.",
+          "Endpoint health check: every target is probed before anything is reported, so one dead endpoint can't hide the others behind it.",
       },
-    ],
-    group: "Infrastructure & Reliability",
-    category: "Open Source",
-    status: "Shipped",
-    problem:
-      "Most teams find out a service is down because a customer tells them. Monitoring that does exist tends to fire one alert per failure, which turns a real outage into an inbox nobody reads.",
-    build:
-      "A scheduled n8n workflow that probes a list of endpoints and sends a single digest only when something is actually down. Silence is the success case.",
-    results: [
-      "Every probe runs with errors captured as data, so one outage can't abort the run and mask the rest",
-      "Failures are collected before anything is sent: one digest for ten dead endpoints, not ten alerts",
-      "Nothing is sent when everything is up, so the channel stays worth reading",
-      "Flap suppression is deliberately left out and documented as the next step, rather than half-built",
-    ],
-    tech: ["n8n", "Scheduling", "HTTP", "Uptime Monitoring"],
-    links: [
-      {
-        label: "Workflow JSON",
-        href: "https://github.com/KoolDudeGameDev/portfolio/blob/main/n8n-workflows/endpoint-health-check.json",
-        icon: "github",
-      },
-    ],
-  },
-  {
-    title: "Workflow Backup to Git",
-    org: "Open source n8n workflow",
-    image: "ref-workflow-backup.webp",
-    shots: [
       {
         src: "ref-workflow-backup.webp",
         caption:
-          "A nightly export of every workflow to a git repository: the backup that has to live somewhere other than the machine it protects.",
+          "Workflow backup to git: a nightly export of every workflow to a repository — the backup that has to live somewhere other than the machine it protects.",
+      },
+      {
+        src: "n8n-company-enrichment.webp",
+        caption:
+          "Company enrichment: each company is fetched, profiled and written back on its own, so a dead website only fails its own row.",
       },
     ],
     group: "Infrastructure & Reliability",
     category: "Open Source",
     status: "Shipped",
     problem:
-      "An automation platform is usually the only copy of its own automations. When a hosted n8n plan ended and took its database with it, the workflows survived only because their JSON was already committed somewhere else.",
+      "Three smaller workflows published from the same instinct: the failure mode matters more than the happy path. Monitoring that fires one alert per failure, a platform that is the only copy of its own automations, and an enrichment script that dies on the first dead website.",
     build:
-      "A nightly n8n workflow that exports every workflow through the n8n API and commits each one to a repository, so the running instance is reproducible rather than irreplaceable.",
+      "An endpoint health check that probes a list of targets and sends one digest only when something is down; a nightly export committing every workflow to git; and a company enrichment run that profiles each homepage against a fixed schema and writes it back to a sheet.",
     results: [
-      "Files are named by workflow id, not name, so a rename produces a diff instead of an orphan plus a new file",
-      "Fields that change on their own (active state, version id, timestamps) are stripped, so a nightly run only commits when something really changed",
-      "Reads the current file SHA before writing, so an update never collides with the commit before it",
-      "Built from the recovery that actually happened, not a hypothetical one",
+      "Health check: failures are collected before anything is sent — one digest for ten dead endpoints, not ten alerts, and silence is the success case",
+      "Git backup: files are named by workflow id, so a rename produces a diff instead of an orphan, and self-changing fields are stripped so a nightly run only commits real changes",
+      "Enrichment: a dead site fails its own row rather than the batch, and the model may answer unknown, because a visible blank beats a guess someone later mistakes for research",
+      "Built from problems that actually happened — the git backup exists because a hosted n8n plan ended and took its database with it",
     ],
-    tech: ["n8n", "GitHub API", "REST APIs", "Backups"],
+    tech: ["n8n", "Scheduling", "GitHub API", "Gemini", "Uptime Monitoring"],
     links: [
       {
         label: "Workflow JSON",
-        href: "https://github.com/KoolDudeGameDev/portfolio/blob/main/n8n-workflows/workflow-backup-to-git.json",
+        href: "https://github.com/KoolDudeGameDev/portfolio/tree/main/n8n-workflows",
         icon: "github",
       },
     ],
@@ -525,39 +502,6 @@ export const work: WorkItem[] = [
       {
         label: "Workflow JSON",
         href: "https://github.com/KoolDudeGameDev/portfolio/blob/main/n8n-workflows/invoice-intake-approval.json",
-        icon: "github",
-      },
-    ],
-  },
-  {
-    title: "Company Enrichment",
-    org: "Open source n8n workflow",
-    image: "n8n-company-enrichment.webp",
-    shots: [
-      {
-        src: "n8n-company-enrichment.webp",
-        caption:
-          "Each company is fetched, profiled and written back on its own, so a dead website only fails its own row.",
-      },
-    ],
-    group: "Automation",
-    category: "Open Source",
-    status: "Shipped",
-    problem:
-      "Researching a list of companies by hand (what they sell, to whom, B2B or B2C) is slow. Scripts that automate it tend to die on the first dead website and take the rest of the batch down with them.",
-    build:
-      "An n8n workflow that reads companies from a sheet, fetches each homepage, has a model profile the company from its own text against a fixed schema, and writes the profile back to the sheet.",
-    results: [
-      "A dead site fails its own row, not the batch. The fetch never throws, so the row is marked failed with its status code and the loop moves on",
-      "The model may answer unknown and reports its confidence, because a visible blank beats a guess someone later mistakes for research",
-      "Structured output means every row comes back in the same shape, ready to filter",
-      "Requests are paced so a long list doesn't hammer anyone's site",
-    ],
-    tech: ["n8n", "Gemini", "Google Sheets", "HTTP", "Structured Output"],
-    links: [
-      {
-        label: "Workflow JSON",
-        href: "https://github.com/KoolDudeGameDev/portfolio/blob/main/n8n-workflows/company-enrichment.json",
         icon: "github",
       },
     ],
