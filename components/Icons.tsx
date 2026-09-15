@@ -185,6 +185,41 @@ export function FileIcon(props: IconProps) {
   );
 }
 
+/* The three below are from lucide (ISC), redrawn against `base` so they carry
+   the same 1.6 stroke as the rest of the set. */
+
+export function SearchCheck(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="m8 11 2 2 4-4" />
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.3-4.3" />
+    </svg>
+  );
+}
+
+export function Blocks(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M10 22V7a1 1 0 0 0-1-1H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5a1 1 0 0 0-1-1H2" />
+      <rect x="14" y="2" width="8" height="8" rx="1" />
+    </svg>
+  );
+}
+
+export function LifeBuoy(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <circle cx="12" cy="12" r="10" />
+      <path d="m4.93 4.93 4.24 4.24" />
+      <path d="m14.83 9.17 4.24-4.24" />
+      <path d="m14.83 14.83 4.24 4.24" />
+      <path d="m9.17 14.83-4.24 4.24" />
+      <circle cx="12" cy="12" r="4" />
+    </svg>
+  );
+}
+
 export function ReliabilityIcon(props: IconProps) {
   return (
     <svg {...base} {...props}>

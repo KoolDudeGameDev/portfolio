@@ -3,11 +3,19 @@ import {
   ArrowRight,
   AutomationIcon,
   BackendIcon,
+  Blocks,
   CrmIcon,
+  LifeBuoy,
   ReliabilityIcon,
+  SearchCheck,
   WebIcon,
 } from "./Icons";
-import { engagements, services, type ServiceIcon } from "@/content/services";
+import {
+  engagements,
+  services,
+  type EngagementIcon,
+  type ServiceIcon,
+} from "@/content/services";
 import { mailtoHref } from "@/lib/site";
 
 const iconMap: Record<ServiceIcon, typeof AutomationIcon> = {
@@ -16,6 +24,12 @@ const iconMap: Record<ServiceIcon, typeof AutomationIcon> = {
   crm: CrmIcon,
   reliability: ReliabilityIcon,
   web: WebIcon,
+};
+
+const engagementIconMap: Record<EngagementIcon, typeof SearchCheck> = {
+  audit: SearchCheck,
+  build: Blocks,
+  support: LifeBuoy,
 };
 
 export function Services() {
@@ -36,7 +50,7 @@ export function Services() {
             return (
               <article
                 key={service.title}
-                className={`group flex flex-col bg-bg p-8 transition-colors hover:bg-card md:p-10 ${
+                className={`group relative flex flex-col bg-bg p-8 transition-colors hover:bg-card md:p-10 ${
                   service.wide ? "sm:col-span-2" : ""
                 }`}
               >
@@ -60,6 +74,16 @@ export function Services() {
                     </li>
                   ))}
                 </ul>
+                {/* The ::after overlay makes the whole card clickable while
+                    keeping one real link in the accessibility tree. Always
+                    visible on touch, where there is no hover to reveal it. */}
+                <a
+                  href="#contact"
+                  className="mt-6 inline-flex items-center gap-1.5 self-start text-sm font-medium transition-opacity after:absolute after:inset-0 after:content-[''] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100"
+                >
+                  Learn more
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                </a>
               </article>
             );
           })}
@@ -71,15 +95,20 @@ export function Services() {
             How we&apos;d work together
           </h3>
           <div className="mt-6 grid gap-4 md:grid-cols-3">
-            {engagements.map((engagement) => (
+            {engagements.map((engagement) => {
+              const EngagementIconMark = engagementIconMap[engagement.icon];
+              return (
               <article
                 key={engagement.title}
-                className="flex flex-col rounded-2xl border border-border bg-card p-7"
+                className="flex flex-col rounded-2xl border border-border bg-card p-7 transition-colors hover:bg-surface"
               >
-                <p className="font-mono text-xs uppercase tracking-[0.14em] text-muted">
-                  {engagement.terms}
-                </p>
-                <h4 className="mt-3 text-lg font-semibold">
+                <div className="mb-5 flex items-center justify-between gap-4">
+                  <EngagementIconMark className="h-6 w-6 text-fg" />
+                  <p className="font-mono text-xs uppercase tracking-[0.14em] text-muted">
+                    {engagement.terms}
+                  </p>
+                </div>
+                <h4 className="text-lg font-semibold">
                   {engagement.title}
                 </h4>
                 <p className="mt-3 flex-1 leading-relaxed text-muted">
@@ -90,11 +119,11 @@ export function Services() {
                   {engagement.goodFor}
                 </p>
               </article>
-            ))}
+              );
+            })}
           </div>
           <p className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted">
-            Every engagement is quoted per project, after a short call about
-            what you need.
+            Every project is scoped and quoted after an initial call.
             <a
               href={mailtoHref}
               className="group inline-flex items-center gap-1 font-medium text-fg underline-offset-4 hover:underline"

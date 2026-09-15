@@ -66,7 +66,10 @@ export const services: Service[] = [
   },
 ];
 
+export type EngagementIcon = "audit" | "build" | "support";
+
 export type Engagement = {
+  icon: EngagementIcon;
   title: string;
   /** How it's scoped and billed, in a few words. No prices on purpose. */
   terms: string;
@@ -78,6 +81,7 @@ export type Engagement = {
 // quoted after a short call, so the work is judged before the price is.
 export const engagements: Engagement[] = [
   {
+    icon: "audit",
     title: "Automation audit",
     terms: "Fixed scope · 1–2 weeks",
     description:
@@ -85,6 +89,7 @@ export const engagements: Engagement[] = [
     goodFor: "Knowing what to fix first",
   },
   {
+    icon: "build",
     title: "Project build",
     terms: "Quoted per project",
     description:
@@ -92,6 +97,7 @@ export const engagements: Engagement[] = [
     goodFor: "A process you already know you want automated",
   },
   {
+    icon: "support",
     title: "Ongoing support",
     terms: "Monthly retainer",
     description:
