@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BrandMark } from "./BrandMark";
 import { featuredTools, type StackItem } from "@/content/techstack";
 
@@ -10,17 +10,25 @@ import { featuredTools, type StackItem } from "@/content/techstack";
  */
 const SPEED = 40;
 
-// The track holds the list twice; scrolling past the first copy wraps back by
-// exactly one copy's width, which lands on a seam-free loop. Hovering pauses
-// the drift, dragging takes it over, and prefers-reduced-motion drops it to a
-// static wrapped row.
-function Half({ clone = false }: { clone?: boolean }) {
+/** Two copies is the minimum that can loop at all; wide screens need more. */
+const MIN_COPIES = 2;
+
+// The track holds the list several times over. Drifting past one copy's width
+// wraps back by exactly that width, which lands on a seam-free loop because
+// every copy is identical. Hovering pauses the drift, dragging takes it over,
+// and prefers-reduced-motion drops it to a static wrapped row.
+function Copy({
+  innerRef,
+  hidden,
+}: {
+  innerRef?: React.Ref<HTMLUListElement>;
+  hidden?: boolean;
+}) {
   return (
     <ul
-      aria-hidden={clone || undefined}
-      className={`flex shrink-0 items-center gap-14 pr-14 ${
-        clone ? "marquee-clone" : ""
-      }`}
+      ref={innerRef}
+      aria-hidden={hidden || undefined}
+      className="marquee-copy flex shrink-0 items-center gap-14 pr-14"
     >
       {featuredTools.map((tool: StackItem) => (
         <li
@@ -31,6 +39,8 @@ function Half({ clone = false }: { clone?: boolean }) {
             slug={tool.slug}
             name={tool.name}
             mono={tool.mono}
+            img={tool.img}
+            mask={tool.mask}
             className="brand-mark--color h-6 w-6"
           />
           <span className="text-sm font-medium tracking-tight">
@@ -44,10 +54,44 @@ function Half({ clone = false }: { clone?: boolean }) {
 
 export function LogoMarquee() {
   const scroller = useRef<HTMLDivElement>(null);
+  const firstCopy = useRef<HTMLUListElement>(null);
+  const [copies, setCopies] = useState(MIN_COPIES);
+
+  /**
+   * A scroll container clamps scrollLeft to `scrollWidth - clientWidth`, so the
+   * loop only works while one copy is narrower than that. With two copies that
+   * stops being true somewhere around a 1950px viewport: the strip drifts to
+   * the right edge, can never reach the wrap point, and stops dead. Render
+   * enough copies that the wrap distance always stays comfortably reachable.
+   */
+  useEffect(() => {
+    const el = scroller.current;
+    const copy = firstCopy.current;
+    if (!el || !copy) return;
+
+    const measure = () => {
+      const copyWidth = copy.offsetWidth;
+      if (copyWidth <= 0) return;
+      const needed = Math.ceil((el.clientWidth * 2) / copyWidth) + 1;
+      setCopies(Math.max(MIN_COPIES, needed));
+    };
+
+    measure();
+
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    observer.observe(copy);
+
+    // Fonts land after first paint and change every copy's width.
+    document.fonts?.ready.then(measure).catch(() => {});
+
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const el = scroller.current;
-    if (!el) return;
+    const copy = firstCopy.current;
+    if (!el || !copy) return;
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -57,31 +101,44 @@ export function LogoMarquee() {
     let dragging = false;
     let startX = 0;
     let startScroll = 0;
+    /** Kept as a float here rather than read back off the DOM each frame. */
+    let offset = el.scrollLeft;
+    let lastWritten = -1;
 
-    /** One copy of the list — the distance that loops seamlessly. */
-    const cycle = () => el.scrollWidth / 2;
-
-    const wrap = () => {
-      const width = cycle();
-      if (width <= 0) return;
-      if (el.scrollLeft >= width) el.scrollLeft -= width;
-      else if (el.scrollLeft <= 0) el.scrollLeft += width;
-    };
+    /** One copy — the distance that loops seamlessly. */
+    const cycle = () => copy.offsetWidth;
 
     const tick = (now: number) => {
+      frame = requestAnimationFrame(tick);
+
+      const width = cycle();
+      if (width <= 0) return;
+
+      // Trackpad, arrow keys or a drag moved it: take their position over ours.
+      if (lastWritten < 0 || Math.abs(el.scrollLeft - lastWritten) > 1) {
+        offset = ((el.scrollLeft % width) + width) % width;
+      }
+
       if (!last) last = now;
       const elapsed = (now - last) / 1000;
       last = now;
-      if (!hovered && !dragging) {
-        el.scrollLeft += SPEED * elapsed;
-        wrap();
+
+      // Leave scrollLeft alone while paused, so native momentum isn't cancelled.
+      if (hovered || dragging) {
+        lastWritten = el.scrollLeft;
+        return;
       }
-      frame = requestAnimationFrame(tick);
+
+      offset += SPEED * elapsed;
+      if (offset >= width) offset -= width;
+      el.scrollLeft = offset;
+      lastWritten = el.scrollLeft;
     };
 
     const start = () => {
       if (reduced.matches || frame) return;
       last = 0;
+      lastWritten = -1;
       frame = requestAnimationFrame(tick);
     };
 
@@ -105,8 +162,24 @@ export function LogoMarquee() {
     const onPointerMove = (event: PointerEvent) => {
       if (!dragging) return;
       event.preventDefault();
-      el.scrollLeft = startScroll - (event.clientX - startX);
-      wrap();
+
+      let next = startScroll - (event.clientX - startX);
+      const width = cycle();
+      // Shift the drag origin along with the wrap so the drag stays continuous
+      // instead of snapping when it crosses a copy boundary.
+      if (width > 0) {
+        while (next >= width) {
+          next -= width;
+          startScroll -= width;
+        }
+        while (next < 0) {
+          next += width;
+          startScroll += width;
+        }
+      }
+      el.scrollLeft = next;
+      offset = next;
+      lastWritten = el.scrollLeft;
     };
 
     const onPointerUp = (event: PointerEvent) => {
@@ -115,6 +188,14 @@ export function LogoMarquee() {
       if (el.hasPointerCapture(event.pointerId)) {
         el.releasePointerCapture(event.pointerId);
       }
+      el.classList.remove("is-dragging");
+    };
+
+    // Safety net: a pointer released outside the element must not leave the
+    // strip stuck in `dragging` and paused forever.
+    const onWindowPointerUp = () => {
+      if (!dragging) return;
+      dragging = false;
       el.classList.remove("is-dragging");
     };
 
@@ -137,6 +218,7 @@ export function LogoMarquee() {
     el.addEventListener("pointerleave", onLeave);
     el.addEventListener("focusin", onEnter);
     el.addEventListener("focusout", onLeave);
+    window.addEventListener("pointerup", onWindowPointerUp);
     reduced.addEventListener("change", onMotionChange);
 
     start();
@@ -151,9 +233,10 @@ export function LogoMarquee() {
       el.removeEventListener("pointerleave", onLeave);
       el.removeEventListener("focusin", onEnter);
       el.removeEventListener("focusout", onLeave);
+      window.removeEventListener("pointerup", onWindowPointerUp);
       reduced.removeEventListener("change", onMotionChange);
     };
-  }, []);
+  }, [copies]);
 
   return (
     <section aria-label="Tools and platforms" className="mt-20 pb-6 md:mt-24">
@@ -173,8 +256,13 @@ export function LogoMarquee() {
         className="marquee mt-10 select-none md:mt-12"
       >
         <div className="marquee-track flex">
-          <Half />
-          <Half clone />
+          {Array.from({ length: copies }, (_, i) => (
+            <Copy
+              key={i}
+              innerRef={i === 0 ? firstCopy : undefined}
+              hidden={i > 0}
+            />
+          ))}
         </div>
       </div>
     </section>
