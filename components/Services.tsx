@@ -1,4 +1,5 @@
 import { SectionHeading } from "./SectionHeading";
+import { ServiceCta } from "./ServiceCta";
 import {
   ArrowRight,
   AutomationIcon,
@@ -16,7 +17,6 @@ import {
   type EngagementIcon,
   type ServiceIcon,
 } from "@/content/services";
-import { mailtoHref } from "@/lib/site";
 
 const iconMap: Record<ServiceIcon, typeof AutomationIcon> = {
   automation: AutomationIcon,
@@ -39,9 +39,9 @@ export function Services() {
         <SectionHeading
           index="01"
           eyebrow="What I do for businesses"
-          title="Services that turn manual work into"
-          titleItalic="reliable systems."
-          description="I work with owners and small teams who are losing hours and leads to manual processes. Here's where I help most."
+          title="From a single integration to"
+          titleItalic="a whole product."
+          description="I work with owners and small teams who need software built, systems connected, or manual work automated — usually some of each. Here's where I help most."
         />
 
         <div className="grid gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-2">
@@ -77,13 +77,7 @@ export function Services() {
                 {/* The ::after overlay makes the whole card clickable while
                     keeping one real link in the accessibility tree. Always
                     visible on touch, where there is no hover to reveal it. */}
-                <a
-                  href="#contact"
-                  className="mt-6 inline-flex items-center gap-1.5 self-start text-sm font-medium transition-opacity after:absolute after:inset-0 after:content-[''] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100"
-                >
-                  Learn more
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                </a>
+                <ServiceCta service={service.title} />
               </article>
             );
           })}
@@ -125,7 +119,7 @@ export function Services() {
           <p className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted">
             Every project is scoped and quoted after an initial call.
             <a
-              href={mailtoHref}
+              href="#contact"
               className="group inline-flex items-center gap-1 font-medium text-fg underline-offset-4 hover:underline"
             >
               Start a project
