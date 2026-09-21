@@ -47,27 +47,31 @@ export const work: WorkItem[] = [
   {
     title: "Automation & Integration Platform",
     org: "Bai Finance",
-    image: "ghl-stage-fanout.webp",
+    // The authored diagram leads, not the raw GoHighLevel canvas. At card size
+    // a screenshot of a 30-node canvas is grey texture; this one still reads
+    // the argument — two directions, one state check, echo dead — at 380px.
+    // The real canvases follow it as evidence that it actually exists.
+    image: "workflow-stage-sync.webp",
     shots: [
-      {
-        src: "ghl-stage-fanout.webp",
-        caption:
-          "The GoHighLevel side of one lending pipeline: an opportunity moving stage fans out to a branch per stage, each writing the matching opportunity on the master pipeline.",
-      },
-      {
-        src: "ghl-automation-overview.webp",
-        caption:
-          "The location's automation overview: 191 workflows, 41 of them published, and 14.1K enrollments to date.",
-      },
       {
         src: "workflow-stage-sync.webp",
         caption:
-          "The n8n side, in both directions. Each side reads where the record already is before writing; if it's already at that stage the run stops, and that check is what ended the echo loop.",
+          "The sync, in both directions. Each side reads where the record already is before it writes; if it's already at that stage the run stops. That check is what ended the echo loop.",
       },
       {
         src: "workflow-broker-routing.webp",
         caption:
           "Broker assignment: a new client is routed to the owning broker by originating BDA, and only a newly assigned broker is added as a follower and emailed.",
+      },
+      {
+        src: "ghl-stage-fanout.webp",
+        caption:
+          "The same sync on the GoHighLevel side of one lending pipeline: an opportunity moving stage fans out to a branch per stage, each writing the matching opportunity on the master pipeline.",
+      },
+      {
+        src: "ghl-automation-overview.webp",
+        caption:
+          "The location's automation overview: 191 workflows, 41 of them published, and 14.1K enrollments to date.",
       },
       {
         src: "ghl-workflow-list.webp",
@@ -95,7 +99,7 @@ export const work: WorkItem[] = [
     status: "Active",
     featured: true,
     problem:
-      "A finance brokerage ran on a brittle Google Apps Script setup. New opportunities didn't become tasks, and updates echoed back and forth as duplicates.",
+      "An Australian finance brokerage ran on a brittle Google Apps Script setup. New opportunities didn't become tasks, and updates echoed back and forth as duplicates.",
     build:
       "Architected a scalable, version-controlled automation platform on n8n with dedicated webhook endpoints and REST payload contracts, driving bidirectional GoHighLevel↔Asana sync on the GHL v2 API.",
     results: [
@@ -229,6 +233,7 @@ export const work: WorkItem[] = [
     group: "Infrastructure & Reliability",
     category: "Infrastructure",
     status: "Shipped",
+    featured: true,
     problem:
       "The automation platform ran on a hosted n8n plan. That plan went away and took its database with it. Every workflow the business depended on was gone in one afternoon, with no way to log in and get them back.",
     build:
@@ -243,41 +248,48 @@ export const work: WorkItem[] = [
     tech: ["Docker Compose", "Traefik", "Linux", "PostgreSQL", "n8n", "DNS"],
   },
   {
-    title: "Marketing Site & Admin CMS",
-    org: "Bai Finance",
-    image: "baifinance-site.webp",
+    title: "CRM Sync & Inquiry Pipeline",
+    org: "Bai Finance — company website",
+    image: "baifinance-inquiry-form.webp",
     shots: [
       {
-        src: "baifinance-site.webp",
+        src: "baifinance-inquiry-form.webp",
         caption:
-          "The public site. The exchange rate in the hero is live, not a figure someone remembers to update.",
+          "Where a lead enters. This form and the chat widget both write the same row, so one path reaches the CRM instead of two that drift apart.",
       },
       {
-        src: "baifinance-calculator.webp",
+        src: "baifinance-home-chat.webp",
         caption:
-          "One of the calculators: borrowing power, assessed with the buffer lenders actually apply rather than the headline rate.",
+          "The other entry point: the site's live chat, open on the homepage. A thread here ends by timer, by cron sweep, or by an admin — which is what made the close worth claiming explicitly.",
       },
       {
-        src: "baifinance-contact.webp",
+        src: "baifinance-inquiries-inbox.webp",
         caption:
-          "The inquiry form. Every submission lands in the CRM through the same sync function the live chat uses, so neither channel drifts.",
+          "The admin inbox, filtered by thread state — New, Open, Replied, Closed. Closing one from here is the path that races the ten-minute timer: first for the close itself, then again for the transcript email. Names and messages are blurred; these are real enquiries.",
+      },
+      {
+        src: "baifinance-analytics.webp",
+        caption:
+          "The site's analytics view, built by the web team. Figures blurred — they're the client's business volumes, not mine to publish.",
       },
     ],
-    group: "Web Apps",
-    category: "Web App",
+    group: "Backend & Data",
+    category: "Integration",
     status: "Shipped",
+    featured: true,
     problem:
-      "The brokerage needed a public site its own staff could keep current (services, calculators, blog, team) without a developer in the loop for every edit.",
+      "Leads from the brokerage's website reached GoHighLevel through an edge function that lived only in the deployed environment — unversioned, unreviewable, and named after the afternoon it was written. Separately, a chat thread could be closed by a timer, a cron sweep or an admin at the same moment, and nothing decided which one owned the close.",
     build:
-      "Built a Next.js marketing site backed by a Supabase admin CMS (services, calculators, blog, team, partners and an inquiry chat), with admin access, rate limiting and security headers all enforced before a request reaches a page.",
+      "Brought the CRM sync into the repository as a reviewed Supabase Edge Function, and built the inquiry close-and-transcript pipeline behind it: tiered contact de-duplication, two independent exactly-once claims, and the schema and indexes underneath.",
     results: [
-      "Staff publish and edit content themselves; a request to the admin area without the role gets a 404 rather than a 401, so the route never advertises that it exists",
-      "The contact form and calculators hold a 90% coverage floor in CI, across unit tests and browser tests",
-      "Every CRM write funnels through one sync function, so a chat lead and a form lead reach GoHighLevel the same way instead of drifting apart",
-      "Rate limiting is keyed by caller and path in one place, so a new endpoint can't quietly ship without it",
-      "Each release is checked by a read-only security suite run against the deployed site, not just the local build",
+      "Contact matching is tiered rather than all-or-nothing: an email match merges, a phone match merges only when the surname agrees, and a weaker match still creates the contact but tags it for review instead of silently fusing two people",
+      "A merge only fills blank fields, so an inbound lead can never overwrite good data already in the CRM",
+      "Two separate exactly-once claims, because they race on different things: one conditional update claims the close, another claims the transcript email — and a failed send releases its claim so a retry can still deliver",
+      "A closed thread now records whether a timer or a human ended it, which the two paths previously made indistinguishable",
+      "Added the two indexes the cron sweep and transcript build were missing — Postgres does not index a foreign key on its own",
+      "Backed by unit, integration and security tests, on the 90% coverage floor CI enforces for the contact path",
     ],
-    tech: ["Next.js", "Supabase", "Playwright", "Vitest", "Railway"],
+    tech: ["Supabase Edge Functions", "Deno", "TypeScript", "PostgreSQL", "GoHighLevel API", "Vitest"],
     links: [
       {
         label: "Live site",
@@ -286,6 +298,7 @@ export const work: WorkItem[] = [
       },
     ],
   },
+
   {
     title: "CRM Migration & Data Pipeline",
     org: "Bai Finance",
@@ -507,43 +520,54 @@ export const work: WorkItem[] = [
     ],
   },
   {
-    title: "BaiAcademy Learning Platform",
-    org: "Bai Finance",
-    image: "baiacademy-lms.webp",
+    title: "Audit Logging & Production Hardening",
+    org: "BaiAcademy — team-built LMS",
+    image: "baiacademy-register.webp",
     shots: [
+      {
+        src: "baiacademy-register.webp",
+        caption:
+          "The registration wizard — my component. Step one of five; the referral code a broker or BDA hands out is redeemed later in the flow, against a throttled endpoint so the codes can't be guessed by probing.",
+      },
       {
         src: "baiacademy-lms.webp",
         caption:
-          "The instructor dashboard. The sidebar is built from the signed-in role, so a student never renders these routes at all.",
+          "The platform this work shipped into: a Django REST backend behind a Next.js front end, built by a team of eight across seven roles.",
       },
       {
         src: "baiacademy-courses.webp",
         caption:
-          "Course management: publish state, enrolment and lesson progress per course, with subjects an instructor can claim.",
+          "Course management. My work sits underneath screens like this one — the logging, the deployment configuration, and the referral flow new brokers register through.",
       },
     ],
     group: "Web Apps",
-    category: "Web App",
+    category: "Backend & Platform",
     status: "Active",
+    featured: true,
     problem:
-      "The company needed an internal learning platform with role-based access and live sessions, and a QA process to keep it stable.",
+      "A learning platform written by eight people across parallel branches had no audit trail, no log retention, and a deployment configuration with origins and TLS assumptions hard-coded for one machine. Migrations from separate feature branches had also diverged into conflicting heads.",
     build:
-      "Built and QA-owned an internal LMS (a Django REST backend behind a Next.js front end) with a drag-and-drop course builder, quizzes, a community, Jitsi live sessions and server-rendered certificates, and designed its GoHighLevel enrollment integration.",
+      "Built the audit and access-logging subsystem, owned the production deployment hardening, and shipped the broker/BDA referral-code flow end to end — Django model and migrations, through DRF, to the Next.js registration wizard.",
     results: [
-      "Seven roles, each with its own dashboard; new broker, BDA and student accounts pass through a moderator review queue before they can see anything",
-      "Moderator rights are granular rather than all-or-nothing, and every account action is written to an audit log",
-      "Certificates are rendered on the server and confirmed at a public verification page that needs no login",
-      "Dashboards update over a live socket instead of polling, so a review decision shows up without a refresh",
-      "Triaged a P0–P2 defect backlog to stabilise the platform",
+      "Added application, access and audit logging as first-class models, with middleware capturing every request and a management command enforcing per-table retention windows (audit longest, access shortest) with a dry-run mode",
+      "Access logs are written by a background thread off a non-blocking queue and batched into bulk inserts, so a request never waits on a log write — and if the queue backs up, events are dropped and counted rather than slowing the site down",
+      "That writer closes its database connection after each flush, which is what the Supabase transaction pooler wants, and drains what's left on shutdown",
+      "Referral-code redemption is throttled under its own scope and logs failed attempts with the caller's IP, so the codes can't be found by probing",
+      "Made the deployment portable: environment-driven CORS and CSRF trusted origins, proxy TLS trust for the host, and WhiteNoise serving static files — replacing values pinned to one developer's machine",
+      "Shipped referral codes for broker and BDA signup across the whole stack: schema migration, a backfill for existing accounts, rate limiting on redemption, and the registration wizard and profile screens that use them",
+      "Reconciled three-way migration conflicts between feature branches that had each added a head, so the shared database could migrate cleanly again",
+      "Fixed an ASGI startup ordering bug that broke the WebSocket dashboard, and derived the socket URL from configuration instead of a hard-coded host",
     ],
-    tech: ["Next.js", "Django", "DRF", "Supabase", "Jitsi", "Railway"],
+    tech: ["Django", "DRF", "PostgreSQL", "Next.js", "TypeScript", "Railway"],
   },
+
   {
     title: "Cebuano Speech-to-Text",
     org: "Capstone Research",
     group: "Research & Systems",
     category: "Machine Learning",
     status: "Research",
+    featured: true,
     image: "asr.webp",
     problem:
       "Cebuano is a low-resource language with almost no ready speech-recognition tooling to build on.",
