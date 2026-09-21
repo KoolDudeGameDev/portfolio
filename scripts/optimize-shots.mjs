@@ -20,10 +20,42 @@ const WIDTH = 1200;
 const HEIGHT = 675;
 
 const dir = path.resolve(import.meta.dirname, "../public/assets");
-const sources = readdirSync(dir).filter((f) => /\.(png|jpe?g)$/i.test(f));
+
+/**
+ * Files that live here as PNG on purpose and must not be swept up: the share
+ * card is referenced as `og.png` by the metadata, and the `mark-*` / `kg-mark`
+ * logos are painted through `.mask-mark`, which needs the PNG alpha channel.
+ * Converting and deleting those silently breaks the share preview and the
+ * theme-inverting logos, which is exactly what this guard exists to stop.
+ */
+const KEEP_AS_PNG = /^(og|kg-mark|mark-.*)\.png$/i;
+
+// With filenames on the command line, only those are converted:
+//   npm run shots -- my-screenshot.png
+// Without, every unprotected screenshot in the folder is, as before.
+const named = process.argv.slice(2);
+
+const sources = readdirSync(dir)
+  .filter((f) => /\.(png|jpe?g)$/i.test(f))
+  .filter((f) => (named.length ? named.includes(f) : !KEEP_AS_PNG.test(f)));
+
+const skipped = readdirSync(dir).filter(
+  (f) => !named.length && KEEP_AS_PNG.test(f),
+);
+if (skipped.length) {
+  console.log(`Skipping ${skipped.length} protected PNG(s): ${skipped.join(", ")}`);
+}
+
+if (named.length) {
+  const missing = named.filter((f) => !sources.includes(f));
+  if (missing.length) {
+    console.error(`Not found in public/assets: ${missing.join(", ")}`);
+    process.exit(1);
+  }
+}
 
 if (!sources.length) {
-  console.log("No .png/.jpg files in public/assets — nothing to do.");
+  console.log("No .png/.jpg files to convert in public/assets — nothing to do.");
   process.exit(0);
 }
 
