@@ -43,11 +43,18 @@ export function About() {
               data architecture.
             </p>
             <p>
-              Day to day I build live integrations across GoHighLevel, n8n,
-              Asana, and Supabase with JavaScript, Python, and SQL. I care about
-              the boring parts that keep software alive: clear contracts,
-              honest error handling, backups, and documentation the next person
-              can actually follow.
+              Day to day that runs from a React front end and a Postgres schema
+              to a REST integration between two systems that were never meant
+              to talk to each other. I work in JavaScript, TypeScript, Python
+              and SQL, and I care about the boring parts that keep software
+              alive: clear contracts, honest error handling, backups, and
+              documentation the next person can actually follow.
+            </p>
+            <p>
+              Most of that work is for clients offshore — currently an
+              Australian finance brokerage, and an ecommerce platform I support
+              under contract through a software agency. Working across
+              timezones is the normal case for me, not the exception.
             </p>
             <p>
               I also lead a six-person engineering team at the brokerage,
@@ -59,9 +66,9 @@ export function About() {
               finished.
             </p>
             <p>
-              Whether it&apos;s automating a brokerage&apos;s pipeline or
-              training a speech model from scratch, I like owning a problem from
-              the database to the deployed product.
+              Whether it&apos;s a brokerage&apos;s pipeline, a learning
+              platform, or a speech model trained from scratch, I like owning a
+              problem from the database to the deployed product.
             </p>
           </div>
         </div>

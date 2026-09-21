@@ -1,10 +1,13 @@
 import { ArrowRight, ArrowUpRight } from "./Icons";
-import { site, mailtoHref } from "@/lib/site";
+import { site } from "@/lib/site";
 
-// Every figure here traces back to a case study in content/work.ts.
+// Every figure here traces back to a case study in content/work.ts, and each
+// one does a different job: scale, data, breadth, responsiveness. There was a
+// fifth, and it kept being filler — first a stage count that just restated the
+// workflow count, then a language count nobody cares about. The range argument
+// belongs to the paragraph above and to the Work grid, not to a spare tile.
 const stats = [
   { value: "190+", label: "Workflows on the platform" },
-  { value: "30+", label: "Pipeline stages automated" },
   { value: "1,900+", label: "CRM contacts consolidated" },
   { value: "5+", label: "Platforms integrated" },
   { value: "<24h", label: "Incident response" },
@@ -35,16 +38,16 @@ export function Hero() {
         </h1>
 
         <p className="mt-7 max-w-2xl text-lg leading-relaxed text-muted md:text-xl">
-          I&apos;m {site.name}. I ship production automation, backends, and web
-          applications end to end, from REST API contracts and webhooks to
-          access-control logic and CRM data architecture. Right now that&apos;s
-          a platform of 190+ workflows connecting GoHighLevel, n8n, Asana, and
-          Supabase.
+          I&apos;m {site.name}. I build software end to end — web apps,
+          backends, REST APIs, and the automation that wires them together. I
+          pick the stack to fit the problem, not the other way round. Right now
+          that&apos;s a 190+ workflow platform for an Australian finance
+          brokerage, on n8n, GoHighLevel, Asana and Supabase.
         </p>
 
         <div className="mt-10 flex flex-wrap items-center gap-4">
           <a
-            href={mailtoHref}
+            href="#contact"
             className="group inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-medium text-accent-fg transition-opacity hover:opacity-90"
           >
             Start a project
@@ -59,9 +62,9 @@ export function Hero() {
           </a>
         </div>
 
-        {/* Flex-wrapped rather than a grid: five figures never divide evenly
-            into two or three columns, and a grid strands the last one against
-            the left edge. Wrapping centres whatever ends up on the last row. */}
+        {/* Flex-wrapped rather than a grid, so the row stays right whatever the
+            count: a grid strands an odd last figure against the left edge,
+            wrapping centres whatever lands on the final row. */}
         <dl className="mt-12 flex flex-wrap justify-center gap-x-10 gap-y-8 border-t border-border pt-10 text-center md:mt-16 md:gap-x-16">
           {stats.map((stat) => (
             <div key={stat.label} className="w-36 md:w-auto md:min-w-[7.5rem]">

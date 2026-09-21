@@ -32,7 +32,7 @@ export function Work() {
           eyebrow="Selected work"
           title="Real systems, built to"
           titleItalic="survive production."
-          description="Client automation, backend systems, open-source reference workflows and research, each framed by the problem it solved."
+          description="Web apps, client automation, backend systems, open-source reference workflows and research — each framed by the problem it solved."
         />
 
         <div className="mb-10 flex flex-wrap gap-2">

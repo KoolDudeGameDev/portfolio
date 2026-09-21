@@ -11,9 +11,9 @@ export const experience: ExperienceItem[] = [
     period: "May 2026 — Sep 2026",
     role: "Automation & Systems Integration Engineer",
     org: "Bai Finance",
-    location: "Cebu, Philippines",
+    location: "Australia · remote from Cebu",
     summary:
-      "Owned a version-controlled n8n automation platform integrating GoHighLevel and Asana across a 19-pipeline brokerage, shipped its marketing site, admin CMS, and a company-wide leave platform, and led a six-person engineering team on builds, code reviews, and documentation standards.",
+      "Owned a version-controlled n8n automation platform integrating GoHighLevel and Asana across a 19-pipeline brokerage, built the CRM sync and inquiry pipeline behind the company website and a company-wide leave platform, and led a six-person engineering team on builds, code reviews, and documentation standards.",
   },
   {
     period: "Jun 2026 — Sep 2026",

@@ -23,15 +23,20 @@ const fraunces = Fraunces({
 export const metadata: Metadata = {
   title: "Kyle Gregory Ibo — Automation & Systems Integration Engineer",
   description:
-    "I build the automations, integrations, and backends that make businesses run themselves: n8n, CRM systems, REST APIs, and web apps that turn manual work into reliable systems.",
+    "I build software end to end — web apps, backends, REST APIs, and the automation that wires them together. Working remotely with clients in Australia and the Philippines.",
   keywords: [
+    "full-stack developer",
     "automation engineer",
     "systems integration",
+    "web developer",
     "n8n",
     "GoHighLevel",
     "backend developer",
+    "React",
+    "TypeScript",
     "Supabase",
     "Next.js",
+    "remote developer Philippines",
     "Kyle Gregory Ibo",
   ],
   authors: [{ name: "Kyle Gregory Ibo" }],
@@ -41,7 +46,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Kyle Gregory Ibo — Automation & Systems Integration Engineer",
     description:
-      "Automations, integrations, and backends that make businesses run themselves.",
+      "Web apps, backends, APIs, and the automation that wires them together.",
     type: "website",
     url: asset("/"),
     siteName: "Kyle Gregory Ibo",
@@ -58,7 +63,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Kyle Gregory Ibo — Automation & Systems Integration Engineer",
     description:
-      "Automations, integrations, and backends that make businesses run themselves.",
+      "Web apps, backends, APIs, and the automation that wires them together.",
     images: [asset("/assets/og.png")],
   },
 };
