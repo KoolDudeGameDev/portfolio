@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { ThemeToggle } from "./ThemeToggle";
 import { ResumeModal } from "./ResumeModal";
 import { Menu, Close, FileIcon } from "./Icons";
-import { site, mailtoHref } from "@/lib/site";
+import { site } from "@/lib/site";
 
 const links = [
   { href: "#services", label: "Services" },
@@ -26,11 +26,21 @@ export function Navbar() {
       .map((id) => document.getElementById(id))
       .filter((el): el is HTMLElement => el !== null);
 
+    // The observer only reports what *changed*, so what is currently inside the
+    // band has to be tracked here. Setting `active` straight from each entry
+    // never clears it, which left the last match lit all the way through About,
+    // FAQ and Contact — sections the nav doesn't even list.
+    const visible = new Set<string>();
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) setActive(entry.target.id);
+          if (entry.isIntersecting) visible.add(entry.target.id);
+          else visible.delete(entry.target.id);
         });
+        // Document order, so the brief overlap while one section hands off to
+        // the next resolves the same way every time instead of by callback luck.
+        setActive(ids.find((id) => visible.has(id)) ?? "");
       },
       { rootMargin: "-45% 0px -50% 0px" },
     );
@@ -50,6 +60,16 @@ export function Navbar() {
     // Floats clear of the page rather than sitting on a full-width band, so the
     // cream ground runs behind it and the bar reads as a control, not a header.
     <header className="fixed inset-x-0 top-3 z-50 px-4 sm:top-4 sm:px-6">
+      {/* The pill only covers the middle 1024px, so full-bleed rows — the logo
+          marquee most of all — scroll past it on both sides at exactly nav
+          height and read as a collision. This catches them across the full
+          width. Blur rather than a colour band, so it works over both `--bg`
+          and `--surface` sections without tinting either, and masked out at the
+          bottom so the pill still floats instead of sitting on a header bar. */}
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-24 backdrop-blur-md [mask-image:linear-gradient(to_bottom,#000_55%,transparent)]"
+      />
       <nav
         className={`mx-auto flex max-w-5xl items-center justify-between gap-4 rounded-full border py-2 pl-5 pr-2 transition-all duration-300 ${
           scrolled
@@ -92,7 +112,7 @@ export function Navbar() {
               Résumé
             </button>
             <a
-              href={mailtoHref}
+              href="#contact"
               className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-fg transition-opacity hover:opacity-90"
             >
               Start a project
@@ -148,7 +168,7 @@ export function Navbar() {
             </li>
             <li className="pt-2">
               <a
-                href={mailtoHref}
+                href="#contact"
                 onClick={() => setOpen(false)}
                 className="inline-flex rounded-full bg-accent px-4 py-2 font-medium text-accent-fg"
               >
