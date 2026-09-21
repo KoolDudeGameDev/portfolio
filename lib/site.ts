@@ -21,6 +21,13 @@ export const site = {
   role: "Automation & Systems Integration Engineer",
   email: "gregoryibo7@gmail.com",
   location: "Cebu, Philippines",
+  /**
+   * Cal.com (or similar) link for a short intro call. Picking a slot is a far
+   * smaller commitment than composing a message, so this converts better than
+   * the form for anyone still deciding. Empty string hides the button
+   * entirely — paste a URL here and it appears beside the form.
+   */
+  bookingUrl: "",
   socials: {
     github: "https://github.com/KoolDudeGameDev",
     linkedin: "https://www.linkedin.com/in/kyle-gregory-ibo-a89455301/",

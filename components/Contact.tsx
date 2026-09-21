@@ -1,4 +1,5 @@
-import { Mail, Linkedin, MapPin, Github, ArrowRight } from "./Icons";
+import { Mail, Linkedin, MapPin, Github } from "./Icons";
+import { ContactForm } from "./ContactForm";
 import { site, mailtoHref } from "@/lib/site";
 
 const channels = [
@@ -23,7 +24,7 @@ const channels = [
   {
     icon: MapPin,
     label: site.location,
-    sub: "Working with clients remotely",
+    sub: "Remote — working across AU and PH timezones",
     href: site.socials.maps,
   },
 ];
@@ -60,15 +61,8 @@ export function Contact() {
             Currently accepting new clients
           </p>
 
-          <div className="mt-7">
-            <a
-              href={mailtoHref}
-              className="group inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 text-sm font-medium text-accent-fg transition-opacity hover:opacity-90"
-            >
-              <Mail className="h-4 w-4" />
-              Email me
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-            </a>
+          <div className="mt-9">
+            <ContactForm />
           </div>
 
           <div className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-border bg-border text-left sm:grid-cols-2">

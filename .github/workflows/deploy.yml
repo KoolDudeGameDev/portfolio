@@ -28,6 +28,14 @@ jobs:
         run: npm ci
       - name: Build static site
         run: npm run build
+        env:
+          # Compiled into the bundle, so it must be present at build time — a
+          # missing key doesn't fail the build, it just degrades the contact
+          # form back to a mailto link. Set it under Settings → Secrets and
+          # variables → Actions → Variables (not Secrets: NEXT_PUBLIC_* values
+          # are public by definition, and a masked secret only makes the build
+          # log harder to read).
+          NEXT_PUBLIC_WEB3FORMS_KEY: ${{ vars.NEXT_PUBLIC_WEB3FORMS_KEY }}
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
