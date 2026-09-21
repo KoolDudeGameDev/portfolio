@@ -11,6 +11,7 @@ import {
 } from "./Icons";
 import { type WorkItem } from "@/content/work";
 import { asset } from "@/lib/site";
+import { useDialog } from "@/lib/useDialog";
 
 function linkHref(href: string) {
   return href.startsWith("http") ? href : asset(href);
@@ -24,7 +25,6 @@ export function WorkModal({
   onClose: () => void;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
-  const restoreFocusRef = useRef<HTMLElement | null>(null);
   const [shot, setShot] = useState(0);
 
   // A card may carry several visuals (a UI screenshot plus the workflow behind
@@ -49,31 +49,23 @@ export function WorkModal({
     setShot(0);
   }, [item]);
 
-  // Close on Escape, lock body scroll, and park focus inside the dialog —
-  // same contract as ResumeModal.
-  useEffect(() => {
-    if (!item) return;
+  // Escape, scroll lock, focus park/restore and the Tab trap all live in
+  // useDialog; only the carousel shortcuts are this dialog's own.
+  const onKey = useCallback(
+    (event: KeyboardEvent) => {
+      if (count <= 1) return;
+      if (event.key === "ArrowLeft") prev();
+      if (event.key === "ArrowRight") next();
+    },
+    [count, prev, next],
+  );
 
-    restoreFocusRef.current = document.activeElement as HTMLElement | null;
-
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-      if (count > 1 && e.key === "ArrowLeft") prev();
-      if (count > 1 && e.key === "ArrowRight") next();
-    };
-    document.addEventListener("keydown", onKeyDown);
-
-    const { overflow } = document.body.style;
-    document.body.style.overflow = "hidden";
-
-    panelRef.current?.focus();
-
-    return () => {
-      document.removeEventListener("keydown", onKeyDown);
-      document.body.style.overflow = overflow;
-      restoreFocusRef.current?.focus();
-    };
-  }, [item, onClose, count, prev, next]);
+  useDialog({
+    open: item !== null,
+    onClose,
+    panelRef,
+    onKey,
+  });
 
   if (!item) return null;
 

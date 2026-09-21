@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { createPortal } from "react-dom";
 import { Close, Download, ArrowUpRight } from "./Icons";
 import { asset, site } from "@/lib/site";
+import { useDialog } from "@/lib/useDialog";
 
 const RESUME_PATH = "/assets/Kyle_Gregory_Ibo_Resume.pdf";
 const FILE_NAME = "Kyle_Gregory_Ibo_Resume.pdf";
@@ -45,30 +46,9 @@ export function ResumeModal({
   onClose: () => void;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
-  const restoreFocusRef = useRef<HTMLElement | null>(null);
 
-  // Close on Escape, lock body scroll, and park focus inside the dialog.
-  useEffect(() => {
-    if (!open) return;
-
-    restoreFocusRef.current = document.activeElement as HTMLElement | null;
-
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", onKeyDown);
-
-    const { overflow } = document.body.style;
-    document.body.style.overflow = "hidden";
-
-    panelRef.current?.focus();
-
-    return () => {
-      document.removeEventListener("keydown", onKeyDown);
-      document.body.style.overflow = overflow;
-      restoreFocusRef.current?.focus();
-    };
-  }, [open, onClose]);
+  // Escape, scroll lock, focus park/restore and the Tab trap — see useDialog.
+  useDialog({ open, onClose, panelRef });
 
   if (!open) return null;
 
