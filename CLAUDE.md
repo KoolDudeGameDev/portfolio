@@ -91,16 +91,27 @@ not a raw canvas screenshot** — a 30-node canvas at 380px is grey texture, and
 is what has to survive the thumbnail.
 
 1. **Authored SVG diagrams** — [scripts/diagrams/](scripts/diagrams/) `*.html`, hand-written
-   SVG at 1200×675 with `<title>`/`<desc>`. The best option: legible at card size, and you
-   control what it says. Keep them to ~9 nodes; past that it's two diagrams.
-2. **`npm run` → [scripts/render-workflow.mjs](scripts/render-workflow.mjs)** — renders an
+   SVG at 1200×675 with `<title>`/`<desc>`, built by **`npm run diagrams`**
+   ([scripts/render-diagrams.mjs](scripts/render-diagrams.mjs) — headless Chromium at 2× DPR,
+   then sharp to WebP). It writes only the diagrams' own `.webp` files and touches nothing
+   else in `public/assets`, so it sidesteps the `npm run shots` landmine below. One file
+   per diagram; `npm run diagrams -- stage-sync` rebuilds just one. If the output name
+   differs from the source name, add it to `OUTPUT_NAME` in that script.
+   ☠️ **The card renders a 1200×675 image at 368×207 — 30.7%.** A 12px node name is 3.7px
+   there, which is why every diagram in this folder was redrawn in 2026-10. **Node names
+   never go below 24px**, sublabels 15–17px, labels and legend 13px. Keep to ~6 nodes and
+   prefer **two rows over one long row** — a single left-to-right row is what leaves the
+   bottom half of the frame empty. The full contract lives in
+   [scripts/diagrams/README.md](scripts/diagrams/README.md); read it before adding one.
+2. **`npm run workflow` → [scripts/render-workflow.mjs](scripts/render-workflow.mjs)** — renders an
    n8n workflow *export* into a texture-style canvas. **Confidentiality:** it deliberately
    reads only node names, types, connections and sticky-note geometry — never parameters or
    sticky text, which carry live emails, phone numbers and endpoints. Keep source JSON out
    of this repo.
 3. **`npm run shots` → [scripts/optimize-shots.mjs](scripts/optimize-shots.mjs)** — raw
    screenshots centre-cropped to 1200×675 WebP. Use as supporting evidence *after* a
-   diagram, not as the lead.
+   diagram, not as the lead. **Not for `scripts/diagrams/` output** — that is `npm run
+   diagrams`, which writes WebP directly and never scans the folder.
    ☠️ **It converts EVERY `.png`/`.jpg` in `public/assets` and deletes the original.** That
    includes `og.png` and the `mark-*.png` brand logos, which are referenced as PNG and must
    stay PNG — it will silently break the share card and the masked logos. Move the one new
