@@ -156,8 +156,13 @@ export const work: WorkItem[] = [
   {
     title: "Leave Application Platform",
     org: "Bai Finance",
-    image: "n8n-leave-intake.webp",
+    image: "workflow-leave-intake.webp",
     shots: [
+      {
+        src: "workflow-leave-intake.webp",
+        caption:
+          "The balance is computed once, in SQL, by the HR app's own accrual engine — so the two systems cannot quote different numbers for the same person.",
+      },
       {
         src: "n8n-leave-intake.webp",
         caption:
@@ -380,8 +385,13 @@ export const work: WorkItem[] = [
   {
     title: "Idempotent Webhook Intake",
     org: "Open source n8n workflow",
-    image: "ref-idempotent-intake.webp",
+    image: "workflow-idempotent-intake.webp",
     shots: [
+      {
+        src: "workflow-idempotent-intake.webp",
+        caption:
+          "The key is a hash of the caller's own fields, so a retry keys the same — and a unique index on it catches the race the check cannot.",
+      },
       {
         src: "ref-idempotent-intake.webp",
         caption:
@@ -413,8 +423,13 @@ export const work: WorkItem[] = [
   {
     title: "More Open-Source Workflows",
     org: "Open source n8n workflows",
-    image: "ref-health-check.webp",
+    image: "workflow-open-source-set.webp",
     shots: [
+      {
+        src: "workflow-open-source-set.webp",
+        caption:
+          "Three workflows, each defined by what it does when something goes wrong rather than by its happy path.",
+      },
       {
         src: "ref-health-check.webp",
         caption:
@@ -456,12 +471,17 @@ export const work: WorkItem[] = [
   {
     title: "RAG Gmail Reply Assistant",
     org: "Open source n8n workflow",
-    image: "n8n-rag-gmail.webp",
+    image: "workflow-rag-gmail.webp",
     shots: [
+      {
+        src: "workflow-rag-gmail.webp",
+        caption:
+          "Triage runs before retrieval, and there is no send step anywhere — the ceiling is a draft a person reads and sends.",
+      },
       {
         src: "n8n-rag-gmail.webp",
         caption:
-          "Triage first, retrieval second, and no send step anywhere. The best this workflow can do is leave a draft for a person to send.",
+          "The workflow itself: the question lane above, the document lane that fills the knowledge base below, sharing one embedding model.",
       },
     ],
     group: "Automation",
@@ -489,8 +509,13 @@ export const work: WorkItem[] = [
   {
     title: "Invoice Intake & Approval Queue",
     org: "Open source n8n workflow",
-    image: "n8n-invoice-queue.webp",
+    image: "workflow-invoice-queue.webp",
     shots: [
+      {
+        src: "workflow-invoice-queue.webp",
+        caption:
+          "One row IN_REVIEW is the whole queue lock, and two days without an answer releases the invoice rather than rejecting it.",
+      },
       {
         src: "n8n-invoice-queue.webp",
         caption:

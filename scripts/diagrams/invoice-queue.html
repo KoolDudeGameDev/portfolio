@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Invoice approval queue</title>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #171a24; font-family: 'Geist', system-ui, sans-serif; }
+    svg#d { width: 1200px; height: 675px; display: block; }
+  </style>
+</head>
+<body>
+  <svg id="d" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg"
+       role="img" aria-labelledby="inv-title inv-desc">
+    <title id="inv-title">Invoice approval queue</title>
+    <desc id="inv-desc">The approval lane wakes every fifteen minutes and does nothing at all while any row is already in review, which is the whole queue lock. Otherwise it takes the oldest queued invoice and asks one approver. An answer is recorded in the masterfile; no answer within two days releases the invoice back to the queue, so a missed email never silently rejects an invoice.</desc>
+
+    <defs>
+      <marker id="arrow" markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto"><polygon points="0 0, 6 2.5, 0 5" fill="#9aa4bd"/></marker>
+      <marker id="arrow-accent" markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto"><polygon points="0 0, 6 2.5, 0 5" fill="#ea4b71"/></marker>
+      <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="rgba(232,236,245,0.07)"/></pattern>
+    </defs>
+
+    <rect width="100%" height="100%" fill="#171a24"/>
+    <rect width="100%" height="100%" fill="url(#dots)"/>
+
+    <!-- header -->
+    <text x="56" y="84" fill="#7f8aa5" font-size="13" font-family="'Geist Mono', monospace" letter-spacing="0.14em">INVOICE APPROVAL · ONE IN REVIEW AT A TIME, AND NO DEAD ENDS</text>
+    <line x1="56" y1="104" x2="1144" y2="104" stroke="rgba(232,236,245,0.10)" stroke-width="1"/>
+
+    <!-- wires -->
+    <g fill="none" stroke="#9aa4bd" stroke-width="2.4">
+      <path d="M280,212 H336" marker-end="url(#arrow)"/>
+      <path d="M568,212 H624" marker-end="url(#arrow)"/>
+      <path d="M856,212 H912" marker-end="url(#arrow)"/>
+      <path d="M1032,264 V340" marker-end="url(#arrow)"/>
+      <path d="M920,400 H892" marker-end="url(#arrow)"/>
+    </g>
+    <path d="M1032,452 V540 H892" fill="none" stroke="#ea4b71" stroke-width="2.4" marker-end="url(#arrow-accent)"/>
+    <text x="912" y="380" fill="#7f8aa5" font-size="13" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">YES</text>
+    <text x="1014" y="486" fill="#7f8aa5" font-size="13" font-family="'Geist Mono', monospace" text-anchor="end" letter-spacing="0.08em">2 DAYS, NO REPLY</text>
+
+    <!-- row 1 -->
+    <rect x="56" y="160" width="224" height="104" rx="52" fill="#171a24"/>
+    <rect x="56" y="160" width="224" height="104" rx="52" fill="rgba(52,211,153,0.06)" stroke="#34d399" stroke-width="1.4"/>
+    <circle cx="168" cy="182" r="6" fill="#34d399"/>
+    <text x="168" y="218" fill="#e8ecf5" font-size="24" font-weight="600" text-anchor="middle">Every 15 min</text>
+    <text x="168" y="242" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace" text-anchor="middle">schedule</text>
+
+    <rect x="344" y="160" width="224" height="104" rx="8" fill="#232838" stroke="#39415a" stroke-width="1.2"/>
+    <circle cx="456" cy="182" r="6" fill="#fbbf24"/>
+    <text x="456" y="218" fill="#e8ecf5" font-size="24" font-weight="600" text-anchor="middle">Any IN_REVIEW?</text>
+    <text x="456" y="242" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace" text-anchor="middle">if so, do nothing</text>
+
+    <rect x="632" y="160" width="224" height="104" rx="8" fill="#232838" stroke="#39415a" stroke-width="1.2"/>
+    <circle cx="744" cy="182" r="6" fill="#c084fc"/>
+    <text x="744" y="218" fill="#e8ecf5" font-size="24" font-weight="600" text-anchor="middle">Take the oldest</text>
+    <text x="744" y="242" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace" text-anchor="middle">one row, marked</text>
+
+    <rect x="920" y="160" width="224" height="104" rx="8" fill="#232838" stroke="#39415a" stroke-width="1.2"/>
+    <circle cx="1032" cy="182" r="6" fill="#f87171"/>
+    <text x="1032" y="218" fill="#e8ecf5" font-size="24" font-weight="600" text-anchor="middle">Ask the approver</text>
+    <text x="1032" y="242" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace" text-anchor="middle">sendAndWait</text>
+
+    <!-- gate -->
+    <path d="M920,400 L1032,340 L1144,400 L1032,452 Z" fill="#232838" stroke="#39415a" stroke-width="1.2"/>
+    <circle cx="1032" cy="374" r="6" fill="#fbbf24"/>
+    <text x="1032" y="412" fill="#e8ecf5" font-size="22" font-weight="600" text-anchor="middle">Answered?</text>
+
+    <!-- recorded -->
+    <rect x="612" y="348" width="280" height="104" rx="8" fill="#232838" stroke="#39415a" stroke-width="1.2"/>
+    <circle cx="752" cy="370" r="6" fill="#c084fc"/>
+    <text x="752" y="406" fill="#e8ecf5" font-size="24" font-weight="600" text-anchor="middle">Record it</text>
+    <text x="752" y="430" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace" text-anchor="middle">masterfile + accounts</text>
+
+    <!-- FOCAL: nothing is ever stranded -->
+    <rect x="612" y="496" width="280" height="88" rx="44" fill="#171a24"/>
+    <rect x="612" y="496" width="280" height="88" rx="44" fill="rgba(234,75,113,0.10)" stroke="#ea4b71" stroke-width="1.6"/>
+    <text x="752" y="536" fill="#ffffff" font-size="24" font-weight="600" text-anchor="middle">Released</text>
+    <text x="752" y="560" fill="#f3aec0" font-size="15" font-family="'Geist Mono', monospace" text-anchor="middle">back on the queue</text>
+
+    <!-- what the intake lane guarantees -->
+    <rect x="56" y="348" width="488" height="240" rx="10" fill="rgba(232,236,245,0.02)" stroke="rgba(232,236,245,0.10)" stroke-width="1"/>
+    <text x="84" y="386" fill="#7f8aa5" font-size="13" font-family="'Geist Mono', monospace" letter-spacing="0.14em">THE OTHER LANE, MEANWHILE</text>
+    <line x1="84" y1="402" x2="516" y2="402" stroke="rgba(232,236,245,0.08)" stroke-width="1"/>
+    <circle cx="92" cy="434" r="5" fill="#34d399"/>
+    <text x="110" y="440" fill="#e8ecf5" font-size="17" font-family="'Geist Mono', monospace">Intake never waits on approval,</text>
+    <text x="110" y="462" fill="#e8ecf5" font-size="17" font-family="'Geist Mono', monospace">so invoices keep queueing</text>
+    <circle cx="92" cy="496" r="5" fill="#818cf8"/>
+    <text x="110" y="502" fill="#e8ecf5" font-size="17" font-family="'Geist Mono', monospace">SHA-256 of vendor, number</text>
+    <text x="110" y="524" fill="#e8ecf5" font-size="17" font-family="'Geist Mono', monospace">and amount catches a resend</text>
+    <circle cx="92" cy="558" r="5" fill="#fbbf24"/>
+    <text x="110" y="564" fill="#e8ecf5" font-size="17" font-family="'Geist Mono', monospace">One IN_REVIEW row is the lock</text>
+
+    <!-- legend -->
+    <line x1="56" y1="612" x2="1144" y2="612" stroke="rgba(232,236,245,0.12)" stroke-width="1"/>
+    <text x="56" y="644" fill="#7f8aa5" font-size="13" font-family="'Geist Mono', monospace" letter-spacing="0.14em">N8N NODE</text>
+    <circle cx="196" cy="639" r="6" fill="#34d399"/>
+    <text x="212" y="644" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace">schedule</text>
+    <circle cx="372" cy="639" r="6" fill="#fbbf24"/>
+    <text x="388" y="644" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace">if</text>
+    <circle cx="488" cy="639" r="6" fill="#c084fc"/>
+    <text x="504" y="644" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace">sheet</text>
+    <circle cx="632" cy="639" r="6" fill="#f87171"/>
+    <text x="648" y="644" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace">gmail</text>
+    <circle cx="776" cy="639" r="6" fill="#ea4b71"/>
+    <text x="792" y="644" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace">nothing is stranded</text>
+  </svg>
+</body>
+</html>

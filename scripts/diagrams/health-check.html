@@ -17,88 +17,92 @@
     <desc id="hc-desc">Every morning a script runs five kinds of check against production. Two are real transactions, a signup and a login with a token refresh, and both clean up after themselves. Three are read-only probes: every edge function, every workflow's failed runs in the last day, and vendor status scoped to the parts actually used. All of it lands in one report that says how each status was proven.</desc>
 
     <defs>
-      <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#9aa4bd"/></marker>
-      <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#ea4b71"/></marker>
+      <marker id="arrow" markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto"><polygon points="0 0, 6 2.5, 0 5" fill="#9aa4bd"/></marker>
+      <marker id="arrow-accent" markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto"><polygon points="0 0, 6 2.5, 0 5" fill="#ea4b71"/></marker>
       <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="rgba(232,236,245,0.07)"/></pattern>
     </defs>
 
     <rect width="100%" height="100%" fill="#171a24"/>
     <rect width="100%" height="100%" fill="url(#dots)"/>
 
+    <!-- header -->
+    <text x="56" y="84" fill="#7f8aa5" font-size="13" font-family="'Geist Mono', monospace" letter-spacing="0.14em">DAILY HEALTH CHECK · ONE SCHEDULED RUN</text>
+    <line x1="56" y1="104" x2="1144" y2="104" stroke="rgba(232,236,245,0.10)" stroke-width="1"/>
+
     <!-- fan out -->
-    <g fill="none" stroke="#9aa4bd" stroke-width="1.4">
-      <path d="M232,300 H300"/>
-      <path d="M300,128 V472"/>
-      <path d="M300,128 H436" marker-end="url(#arrow)"/>
-      <path d="M300,214 H436" marker-end="url(#arrow)"/>
-      <path d="M300,300 H436" marker-end="url(#arrow)"/>
-      <path d="M300,386 H436" marker-end="url(#arrow)"/>
-      <path d="M300,472 H436" marker-end="url(#arrow)"/>
+    <g fill="none" stroke="#9aa4bd" stroke-width="2.4">
+      <path d="M328,366 H376"/>
+      <path d="M376,182 V550"/>
+      <path d="M376,182 H412" marker-end="url(#arrow)"/>
+      <path d="M376,274 H412" marker-end="url(#arrow)"/>
+      <path d="M376,366 H412" marker-end="url(#arrow)"/>
+      <path d="M376,458 H412" marker-end="url(#arrow)"/>
+      <path d="M376,550 H412" marker-end="url(#arrow)"/>
     </g>
     <!-- fan in -->
-    <g fill="none" stroke="#9aa4bd" stroke-width="1.4">
-      <path d="M660,128 H760"/>
-      <path d="M660,214 H760"/>
-      <path d="M660,300 H760"/>
-      <path d="M660,386 H760"/>
-      <path d="M660,472 H760"/>
-      <path d="M760,128 V472"/>
+    <g fill="none" stroke="#9aa4bd" stroke-width="2.4">
+      <path d="M788,182 H836"/>
+      <path d="M788,274 H836"/>
+      <path d="M788,366 H836"/>
+      <path d="M788,458 H836"/>
+      <path d="M788,550 H836"/>
+      <path d="M836,182 V550"/>
     </g>
-    <path d="M760,300 H868" fill="none" stroke="#ea4b71" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+    <path d="M836,366 H868" fill="none" stroke="#ea4b71" stroke-width="2.4" marker-end="url(#arrow-accent)"/>
 
     <!-- trigger -->
-    <rect x="72" y="268" width="160" height="64" rx="32" fill="#171a24"/>
-    <rect x="72" y="268" width="160" height="64" rx="32" fill="rgba(52,211,153,0.06)" stroke="#34d399" stroke-width="1"/>
-    <circle cx="152" cy="284" r="4" fill="#34d399"/>
-    <text x="152" y="308" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">Every morning</text>
-    <text x="152" y="322" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">one scheduled run</text>
+    <rect x="56" y="314" width="272" height="104" rx="52" fill="#171a24"/>
+    <rect x="56" y="314" width="272" height="104" rx="52" fill="rgba(52,211,153,0.06)" stroke="#34d399" stroke-width="1.4"/>
+    <circle cx="192" cy="336" r="6" fill="#34d399"/>
+    <text x="192" y="372" fill="#e8ecf5" font-size="24" font-weight="600" text-anchor="middle">Every morning</text>
+    <text x="192" y="396" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace" text-anchor="middle">one scheduled run</text>
 
     <!-- checks -->
     <g>
-      <rect x="440" y="96" width="220" height="64" rx="6" fill="#232838" stroke="#39415a"/>
-      <circle cx="550" cy="112" r="4" fill="#c084fc"/>
-      <text x="550" y="136" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">A real signup</text>
-      <text x="550" y="150" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">verified, then its data deleted</text>
+      <rect x="416" y="144" width="372" height="76" rx="8" fill="#232838" stroke="#39415a" stroke-width="1.2"/>
+      <circle cx="440" cy="172" r="5" fill="#c084fc"/>
+      <text x="458" y="180" fill="#e8ecf5" font-size="24" font-weight="600">A real signup</text>
+      <text x="458" y="204" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace">verified, then its data deleted</text>
 
-      <rect x="440" y="182" width="220" height="64" rx="6" fill="#232838" stroke="#39415a"/>
-      <circle cx="550" cy="198" r="4" fill="#c084fc"/>
-      <text x="550" y="222" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">A real login</text>
-      <text x="550" y="236" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">sign in → refresh → whoami</text>
+      <rect x="416" y="236" width="372" height="76" rx="8" fill="#232838" stroke="#39415a" stroke-width="1.2"/>
+      <circle cx="440" cy="264" r="5" fill="#c084fc"/>
+      <text x="458" y="272" fill="#e8ecf5" font-size="24" font-weight="600">A real login</text>
+      <text x="458" y="296" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace">sign in → refresh → whoami</text>
 
-      <rect x="440" y="268" width="220" height="64" rx="6" fill="#232838" stroke="#39415a"/>
-      <circle cx="550" cy="284" r="4" fill="#818cf8"/>
-      <text x="550" y="308" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">Every edge function</text>
-      <text x="550" y="322" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">401 live · 404 gone · 5xx crashing</text>
+      <rect x="416" y="328" width="372" height="76" rx="8" fill="#232838" stroke="#39415a" stroke-width="1.2"/>
+      <circle cx="440" cy="356" r="5" fill="#818cf8"/>
+      <text x="458" y="364" fill="#e8ecf5" font-size="24" font-weight="600">Every edge function</text>
+      <text x="458" y="388" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace">401 live · 404 gone · 5xx crashing</text>
 
-      <rect x="440" y="354" width="220" height="64" rx="6" fill="#232838" stroke="#39415a"/>
-      <circle cx="550" cy="370" r="4" fill="#818cf8"/>
-      <text x="550" y="394" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">Every workflow's failures</text>
-      <text x="550" y="408" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">all workflows, last 24 hours</text>
+      <rect x="416" y="420" width="372" height="76" rx="8" fill="#232838" stroke="#39415a" stroke-width="1.2"/>
+      <circle cx="440" cy="448" r="5" fill="#818cf8"/>
+      <text x="458" y="456" fill="#e8ecf5" font-size="24" font-weight="600">Workflow failures</text>
+      <text x="458" y="480" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace">all workflows, last 24 hours</text>
 
-      <rect x="440" y="440" width="220" height="64" rx="6" fill="#232838" stroke="#39415a"/>
-      <circle cx="550" cy="456" r="4" fill="#818cf8"/>
-      <text x="550" y="480" fill="#e8ecf5" font-size="12" font-weight="600" text-anchor="middle">Vendor status</text>
-      <text x="550" y="494" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">only the parts we depend on</text>
+      <rect x="416" y="512" width="372" height="76" rx="8" fill="#232838" stroke="#39415a" stroke-width="1.2"/>
+      <circle cx="440" cy="540" r="5" fill="#818cf8"/>
+      <text x="458" y="548" fill="#e8ecf5" font-size="24" font-weight="600">Vendor status</text>
+      <text x="458" y="572" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace">only the parts we depend on</text>
     </g>
 
     <!-- FOCAL: one report that says how each status was proven -->
-    <rect x="872" y="268" width="232" height="64" rx="6" fill="#171a24"/>
-    <rect x="872" y="268" width="232" height="64" rx="6" fill="rgba(234,75,113,0.10)" stroke="#ea4b71" stroke-width="1.2"/>
-    <circle cx="988" cy="284" r="4" fill="#ea4b71"/>
-    <text x="988" y="308" fill="#ffffff" font-size="12" font-weight="600" text-anchor="middle">One morning report</text>
-    <text x="988" y="322" fill="#f3aec0" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">status + how it was proven</text>
+    <rect x="872" y="314" width="272" height="104" rx="8" fill="#171a24"/>
+    <rect x="872" y="314" width="272" height="104" rx="8" fill="rgba(234,75,113,0.10)" stroke="#ea4b71" stroke-width="1.6"/>
+    <circle cx="1008" cy="336" r="6" fill="#ea4b71"/>
+    <text x="1008" y="372" fill="#ffffff" font-size="24" font-weight="600" text-anchor="middle">One report</text>
+    <text x="1008" y="396" fill="#f3aec0" font-size="15" font-family="'Geist Mono', monospace" text-anchor="middle">+ how it was proven</text>
 
     <!-- legend -->
-    <line x1="72" y1="572" x2="1128" y2="572" stroke="rgba(232,236,245,0.12)" stroke-width="0.8"/>
-    <text x="72" y="596" fill="#7f8aa5" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">CHECK</text>
-    <circle cx="176" cy="592" r="4" fill="#34d399"/>
-    <text x="188" y="596" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace">schedule</text>
-    <circle cx="304" cy="592" r="4" fill="#c084fc"/>
-    <text x="316" y="596" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace">real transaction, cleaned up</text>
-    <circle cx="560" cy="592" r="4" fill="#818cf8"/>
-    <text x="572" y="596" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace">read-only probe</text>
-    <circle cx="728" cy="592" r="4" fill="#ea4b71"/>
-    <text x="740" y="596" fill="#9aa4bd" font-size="9" font-family="'Geist Mono', monospace">output</text>
+    <line x1="56" y1="612" x2="1144" y2="612" stroke="rgba(232,236,245,0.12)" stroke-width="1"/>
+    <text x="56" y="644" fill="#7f8aa5" font-size="13" font-family="'Geist Mono', monospace" letter-spacing="0.14em">CHECK</text>
+    <circle cx="172" cy="639" r="6" fill="#34d399"/>
+    <text x="188" y="644" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace">schedule</text>
+    <circle cx="332" cy="639" r="6" fill="#c084fc"/>
+    <text x="348" y="644" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace">real transaction, cleaned up</text>
+    <circle cx="700" cy="639" r="6" fill="#818cf8"/>
+    <text x="716" y="644" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace">read-only probe</text>
+    <circle cx="936" cy="639" r="6" fill="#ea4b71"/>
+    <text x="952" y="644" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace">output</text>
   </svg>
 </body>
 </html>

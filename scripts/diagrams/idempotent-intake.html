@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Idempotent webhook intake</title>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #171a24; font-family: 'Geist', system-ui, sans-serif; }
+    svg#d { width: 1200px; height: 675px; display: block; }
+  </style>
+</head>
+<body>
+  <svg id="d" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg"
+       role="img" aria-labelledby="idem-title idem-desc">
+    <title id="idem-title">Idempotent webhook intake</title>
+    <desc id="idem-desc">Every request is keyed on a SHA-256 of the caller's own identifying fields, never a timestamp or a random value, so a retry produces the same key as the original. The key is checked before anything is written and a unique index on it backs the lookup, so even a race that slips past the check cannot create a second row. The endpoint answers 400 when retrying will not help, 200 when the record already exists, and 201 when something was created.</desc>
+
+    <defs>
+      <marker id="arrow" markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto"><polygon points="0 0, 6 2.5, 0 5" fill="#9aa4bd"/></marker>
+      <marker id="arrow-accent" markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto"><polygon points="0 0, 6 2.5, 0 5" fill="#ea4b71"/></marker>
+      <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="rgba(232,236,245,0.07)"/></pattern>
+    </defs>
+
+    <rect width="100%" height="100%" fill="#171a24"/>
+    <rect width="100%" height="100%" fill="url(#dots)"/>
+
+    <!-- header -->
+    <text x="56" y="84" fill="#7f8aa5" font-size="13" font-family="'Geist Mono', monospace" letter-spacing="0.14em">IDEMPOTENT WEBHOOK INTAKE · A RETRY PRODUCES THE SAME KEY</text>
+    <line x1="56" y1="104" x2="1144" y2="104" stroke="rgba(232,236,245,0.10)" stroke-width="1"/>
+
+    <!-- wires -->
+    <g fill="none" stroke="#9aa4bd" stroke-width="2.4">
+      <path d="M280,212 H336" marker-end="url(#arrow)"/>
+      <path d="M568,212 H624" marker-end="url(#arrow)"/>
+      <path d="M856,212 H912" marker-end="url(#arrow)"/>
+      <path d="M1032,264 V340" marker-end="url(#arrow)"/>
+      <path d="M744,264 V488" marker-end="url(#arrow)"/>
+    </g>
+    <text x="884" y="196" fill="#7f8aa5" font-size="13" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">NEW</text>
+    <text x="762" y="396" fill="#7f8aa5" font-size="13" font-family="'Geist Mono', monospace" letter-spacing="0.08em">SEEN BEFORE</text>
+
+    <!-- row 1 -->
+    <rect x="56" y="160" width="224" height="104" rx="52" fill="#171a24"/>
+    <rect x="56" y="160" width="224" height="104" rx="52" fill="rgba(52,211,153,0.06)" stroke="#34d399" stroke-width="1.4"/>
+    <circle cx="168" cy="182" r="6" fill="#34d399"/>
+    <text x="168" y="218" fill="#e8ecf5" font-size="24" font-weight="600" text-anchor="middle">Receive</text>
+    <text x="168" y="242" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace" text-anchor="middle">POST /intake</text>
+
+    <!-- FOCAL: the key is the whole idea -->
+    <rect x="344" y="160" width="224" height="104" rx="8" fill="#171a24"/>
+    <rect x="344" y="160" width="224" height="104" rx="8" fill="rgba(234,75,113,0.10)" stroke="#ea4b71" stroke-width="1.6"/>
+    <circle cx="456" cy="182" r="6" fill="#ea4b71"/>
+    <text x="456" y="218" fill="#ffffff" font-size="24" font-weight="600" text-anchor="middle">Key it</text>
+    <text x="456" y="242" fill="#f3aec0" font-size="15" font-family="'Geist Mono', monospace" text-anchor="middle">SHA-256, their fields</text>
+
+    <path d="M632,212 L744,160 L856,212 L744,264 Z" fill="#232838" stroke="#39415a" stroke-width="1.2"/>
+    <circle cx="744" cy="186" r="6" fill="#fbbf24"/>
+    <text x="744" y="224" fill="#e8ecf5" font-size="22" font-weight="600" text-anchor="middle">Seen it?</text>
+
+    <rect x="920" y="160" width="224" height="104" rx="8" fill="#232838" stroke="#39415a" stroke-width="1.2"/>
+    <circle cx="1032" cy="182" r="6" fill="#c084fc"/>
+    <text x="1032" y="218" fill="#e8ecf5" font-size="24" font-weight="600" text-anchor="middle">Store it</text>
+    <text x="1032" y="242" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace" text-anchor="middle">unique index on key</text>
+
+    <!-- 201 -->
+    <rect x="864" y="348" width="280" height="104" rx="8" fill="#232838" stroke="#39415a" stroke-width="1.2"/>
+    <text x="1004" y="394" fill="#34d399" font-size="24" font-weight="600" text-anchor="middle">201 Created</text>
+    <text x="1004" y="420" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace" text-anchor="middle">something was written</text>
+
+    <!-- 200 -->
+    <rect x="604" y="492" width="280" height="88" rx="44" fill="#1d2130" stroke="#39415a" stroke-width="1.2"/>
+    <text x="744" y="532" fill="#e8ecf5" font-size="24" font-weight="600" text-anchor="middle">200 Duplicate</text>
+    <text x="744" y="556" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace" text-anchor="middle">already have it</text>
+
+    <!-- why the key is a hash -->
+    <rect x="56" y="348" width="488" height="240" rx="10" fill="rgba(232,236,245,0.02)" stroke="rgba(232,236,245,0.10)" stroke-width="1"/>
+    <text x="84" y="386" fill="#7f8aa5" font-size="13" font-family="'Geist Mono', monospace" letter-spacing="0.14em">WHY A HASH, NOT A UUID</text>
+    <line x1="84" y1="402" x2="516" y2="402" stroke="rgba(232,236,245,0.08)" stroke-width="1"/>
+    <circle cx="92" cy="434" r="5" fill="#ea4b71"/>
+    <text x="110" y="440" fill="#e8ecf5" font-size="17" font-family="'Geist Mono', monospace">Never a timestamp or a random</text>
+    <text x="110" y="462" fill="#e8ecf5" font-size="17" font-family="'Geist Mono', monospace">value — a retry must key the same</text>
+    <circle cx="92" cy="496" r="5" fill="#c084fc"/>
+    <text x="110" y="502" fill="#e8ecf5" font-size="17" font-family="'Geist Mono', monospace">A unique index backs the check,</text>
+    <text x="110" y="524" fill="#e8ecf5" font-size="17" font-family="'Geist Mono', monospace">so a race still cannot double-write</text>
+    <circle cx="92" cy="558" r="5" fill="#fbbf24"/>
+    <text x="110" y="564" fill="#e8ecf5" font-size="17" font-family="'Geist Mono', monospace">400 when retrying will not help</text>
+
+    <!-- legend -->
+    <line x1="56" y1="612" x2="1144" y2="612" stroke="rgba(232,236,245,0.12)" stroke-width="1"/>
+    <text x="56" y="644" fill="#7f8aa5" font-size="13" font-family="'Geist Mono', monospace" letter-spacing="0.14em">THREE REPLIES</text>
+    <text x="216" y="644" fill="#f87171" font-size="15" font-family="'Geist Mono', monospace">400 unusable</text>
+    <text x="400" y="644" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace">200 already exists</text>
+    <text x="640" y="644" fill="#34d399" font-size="15" font-family="'Geist Mono', monospace">201 created</text>
+    <text x="820" y="644" fill="#7f8aa5" font-size="15" font-family="'Geist Mono', monospace">— each one the caller can act on</text>
+  </svg>
+</body>
+</html>
