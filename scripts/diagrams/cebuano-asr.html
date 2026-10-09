@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cebuano ASR pipeline</title>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #171a24; font-family: 'Geist', system-ui, sans-serif; }
+    svg#d { width: 1200px; height: 675px; display: block; }
+  </style>
+</head>
+<body>
+  <svg id="d" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg"
+       role="img" aria-labelledby="asr-title asr-desc">
+    <title id="asr-title">Cebuano speech-to-text pipeline</title>
+    <desc id="asr-desc">A grapheme CTC pipeline for Cebuano, a language with almost no open speech tooling. 3,622 utterances from 22 speakers are validated and normalised, then split by speaker on clean audio before any augmentation, so every augmented clip inherits its source clip's split and cannot cross it. An XLSR-53 encoder is fine-tuned with a CTC head over a grapheme vocabulary, and the held-out set is decoded greedily and with beam search. A KenLM language model sits off the main path, greyed out: a test-set leakage was found in its evaluation, so no language-model figure is reported until the model is rebuilt from train-split transcripts only.</desc>
+
+    <defs>
+      <marker id="arrow" markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto"><polygon points="0 0, 6 2.5, 0 5" fill="#9aa4bd"/></marker>
+      <marker id="arrow-accent" markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto"><polygon points="0 0, 6 2.5, 0 5" fill="#ea4b71"/></marker>
+      <marker id="arrow-dim" markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto"><polygon points="0 0, 6 2.5, 0 5" fill="#5b6478"/></marker>
+      <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="rgba(232,236,245,0.07)"/></pattern>
+    </defs>
+
+    <rect width="100%" height="100%" fill="#171a24"/>
+    <rect width="100%" height="100%" fill="url(#dots)"/>
+
+    <!-- header -->
+    <text x="56" y="84" fill="#7f8aa5" font-size="13" font-family="'Geist Mono', monospace" letter-spacing="0.14em">CEBUANO SPEECH-TO-TEXT · SPLIT BEFORE AUGMENT</text>
+    <line x1="56" y1="104" x2="1144" y2="104" stroke="rgba(232,236,245,0.10)" stroke-width="1"/>
+
+    <!-- wires -->
+    <g fill="none" stroke="#9aa4bd" stroke-width="2.4">
+      <path d="M280,212 H336" marker-end="url(#arrow)"/>
+      <path d="M568,212 H624" marker-end="url(#arrow)"/>
+      <path d="M856,212 H912" marker-end="url(#arrow)"/>
+      <path d="M1032,264 V340" marker-end="url(#arrow)"/>
+    </g>
+    <path d="M920,400 H892" fill="none" stroke="#9aa4bd" stroke-width="2.4" marker-end="url(#arrow)"/>
+
+    <!-- the LM path, deliberately dimmed and dashed: quarantined -->
+    <path d="M1032,452 V544 H892" fill="none" stroke="#5b6478" stroke-width="2.4" stroke-dasharray="5 5" marker-end="url(#arrow-dim)"/>
+    <text x="1020" y="502" fill="#5b6478" font-size="13" font-family="'Geist Mono', monospace" text-anchor="end" letter-spacing="0.08em">QUARANTINED</text>
+
+    <!-- row 1 -->
+    <rect x="56" y="160" width="224" height="104" rx="52" fill="#171a24"/>
+    <rect x="56" y="160" width="224" height="104" rx="52" fill="rgba(52,211,153,0.06)" stroke="#34d399" stroke-width="1.4"/>
+    <circle cx="168" cy="182" r="6" fill="#34d399"/>
+    <text x="168" y="218" fill="#e8ecf5" font-size="24" font-weight="600" text-anchor="middle">3,622 clips</text>
+    <text x="168" y="242" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace" text-anchor="middle">22 speakers · 1.72 h</text>
+
+    <rect x="344" y="160" width="224" height="104" rx="8" fill="#232838" stroke="#39415a" stroke-width="1.2"/>
+    <circle cx="456" cy="182" r="6" fill="#818cf8"/>
+    <text x="456" y="218" fill="#e8ecf5" font-size="24" font-weight="600" text-anchor="middle">Validate</text>
+    <text x="456" y="242" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace" text-anchor="middle">16 kHz mono · 1–15 s</text>
+
+    <!-- FOCAL: the control that makes the whole evaluation trustworthy -->
+    <rect x="632" y="160" width="224" height="104" rx="8" fill="#171a24"/>
+    <rect x="632" y="160" width="224" height="104" rx="8" fill="rgba(234,75,113,0.10)" stroke="#ea4b71" stroke-width="1.6"/>
+    <circle cx="744" cy="182" r="6" fill="#ea4b71"/>
+    <text x="744" y="218" fill="#ffffff" font-size="24" font-weight="600" text-anchor="middle">Split first</text>
+    <text x="744" y="242" fill="#f3aec0" font-size="15" font-family="'Geist Mono', monospace" text-anchor="middle">by speaker, clean audio</text>
+
+    <rect x="920" y="160" width="224" height="104" rx="8" fill="#232838" stroke="#39415a" stroke-width="1.2"/>
+    <circle cx="1032" cy="182" r="6" fill="#c084fc"/>
+    <text x="1032" y="218" fill="#e8ecf5" font-size="24" font-weight="600" text-anchor="middle">Fine-tune</text>
+    <text x="1032" y="242" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace" text-anchor="middle">XLSR-53 + CTC head</text>
+
+    <!-- decode -->
+    <path d="M920,400 L1032,340 L1144,400 L1032,452 Z" fill="#232838" stroke="#39415a" stroke-width="1.2"/>
+    <circle cx="1032" cy="374" r="6" fill="#fbbf24"/>
+    <text x="1032" y="412" fill="#e8ecf5" font-size="22" font-weight="600" text-anchor="middle">Decode</text>
+
+    <!-- the reported result -->
+    <rect x="612" y="348" width="280" height="104" rx="8" fill="#232838" stroke="#39415a" stroke-width="1.2"/>
+    <circle cx="752" cy="370" r="6" fill="#22d3ee"/>
+    <text x="752" y="406" fill="#e8ecf5" font-size="24" font-weight="600" text-anchor="middle">4.15% WER</text>
+    <text x="752" y="430" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace" text-anchor="middle">1.16% CER · beam, no LM</text>
+
+    <!-- the quarantined LM -->
+    <rect x="612" y="500" width="280" height="88" rx="8" fill="#1a1d27" stroke="#39415a" stroke-width="1.2" stroke-dasharray="5 5"/>
+    <text x="752" y="540" fill="#7f8aa5" font-size="22" font-weight="600" text-anchor="middle">KenLM 5-gram</text>
+    <text x="752" y="564" fill="#5b6478" font-size="15" font-family="'Geist Mono', monospace" text-anchor="middle">rebuilding · not reported</text>
+
+    <!-- why the split order is the whole point -->
+    <rect x="56" y="348" width="488" height="240" rx="10" fill="rgba(232,236,245,0.02)" stroke="rgba(232,236,245,0.10)" stroke-width="1"/>
+    <text x="84" y="386" fill="#7f8aa5" font-size="13" font-family="'Geist Mono', monospace" letter-spacing="0.14em">WHY THE ORDER MATTERS</text>
+    <line x1="84" y1="402" x2="516" y2="402" stroke="rgba(232,236,245,0.08)" stroke-width="1"/>
+    <circle cx="92" cy="434" r="5" fill="#ea4b71"/>
+    <text x="110" y="440" fill="#e8ecf5" font-size="17" font-family="'Geist Mono', monospace">Augment first and a clip&#8217;s own</text>
+    <text x="110" y="462" fill="#e8ecf5" font-size="17" font-family="'Geist Mono', monospace">copy lands in the test set</text>
+    <circle cx="92" cy="496" r="5" fill="#818cf8"/>
+    <text x="110" y="502" fill="#e8ecf5" font-size="17" font-family="'Geist Mono', monospace">Splits are speaker-disjoint, so</text>
+    <text x="110" y="524" fill="#e8ecf5" font-size="17" font-family="'Geist Mono', monospace">no voice is in both halves</text>
+    <circle cx="92" cy="558" r="5" fill="#22d3ee"/>
+    <text x="110" y="564" fill="#e8ecf5" font-size="17" font-family="'Geist Mono', monospace">Every clip keeps its source path</text>
+
+    <!-- legend -->
+    <line x1="56" y1="612" x2="1144" y2="612" stroke="rgba(232,236,245,0.12)" stroke-width="1"/>
+    <text x="56" y="644" fill="#7f8aa5" font-size="13" font-family="'Geist Mono', monospace" letter-spacing="0.14em">STAGE</text>
+    <circle cx="148" cy="639" r="6" fill="#34d399"/>
+    <text x="164" y="644" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace">corpus</text>
+    <circle cx="288" cy="639" r="6" fill="#818cf8"/>
+    <text x="304" y="644" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace">preprocessing</text>
+    <circle cx="500" cy="639" r="6" fill="#c084fc"/>
+    <text x="516" y="644" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace">training</text>
+    <circle cx="652" cy="639" r="6" fill="#22d3ee"/>
+    <text x="668" y="644" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace">reported result</text>
+    <circle cx="856" cy="639" r="6" fill="#ea4b71"/>
+    <text x="872" y="644" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace">the leakage control</text>
+  </svg>
+</body>
+</html>

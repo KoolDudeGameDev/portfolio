@@ -599,8 +599,9 @@ export const work: WorkItem[] = [
     build:
       "Engineered an end-to-end ASR pipeline in Python with Hugging Face Transformers, Wav2Vec2-XLSR, and a custom KenLM language model, training and decoding the models independently.",
     results: [
-      "3.07% WER and 1.03% CER on 552 test samples",
-      "Reproducible pipeline over 3,622 speaker-disjoint utterances; authored a conference paper",
+      "4.15% WER and 1.16% CER on 552 held-out samples — beam search with no language model, so the figure depends on nothing but the acoustic model",
+      "3,622 utterances from 22 speakers (1.72 hours), split on clean audio before augmentation so every augmented clip inherits its source clip’s split and cannot leak across it",
+      "Found a test-set leakage in my own KenLM evaluation after the fact; the decoder is being rebuilt and no language-model figures are quoted until it is honest",
     ],
     tech: ["Python", "Wav2Vec2-XLSR", "KenLM", "Hugging Face"],
     links: [

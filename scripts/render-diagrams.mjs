@@ -44,6 +44,7 @@ const OUTPUT_NAME = {
   "leave-intake": "workflow-leave-intake",
   "open-source-set": "workflow-open-source-set",
   "rag-gmail": "workflow-rag-gmail",
+  "cebuano-asr": "asr",
 };
 
 const named = process.argv.slice(2).map((a) => path.parse(a).name);
