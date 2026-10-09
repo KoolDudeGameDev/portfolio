@@ -45,7 +45,7 @@ export function Services() {
         />
 
         <div className="grid gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-2">
-          {services.map((service) => {
+          {services.map((service, i) => {
             const Icon = iconMap[service.icon];
             return (
               <article
@@ -54,7 +54,21 @@ export function Services() {
                   service.wide ? "sm:col-span-2" : ""
                 }`}
               >
-                <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-border text-fg transition-colors group-hover:border-fg">
+                {/* Meta rail: what it gets you on the left, what it's built
+                    with on the right. This carries the stack, so there is no
+                    chip list at the foot of the card repeating it. */}
+                <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-b border-border pb-4 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
+                  <span>
+                    {String(i + 1).padStart(2, "0")}
+                    <span className="mx-2 text-border">/</span>
+                    {service.outcome}
+                  </span>
+                  <span className="text-muted/70">
+                    {service.stack.join(" · ")}
+                  </span>
+                </div>
+
+                <div className="mb-6 mt-8 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-border text-fg transition-colors group-hover:border-fg">
                   <Icon className="h-7 w-7" />
                 </div>
                 <h3 className="text-xl font-semibold">{service.title}</h3>
@@ -64,16 +78,6 @@ export function Services() {
                 <p className="mt-4 flex-1 leading-relaxed text-muted">
                   {service.description}
                 </p>
-                <ul className="mt-6 flex flex-wrap gap-2">
-                  {service.stack.map((tool) => (
-                    <li
-                      key={tool}
-                      className="rounded-full border border-border px-3 py-1 text-xs text-muted"
-                    >
-                      {tool}
-                    </li>
-                  ))}
-                </ul>
                 {/* The ::after overlay makes the whole card clickable while
                     keeping one real link in the accessibility tree. Always
                     visible on touch, where there is no hover to reveal it. */}
