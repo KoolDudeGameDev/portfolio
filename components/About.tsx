@@ -1,5 +1,17 @@
 import { asset, site } from "@/lib/site";
 
+/**
+ * Four facts worth scanning before the prose. Each one is already claimed
+ * elsewhere in the site's copy — keep it that way, so nothing here is a line
+ * an interviewer can catch him out on.
+ */
+const facts = [
+  { label: "Cum Laude", sub: "Computer Technology" },
+  { label: site.location, sub: site.timezone },
+  { label: "Leads 6 engineers", sub: "At the brokerage" },
+  { label: "Australia + US clients", sub: "Remote, under contract" },
+];
+
 export function About() {
   return (
     <section id="about" className="px-6 py-20 md:py-28">
@@ -35,42 +47,53 @@ export function About() {
               end to end.
             </span>
           </h2>
+
+          {/* The thesis, carried by weight and contrast rather than colour:
+              the claim in full-strength ink, the consequence in muted. */}
+          <p className="mt-7 text-xl leading-snug tracking-tight sm:text-2xl">
+            <span className="font-semibold text-fg">
+              A system nobody else can maintain isn&apos;t finished.
+            </span>{" "}
+            <span className="text-muted">
+              So the documentation, the health checks and the handover ship with
+              the code, not after it.
+            </span>
+          </p>
+
           <div className="mt-6 space-y-4 leading-relaxed text-muted">
             <p>
-              I&apos;m a Computer Technology graduate (Cum Laude)
-              who turns business requirements into maintainable systems, from
-              REST API contracts and webhooks to access-control logic and CRM
-              data architecture.
-            </p>
-            <p>
+              I&apos;m a Computer Technology graduate who turns business
+              requirements into maintainable systems, from REST API contracts
+              and webhooks to access-control logic and CRM data architecture.
               Day to day that runs from a React front end and a Postgres schema
-              to a REST integration between two systems that were never meant
-              to talk to each other. I work in JavaScript, TypeScript, Python
-              and SQL, and I care about the boring parts that keep software
-              alive: clear contracts, honest error handling, backups, and
-              documentation the next person can actually follow.
+              to an integration between two systems that were never meant to
+              talk to each other.
             </p>
             <p>
               Most of that work is for clients offshore — currently an
               Australian finance brokerage, and an ecommerce platform I support
-              under contract through a software agency. Working across
-              timezones is the normal case for me, not the exception.
-            </p>
-            <p>
-              I also lead a six-person engineering team at the brokerage,
-              drawn from some of the country&apos;s top universities. I assign
-              the workflow builds, review what they ship, and own the
-              documentation standards we all work to. Getting six people
-              building against the same conventions is its own engineering
-              problem, and a system nobody else can maintain isn&apos;t
-              finished.
-            </p>
-            <p>
-              Whether it&apos;s a brokerage&apos;s pipeline, a learning
-              platform, or a speech model trained from scratch, I like owning a
-              problem from the database to the deployed product.
+              under contract through a software agency. Working across timezones
+              is the normal case for me, not the exception. At the brokerage I
+              also lead a six-person engineering team: I assign the workflow
+              builds, review what they ship, and own the documentation standards
+              we all work to.
             </p>
           </div>
+
+          {/* Two across, not four: this column is ~600px, and four cells put
+              every label on two ragged lines. */}
+          <dl className="mt-9 grid grid-cols-1 gap-x-8 gap-y-6 border-t border-border pt-7 sm:grid-cols-2">
+            {facts.map((fact) => (
+              <div key={fact.label}>
+                <dt className="font-semibold leading-snug text-fg">
+                  {fact.label}
+                </dt>
+                <dd className="mt-1 font-mono text-xs uppercase tracking-[0.14em] text-muted">
+                  {fact.sub}
+                </dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </div>
     </section>

@@ -1,11 +1,12 @@
 import type { CSSProperties } from "react";
-import { Github, Linkedin, Facebook, Mail } from "./Icons";
+import { Github, Linkedin, Facebook, Discord, Mail } from "./Icons";
 import { site, asset } from "@/lib/site";
 
 const socials = [
   { icon: Github, href: site.socials.github, label: "GitHub" },
   { icon: Linkedin, href: site.socials.linkedin, label: "LinkedIn" },
   { icon: Facebook, href: site.socials.facebook, label: "Facebook" },
+  { icon: Discord, href: site.socials.discord, label: "Discord" },
   { icon: Mail, href: `mailto:${site.email}`, label: "Email" },
 ];
 

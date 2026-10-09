@@ -28,13 +28,17 @@ export const site = {
    * entirely — paste a URL here and it appears beside the form.
    */
   bookingUrl: "",
+  /**
+   * Shown in the About fact strip. "Any timezone" is the availability claim,
+   * not a promise of a 24-hour reply — the overlap is arranged per client.
+   */
+  timezone: "GMT+8 · any timezone",
   socials: {
     github: "https://github.com/KoolDudeGameDev",
     linkedin: "https://www.linkedin.com/in/kyle-gregory-ibo-a89455301/",
     facebook: "https://www.facebook.com/profile.php?id=61577563267705",
-    // Province-level on purpose. This used to be a pin on exact GPS
-    // coordinates at street zoom, which is a home address in all but name.
-    maps: "https://www.google.com/maps/place/Cebu,+Philippines",
+    // User-id form, which is what resolves for an account without a vanity URL.
+    discord: "https://discord.com/users/1257833676675485758",
   },
 } as const;
 
