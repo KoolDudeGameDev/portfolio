@@ -19,6 +19,8 @@
   --accent: #0c0c0c;
   --accent-fg: #fafafa;
   --live: #16a34a;
+  /* A soft radial lift behind the page. Ink here, paper in dark. */
+  --veil: rgba(12, 12, 12, 0.045);
 }
 
 .dark {
@@ -33,6 +35,29 @@
   --accent-fg: #0a0a0a;
   /* Brighter than the light-mode green so it holds contrast on near-black. */
   --live: #4ade80;
+  --veil: rgba(245, 245, 244, 0.05);
+}
+
+/* ---- Diagram canvas ----
+   The surface the live process band is drawn on. True neutrals, no blue cast:
+   the site's rule is that emphasis comes from contrast, not hue, and the band
+   is the largest block of colour on the page.
+
+   DELIBERATELY NOT redefined under .dark. The band is a dark canvas in both
+   themes, the way a printed figure stays itself on any page. Do not "fix" it.
+
+   Note these are NOT the palette of the baked case-study WebPs in the work
+   cards — those are rendered from scripts/diagrams/*.html, which carry their
+   own cooler hex (#171a24 / #232838 / #39415a). Re-rendering those 15 diagrams
+   to neutral is the follow-up if the two surfaces ever need to match. */
+:root {
+  --diagram-bg: #141414;
+  --diagram-node: #1f1f1f;
+  --diagram-line: #3a3a3a;
+  --diagram-fg: #ededec;
+  --diagram-muted: #a0a0a0;
+  /* Graph paper on the canvas, faint enough to read as texture not as a table. */
+  --diagram-grid: rgba(255, 255, 255, 0.035);
 }
 
 /* Map semantic tokens to Tailwind utilities. `inline` keeps the var reference
@@ -47,6 +72,12 @@
   --color-accent: var(--accent);
   --color-accent-fg: var(--accent-fg);
   --color-live: var(--live);
+  --color-diagram-bg: var(--diagram-bg);
+  --color-diagram-node: var(--diagram-node);
+  --color-diagram-line: var(--diagram-line);
+  --color-diagram-fg: var(--diagram-fg);
+  --color-diagram-muted: var(--diagram-muted);
+  --color-diagram-grid: var(--diagram-grid);
 
   --font-sans: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-fraunces), ui-serif, Georgia, serif;
@@ -240,6 +271,217 @@ section[id] {
   /* The track holds as many copies as the viewport needs; a wrapped static row
      only wants the first. */
   .marquee-copy:not(:first-child) {
+    display: none;
+  }
+}
+
+/* ==================== PAGE VEIL ==================== */
+/* A single fixed radial lift behind everything. No pattern, no canvas, no JS:
+   one painted gradient that never repaints because it never moves. */
+.veil {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    1100px 760px at 50% 16%,
+    var(--veil),
+    transparent 70%
+  );
+}
+
+/* ==================== PROCESS FLOW BAND ==================== */
+/* Everything that moves here is a CSS rule on a DOM node. There is no
+   JavaScript in BuildFlow.tsx on purpose — nothing to execute means nothing to
+   drop frames on a phone, and the band ships complete in the static HTML.
+   Known trade-off: touch devices have no hover, so phones get the diagram
+   without the inspect panel. */
+
+/* Graph paper. Two gradients, painted once, no repeat cost worth measuring. */
+.flow-canvas {
+  background-image:
+    linear-gradient(var(--diagram-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--diagram-grid) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Each stage owns its readout, detail block and tick row. They live inside the
+   stage so the markup reads in one place, but they PAINT into the canvas
+   corners — which only works while .flow-stage creates no containing block.
+   That is why every transform below is on .flow-stage-box, never on
+   .flow-stage itself. Move one up a level and all three silently reposition. */
+.flow-stage {
+  position: static;
+}
+
+.flow-stage-readout,
+.flow-stage-detail,
+.flow-stage-ticks {
+  position: absolute;
+  opacity: 0;
+  transition: opacity 180ms ease;
+  pointer-events: none;
+}
+
+.flow-stage-readout {
+  top: 1.75rem;
+  right: 1.75rem;
+}
+
+.flow-stage-detail {
+  bottom: 1.5rem;
+  left: 1.75rem;
+  right: 10rem;
+  margin: 0;
+}
+
+.flow-stage-ticks {
+  bottom: 1.75rem;
+  right: 1.75rem;
+}
+
+/* Hover only — deliberately NOT :focus-within, and the cards carry no tabIndex.
+   They are not interactive, so they do not belong in the tab order; and focus
+   used to pin one card's readout open while a second was hovered, painting two
+   sets of text into the same corner. The detail text stays in the DOM at
+   opacity 0, so a screen reader still reads every step. */
+.flow-stage:hover .flow-stage-readout,
+.flow-stage:hover .flow-stage-detail,
+.flow-stage:hover .flow-stage-ticks {
+  opacity: 1;
+}
+
+/* The idle state retires the moment any stage is being inspected. */
+.flow-idle {
+  transition: opacity 180ms ease;
+}
+
+.flow-canvas:has(.flow-stage:hover) .flow-idle {
+  opacity: 0;
+}
+
+/* Everything else recedes so the inspected card is the only thing lit.
+   The :not(:hover) matters: without it this selector also matches the hovered
+   card, and because :has() lends it more specificity than the rule below, the
+   card you are pointing at dims along with the rest. Say what is meant — dim
+   the ones that are NOT hovered — rather than fighting specificity. */
+.flow-canvas:has(.flow-stage:hover) .flow-stage:not(:hover) .flow-stage-box {
+  opacity: 0.4;
+}
+
+.flow-stage-box {
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    opacity 300ms ease;
+}
+
+.flow-stage-icon,
+.flow-stage-chip {
+  transition:
+    color 180ms ease,
+    border-color 180ms ease;
+}
+
+.flow-stage:hover .flow-stage-box {
+  opacity: 1;
+  transform: translateY(-3px);
+  border-color: var(--diagram-fg);
+}
+
+/* The whole card lights, not just its border. */
+.flow-stage:hover .flow-stage-icon,
+.flow-stage:hover .flow-stage-chip {
+  color: var(--diagram-fg);
+}
+
+.flow-stage:hover .flow-stage-chip {
+  border-color: var(--diagram-muted);
+}
+
+/* ...and so does the run that fed it. The connector is a previous sibling of
+   its stage, which CSS cannot select backwards — hence :has() on the .flow-pair
+   wrapper the two share. Stages that open a cluster have no inbound connector,
+   which is correct: nothing fed them inside that group. */
+.flow-pair:has(.flow-stage:hover) .flow-connector-line {
+  background: var(--diagram-fg);
+}
+
+.flow-pair:has(.flow-stage:hover) .flow-connector-arrow {
+  border-left-color: var(--diagram-fg);
+}
+
+.flow-connector-line,
+.flow-connector-arrow {
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease;
+}
+
+/* A pulse of light running the length of a connector. `--run` is the travel
+   distance, set per connector so the dot stops at the next card's edge. */
+.flow-spark {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 6px;
+  width: 6px;
+  border-radius: 9999px;
+  background: var(--diagram-fg);
+  box-shadow: 0 0 8px 2px rgba(237, 237, 236, 0.4);
+  pointer-events: none;
+  animation: flow-spark 2.6s linear infinite;
+}
+
+@keyframes flow-spark {
+  0% {
+    transform: translate(0, -50%);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--run, 100%), -50%);
+    opacity: 0;
+  }
+}
+
+/* Below lg the clusters stack and there is no corner left to paint a readout
+   into — and on a touch screen "hover" is a lie. Hide the affordance, and take
+   the three revealed blocks out of view with a clip rather than display:none,
+   so a screen reader still reads every step's detail. */
+@media (max-width: 1023px) {
+  .flow-idle {
+    display: none;
+  }
+  .flow-stage-readout,
+  .flow-stage-detail,
+  .flow-stage-ticks {
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/* Phones get the diagram, not the animation. The band is legible static, and a
+   dot repainting 60 times a second is the one thing here that could cost a
+   low-end device anything. */
+@media (max-width: 767px) {
+  .flow-spark {
+    display: none;
+  }
+}
+
+/* The global reduce rule already stops the animation; removing the spark from
+   paint as well means no stray dot parked at the start of every connector. */
+@media (prefers-reduced-motion: reduce) {
+  .flow-spark {
     display: none;
   }
 }

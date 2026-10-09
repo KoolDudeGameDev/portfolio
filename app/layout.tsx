@@ -76,6 +76,9 @@ export default function RootLayout({
       <body
         className={`${instrumentSans.variable} ${fraunces.variable} antialiased`}
       >
+        {/* One fixed radial lift behind the whole page. Painted once, never
+            animated, ignores pointers. */}
+        <div aria-hidden className="veil" />
         <ThemeProvider
           attribute="class"
           defaultTheme="light"

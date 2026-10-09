@@ -87,6 +87,15 @@ export function Facebook(props: IconProps) {
   );
 }
 
+/** A conversation — the first step of the process band. */
+export function MessageIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.5 9.5 0 0 1-2.8-.4L3 21l1.6-4.6A8.1 8.1 0 0 1 3.6 11 8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5Z" />
+    </svg>
+  );
+}
+
 export function Sun(props: IconProps) {
   return (
     <svg {...base} {...props}>

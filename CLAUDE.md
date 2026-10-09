@@ -57,10 +57,53 @@ systems integration, applied ML).
 - [scripts/](scripts/) — the image pipelines. See **Case-study imagery** below.
 
 ## Section order (client-first, in `app/page.tsx`)
-Navbar → Hero (`#home`) → LogoMarquee → Services (`#services`) → Work (`#work`) →
-Tech Stack (`#stack`) → Experience (`#experience`) → About (`#about`) → FAQ (`#faq`) →
+Navbar → Hero (`#home`) → BuildFlow → LogoMarquee → Services (`#services`) → Work (`#work`) →
+Tech Stack (`#stack`) → Experience (`#experience`) → About (`#about`) →
 Contact (`#contact`) → Footer.
 Navbar is fixed; nav links smooth-scroll (CSS `scroll-behavior` + `scroll-margin-top: 92px`).
+
+**`BuildFlow` is an unnumbered band**, like `LogoMarquee` — a live, hoverable version of
+the six-step delivery process, sitting between the hero and the marquee.
+
+☠️ **It has no `"use client"`, and must not get one.** Every moving part is a CSS rule in
+`globals.css`: the travelling `.flow-spark`, the hover lift, and the inspect readout, which
+works through `.flow-stage:hover` on the readout, detail panel and tick row, plus two
+`:has()` rules for the dimming and the idle state. Zero JavaScript is the entire reason this is safe above the fold on a phone.
+Sparks are removed from paint below 768px and under `prefers-reduced-motion`; below 1024px
+the readout is clipped rather than `display:none`, so screen readers keep it.
+
+Each stage's **readout, detail panel and tick row** live inside that stage but paint into
+the canvas corners. That only works because `.flow-stage` stays `position: static` — the
+hover lift is on `.flow-stage-box` precisely so the stage never becomes a containing block.
+Move the transform up a level and all three silently reposition.
+
+The **FAQ accordion is exclusive** via `<details name="faq">` — a browser feature, not
+script. It matters beyond tidiness: `Contact`'s grid has no `items-start`, so both cards
+share the row height, and without exclusivity a stack of open answers would stretch the
+form card arbitrarily.
+
+Content is `content/process.ts`, and every line of it is already claimed in `services.ts`
+or `faq.ts`. Keep it that way: it is the first promise a visitor reads.
+
+**The `--diagram-*` tokens** (`app/globals.css`) are the live band's surface: **true
+neutrals**, no blue cast, dark in both themes. They are **deliberately not redefined under
+`.dark`** — a figure stays itself on any page. Do not "fix" that.
+
+⚠️ They are **not** the palette of the baked case-study WebPs. Those render from
+`scripts/diagrams/*.html`, which carry their own cooler hex (`#171a24` / `#232838` /
+`#39415a`). So the live band is neutral and the work-card images are cool — a known,
+accepted divergence. Re-rendering the 15 diagrams to neutral is the follow-up if the two
+surfaces ever need to match.
+
+**`.veil`** is one fixed radial gradient mounted in `app/layout.tsx`. Painted once, never
+animated, `pointer-events: none`.
+
+**The FAQ is not a section.** `Faq.tsx` exports a `FaqPanel` that `Contact` renders in a
+two-column grid beside the form — the objections belong next to the box people hesitate to
+fill in, and as a full-width band it cost a screen of scrolling for the page's lowest-value
+content. It keeps `id="faq"`, which is both a deep-link target and what
+`tests/navigation.spec.ts` scrolls to when asserting the nav highlights nothing there.
+Section markers therefore run 01–06, with Contact as `06`.
 
 ## Styling conventions
 - **Theme: monochrome editorial.** Light is paper (`#fafaf9`), dark is warm near-black
