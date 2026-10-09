@@ -75,6 +75,29 @@ test("Escape closes it, unlocks scrolling and returns focus to the opener", asyn
   await expect(opener).toBeFocused();
 });
 
+test("the enlarged image closes on its own, then the case study", async ({
+  page,
+}) => {
+  await page.goto(route());
+  const opener = page
+    .locator("#work article")
+    .first()
+    .getByRole("button", { name: /Case study/ });
+  await opener.click();
+
+  await page.getByRole("button", { name: "Zoom image" }).click();
+  await expect(page.locator(DIALOG)).toHaveCount(2);
+  await expect(page.locator("body")).toHaveCSS("overflow", "hidden");
+
+  await page.keyboard.press("Escape");
+  await expect(page.locator(DIALOG)).toHaveCount(1);
+  await expect(page.locator("body")).toHaveCSS("overflow", "hidden");
+
+  await page.keyboard.press("Escape");
+  await expect(page.locator(DIALOG)).toHaveCount(0);
+  await expect(opener).toBeFocused();
+});
+
 test("the résumé dialog honours the same contract", async ({ page }) => {
   await page.goto(route());
   const opener = page.getByRole("button", { name: /Résumé/ });

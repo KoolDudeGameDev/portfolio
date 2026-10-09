@@ -8,7 +8,9 @@ import {
   ArrowUpRight,
   ChevronLeft,
   ChevronRight,
+  ZoomIn,
 } from "./Icons";
+import { ImageZoom } from "./ImageZoom";
 import { type WorkItem } from "@/content/work";
 import { asset } from "@/lib/site";
 import { useDialog } from "@/lib/useDialog";
@@ -26,6 +28,8 @@ export function WorkModal({
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const [shot, setShot] = useState(0);
+  const [zoomed, setZoomed] = useState(false);
+  const closeZoom = useCallback(() => setZoomed(false), []);
 
   // A card may carry several visuals (a UI screenshot plus the workflow behind
   // it). `shots` is the normalised list; `image` alone still works. Computed
@@ -47,6 +51,7 @@ export function WorkModal({
   // Reopening a different case study must not inherit the last one's slide.
   useEffect(() => {
     setShot(0);
+    setZoomed(false);
   }, [item]);
 
   // Escape, scroll lock, focus park/restore and the Tab trap all live in
@@ -60,8 +65,10 @@ export function WorkModal({
     [count, prev, next],
   );
 
+  // While the enlarged view is up it owns Escape, Tab and the arrows; this
+  // dialog steps aside and re-parks focus in its panel when it closes.
   useDialog({
-    open: item !== null,
+    open: item !== null && !zoomed,
     onClose,
     panelRef,
     onKey,
@@ -112,12 +119,22 @@ export function WorkModal({
           {shots.length ? (
             <div className="mb-6">
               <div className="group relative overflow-hidden rounded-xl border border-border">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={asset(`/assets/${shots[shot].src}`)}
-                  alt={shots[shot].caption || item.title}
-                  className="aspect-[16/9] w-full object-cover"
-                />
+                <button
+                  type="button"
+                  onClick={() => setZoomed(true)}
+                  aria-label="Zoom image"
+                  className="block w-full cursor-zoom-in"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={asset(`/assets/${shots[shot].src}`)}
+                    alt={shots[shot].caption || item.title}
+                    className="aspect-[16/9] w-full object-cover"
+                  />
+                  <span className="pointer-events-none absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/25 bg-black/45 text-white backdrop-blur-sm">
+                    <ZoomIn className="h-4 w-4" />
+                  </span>
+                </button>
 
                 {shots.length > 1 ? (
                   <>
@@ -240,5 +257,18 @@ export function WorkModal({
     </div>
   );
 
-  return createPortal(modal, document.body);
+  return (
+    <>
+      {createPortal(modal, document.body)}
+      {zoomed && shots.length ? (
+        <ImageZoom
+          shots={shots}
+          index={shot}
+          title={item.title}
+          onIndex={setShot}
+          onClose={closeZoom}
+        />
+      ) : null}
+    </>
+  );
 }

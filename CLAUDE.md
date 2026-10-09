@@ -227,6 +227,11 @@ Escape-to-close, body-scroll lock, focus park on open, focus restore on close, a
 optional `onKey` callback (WorkModal uses it for the arrow-key carousel); it never sees Tab
 or Escape. **Any new dialog uses this hook** rather than re-implementing the contract.
 
+[components/ImageZoom.tsx](components/ImageZoom.tsx) is the full-screen image viewer opened
+from the WorkModal image. It stacks *on top of* the modal, so WorkModal passes
+`open: item !== null && !zoomed` — the modal's hook steps aside while the viewer owns
+Escape/Tab/arrows, then re-arms. Zoom is a fixed width in a scrolling box, no library.
+
 ## Known gaps
 - No booking link yet: `site.bookingUrl` is an empty string, which hides the "Book a
   15-min call" button. Paste a Cal.com URL there to turn it on.

@@ -35,6 +35,24 @@ export function ChevronRight(props: IconProps) {
   );
 }
 
+export function ZoomIn(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <circle cx="11" cy="11" r="6.5" />
+      <path d="m20 20-4.4-4.4M8.5 11h5M11 8.5v5" />
+    </svg>
+  );
+}
+
+export function ZoomOut(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <circle cx="11" cy="11" r="6.5" />
+      <path d="m20 20-4.4-4.4M8.5 11h5" />
+    </svg>
+  );
+}
+
 export function ArrowUpRight(props: IconProps) {
   return (
     <svg {...base} {...props}>
