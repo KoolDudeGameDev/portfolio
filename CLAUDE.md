@@ -86,8 +86,10 @@ Content is `content/process.ts`, and every line of it is already claimed in `ser
 or `faq.ts`. Keep it that way: it is the first promise a visitor reads.
 
 **The `--diagram-*` tokens** (`app/globals.css`) are the live band's surface: **true
-neutrals**, no blue cast, dark in both themes. They are **deliberately not redefined under
-`.dark`** — a figure stays itself on any page. Do not "fix" that.
+neutrals**, no blue cast, and they **follow the theme**: a white sheet in light mode, a
+near-black canvas under `.dark` (changed 2026-10-09 at Kyle's request — the always-dark
+band read as a black slab on the paper page). The spark glow is `--diagram-glow`, not a
+hardcoded rgba, for the same reason.
 
 ⚠️ They are **not** the palette of the baked case-study WebPs. Those render from
 `scripts/diagrams/*.html`, which carry their own cooler hex (`#171a24` / `#232838` /

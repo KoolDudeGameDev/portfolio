@@ -37,8 +37,8 @@ const planeLabel = { you: "With you", me: "On me" } as const;
  * phones get the diagram without the inspect panel; the detail text is clipped
  * rather than removed, so screen readers still reach it.
  *
- * Colours come from the --diagram-* tokens: true neutrals, dark in both
- * themes. The spark is ink, never --live — that green means "running right
+ * Colours come from the --diagram-* tokens: true neutrals that follow the
+ * theme, a white sheet in light mode and near-black in dark. The spark is ink, never --live — that green means "running right
  * now", and a process diagram is not running.
  */
 export function BuildFlow() {

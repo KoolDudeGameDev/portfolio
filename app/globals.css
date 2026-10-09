@@ -43,21 +43,33 @@
    the site's rule is that emphasis comes from contrast, not hue, and the band
    is the largest block of colour on the page.
 
-   DELIBERATELY NOT redefined under .dark. The band is a dark canvas in both
-   themes, the way a printed figure stays itself on any page. Do not "fix" it.
+   Follows the theme: a white sheet on paper in light mode, a near-black canvas
+   in dark. The glow under the travelling spark is a token too, because a white
+   glow on a white canvas is invisible.
 
    Note these are NOT the palette of the baked case-study WebPs in the work
    cards — those are rendered from scripts/diagrams/*.html, which carry their
    own cooler hex (#171a24 / #232838 / #39415a). Re-rendering those 15 diagrams
    to neutral is the follow-up if the two surfaces ever need to match. */
 :root {
+  --diagram-bg: #ffffff;
+  --diagram-node: #f7f7f6;
+  --diagram-line: #e2e2df;
+  --diagram-fg: #0c0c0c;
+  --diagram-muted: #71717a;
+  /* Graph paper on the canvas, faint enough to read as texture not as a table. */
+  --diagram-grid: rgba(12, 12, 12, 0.045);
+  --diagram-glow: rgba(12, 12, 12, 0.18);
+}
+
+.dark {
   --diagram-bg: #141414;
   --diagram-node: #1f1f1f;
   --diagram-line: #3a3a3a;
   --diagram-fg: #ededec;
   --diagram-muted: #a0a0a0;
-  /* Graph paper on the canvas, faint enough to read as texture not as a table. */
   --diagram-grid: rgba(255, 255, 255, 0.035);
+  --diagram-glow: rgba(237, 237, 236, 0.4);
 }
 
 /* Map semantic tokens to Tailwind utilities. `inline` keeps the var reference
@@ -428,7 +440,7 @@ section[id] {
   width: 6px;
   border-radius: 9999px;
   background: var(--diagram-fg);
-  box-shadow: 0 0 8px 2px rgba(237, 237, 236, 0.4);
+  box-shadow: 0 0 8px 2px var(--diagram-glow);
   pointer-events: none;
   animation: flow-spark 2.6s linear infinite;
 }
