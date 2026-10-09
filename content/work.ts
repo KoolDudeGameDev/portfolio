@@ -181,7 +181,7 @@ export const work: WorkItem[] = [
     ],
     group: "Automation",
     category: "Internal Platform",
-    status: "Shipped",
+    status: "Active",
     problem:
       "Staff filed leave over chat and email. Not everyone was onboarded into the HR app, approvals left no record, and the balance a person was quoted didn't always match the one the HR app would compute.",
     build:
@@ -237,7 +237,7 @@ export const work: WorkItem[] = [
     image: "platform-architecture.webp",
     group: "Infrastructure & Reliability",
     category: "Infrastructure",
-    status: "Shipped",
+    status: "Active",
     featured: true,
     problem:
       "The automation platform ran on a hosted n8n plan. That plan went away and took its database with it. Every workflow the business depended on was gone in one afternoon, with no way to log in and get them back.",
@@ -280,7 +280,7 @@ export const work: WorkItem[] = [
     ],
     group: "Backend & Data",
     category: "Integration",
-    status: "Shipped",
+    status: "Active",
     featured: true,
     problem:
       "Leads from the brokerage's website reached GoHighLevel through an edge function that lived only in the deployed environment — unversioned, unreviewable, and named after the afternoon it was written. Separately, a chat thread could be closed by a timer, a cron sweep or an admin at the same moment, and nothing decided which one owned the close.",
@@ -371,7 +371,7 @@ export const work: WorkItem[] = [
     ],
     group: "Automation",
     category: "Automation",
-    status: "Shipped",
+    status: "Active",
     problem:
       "Prospects scanned from business cards had to reach the right broker instantly, with a welcome email that wouldn't land in spam.",
     build:
