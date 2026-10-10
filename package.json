@@ -13,7 +13,8 @@
     "workflow": "node scripts/render-workflow.mjs",
     "shots": "node scripts/optimize-shots.mjs",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "resume:preview": "python scripts/render-resume-preview.py"
   },
   "dependencies": {
     "next": "^15.5.0",

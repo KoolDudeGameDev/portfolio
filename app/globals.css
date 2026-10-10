@@ -285,6 +285,16 @@ section[id] {
   .marquee-copy:not(:first-child) {
     display: none;
   }
+  /* The logos live inside the copy, not the track, so the copy is what has to
+     wrap. Without this it stays one unbroken line wider than the viewport and
+     the whole page scrolls sideways for anyone with Reduce Motion on. */
+  .marquee-copy {
+    flex-shrink: 1;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem 2.5rem;
+    padding-inline: 1.5rem;
+  }
 }
 
 /* ==================== PAGE VEIL ==================== */

@@ -78,7 +78,7 @@ export function WorkModal({
 
   const modal = (
     <div
-      className="animate-overlay-in fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm sm:p-6"
+      className="animate-overlay-in fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-3 backdrop-blur-sm sm:p-6"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -89,7 +89,7 @@ export function WorkModal({
         aria-modal="true"
         aria-labelledby="work-modal-title"
         tabIndex={-1}
-        className="animate-panel-in flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-border bg-bg shadow-2xl outline-none"
+        className="animate-panel-in flex max-h-[92dvh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-border bg-bg shadow-2xl outline-none"
       >
         <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4 sm:px-6">
           <div className="min-w-0">
@@ -115,7 +115,7 @@ export function WorkModal({
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-5 py-6 sm:px-6">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-6 sm:px-6">
           {shots.length ? (
             <div className="mb-6">
               <div className="group relative overflow-hidden rounded-xl border border-border">

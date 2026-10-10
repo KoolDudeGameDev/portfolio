@@ -227,6 +227,14 @@ Escape-to-close, body-scroll lock, focus park on open, focus restore on close, a
 optional `onKey` callback (WorkModal uses it for the arrow-key carousel); it never sees Tab
 or Escape. **Any new dialog uses this hook** rather than re-implementing the contract.
 
+**`ResumeModal` shows a picture of the PDF, not the PDF.** An `<object>` embed only works
+where the browser has a PDF viewer, so phones (and Chrome set to download PDFs) got an empty
+panel. The dialog now shows `public/assets/resume-preview.webp` as a paper sheet, with Open
+and Download beside it. **After every resume export, run `npm run resume:preview`**
+([scripts/render-resume-preview.py](scripts/render-resume-preview.py); needs
+`pip install pypdfium2 pillow`) or the picture drifts from the file people download. If the
+page size ever changes, update `PREVIEW_WIDTH`/`PREVIEW_HEIGHT` in the component too.
+
 [components/ImageZoom.tsx](components/ImageZoom.tsx) is the full-screen image viewer opened
 from the WorkModal image. It stacks *on top of* the modal, so WorkModal passes
 `open: item !== null && !zoomed` — the modal's hook steps aside while the viewer owns
@@ -235,7 +243,7 @@ Escape/Tab/arrows, then re-arms. Zoom is a fixed width in a scrolling box, no li
 ## Known gaps
 - No booking link yet: `site.bookingUrl` is an empty string, which hides the "Book a
   15-min call" button. Paste a Cal.com URL there to turn it on.
-- 16 projects is a lot and 4 of them are open-source n8n reference workflows — the least
+- 17 projects is a lot and 4 of them are open-source n8n reference workflows — the least
   differentiated items. Pruning the tail is a judgement call, deliberately not made.
 - Web3Forms free tier can't restyle the notification email. Sender name, subject and the
   per-row labels are controlled from the POST payload in `ContactForm.tsx` — the keys sent
