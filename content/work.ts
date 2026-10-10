@@ -112,46 +112,53 @@ export const work: WorkItem[] = [
     tech: ["n8n", "GoHighLevel v2 API", "Asana API", "Webhooks", "REST"],
   },
   {
-    title: "Creator Rewards Platform Operations",
+    title: "Creator Rewards Finance & Payout System",
     org: "Confidential Client — Ecommerce",
-    image: "workflow-commission-engine.webp",
+    // Leads with the system Kyle built. The two n8n workflows at the end were
+    // already running when he took over; their captions say so, because this
+    // card must survive "walk me through how you built that".
+    image: "payout-system.webp",
     shots: [
       {
-        src: "workflow-commission-engine.webp",
+        src: "payout-system.webp",
         caption:
-          "The commission engine. Every claim is routed by type and checked against the table that owns that bonus. A claim nobody can vouch for is rejected rather than paid.",
-      },
-      {
-        src: "workflow-sales-attribution.webp",
-        caption:
-          "Sales attribution: a storefront order is matched to a creator by discount code, then by referral link, before commission and tier progression run.",
-      },
-      {
-        src: "workflow-messaging-engine.webp",
-        caption:
-          "The messaging engine: thirteen notification types routed to one delivery path, deduplicated by hashed message content so a retry can't send twice.",
+          "The finance and payout system, in two lanes. An order earns commission on a labelled basis and becomes payable once the refund window has passed; staff then settle it through a ledger that always pays the oldest owed earnings first.",
       },
       {
         src: "health-check.webp",
         caption:
           "The daily health check. A signup and a login run through production for real and clean up after themselves; the rest are read-only probes. One report says what each status is and how it was proven.",
       },
+      {
+        src: "workflow-sales-attribution.webp",
+        caption:
+          "The order flow I traced end to end when I took the system over: a storefront order is matched to a creator by discount code, then by referral link, before commission runs.",
+      },
+      {
+        src: "workflow-commission-engine.webp",
+        caption:
+          "The automation layer the dashboards read from, already running when I took over. Every claim is routed by type and checked against the table that owns that bonus.",
+      },
     ],
-    group: "Infrastructure & Reliability",
-    category: "Reliability",
-    status: "Active",
+    group: "Web Apps",
+    category: "Full-Stack",
+    status: "Shipped",
     featured: true,
     problem:
-      "An ecommerce brand's affiliate-management platform (storefront, dashboards, payouts, messaging) had one engineer available to keep it alive, and its failures surfaced as wrong numbers rather than as errors.",
+      "An ecommerce brand paid its creators commission on every sale, but its finance team couldn't see what each order earned, what had been paid, what was still owed, or what a refund should take back. The dashboards showed totals, the commission rates lived in the page markup, and the system came half-built from a previous team, with dead code and endpoints nothing called.",
     build:
-      "Took sole ownership of production: uptime monitoring, incident response, security review, database maintenance, and feature work across 17 Supabase Edge Functions, two role-gated dashboards, and a self-hosted automation stack.",
+      "Took the system over as its sole engineer. Learned the stack and architecture from the project docs, traced the whole flow from storefront order through the automation layer to the database and both dashboards, and cleared out the dead weight. Then built its finance and payout system end to end: an order-level transaction ledger, a rate card moved out of the code into the database, a configurable refund holdback, a payout ledger that settles the oldest earnings first, and encrypted bank details. That meant the schema, 17 new server functions, and a rebuild of both role-gated dashboards for internal staff and for creators.",
     results: [
-      "Removed an unauthenticated endpoint that could write directly to the live database, closing a path to forged commission records",
+      "Audited the inherited codebase against what production actually ran, stripped dead code, faked fields and unused endpoints, and reconciled every database function between environments before building on top of it",
+      "Delivered 10 of the 11 requirements Finance and Marketing set, and shipped 25 server functions to production in one release, browser-verified afterwards",
+      "Made the commission basis visible: \"sales\" had been three different numbers about 15% apart, displayed as one and paid on another. They are now labelled columns, and every export states its basis",
+      "Bank details are encrypted with AES-256-GCM, and every time a creator reveals their own account number the reveal is logged before it is shown",
+      "Removed an unauthenticated endpoint that could write directly to the live database, closing a path to forged commission records, and caught an account-creation path that let any staff member make themselves an administrator",
       "Root-caused an analytics endpoint that had silently returned zeros since launch, and rebuilt it to fail closed",
-      "Wrote a daily end-to-end health check that runs a real signup and a real login through production, probes every Edge Function, and sweeps every workflow's failed runs into one morning report",
-      "Traced a same-day outage of two separate systems to one shared-host failure and restored both",
+      "Wrote a daily end-to-end health check that runs a real signup and a real login through production, probes every server function, and sweeps every workflow's failed runs into one morning report",
+      "Split development from production with a personal-data-scrubbing clone, then closed the contract with a re-verified handoff, release runbooks and scripts for the incoming team",
     ],
-    tech: ["Supabase", "PostgreSQL", "React", "TypeScript", "Deno", "n8n"],
+    tech: ["Supabase", "PostgreSQL", "Deno", "TypeScript", "JavaScript", "Chart.js", "n8n"],
   },
   {
     title: "Leave Application Platform",
@@ -249,8 +256,31 @@ export const work: WorkItem[] = [
       "Postgres holds execution state instead of the container filesystem, so the stack can be rebuilt without losing history",
       "The encryption key is treated as the platform's real secret: lose it and every stored credential becomes permanently unreadable",
       "Traced a TLS failure to a proxy release that had dropped two config keys, and was serving a self-signed certificate rather than erroring",
+      "Three backup tiers, each covering the last one's blind spot: provider snapshots, a nightly database dump on the box, and a nightly GitHub Actions job that commits every workflow off-box as normalised JSON, so a diff answers who changed what, and when",
+      "Every workflow is tagged as production, internal or practice, and noisy internal workflows no longer store their successful runs, so the execution history holds what someone might actually need to read",
+      "Opened the repository to the wider team with a contributing guide and a dev-branch model, so changes are reviewed before they reach the live instance",
     ],
-    tech: ["Docker Compose", "Traefik", "Linux", "PostgreSQL", "n8n", "DNS"],
+    tech: ["Docker Compose", "Traefik", "Linux", "PostgreSQL", "n8n", "GitHub Actions"],
+  },
+  {
+    title: "Workflow Monitor",
+    org: "Bai Finance",
+    image: "workflow-monitor.webp",
+    group: "Infrastructure & Reliability",
+    category: "Monitoring",
+    status: "Active",
+    problem:
+      "The brokerage's production workflows caught their own errors so callers always got a clean reply, which also meant n8n recorded every failure as a success. A broken CRM sync could fail on every lead for days and nobody would hear about it.",
+    build:
+      "Built one n8n workflow with two lanes. The error lane posts each failed run to the team's Discord the moment it happens. The status lane posts a summary of the previous hour, every hour. Then went back into the production workflows and made their caught errors fail the run, so there was something to report.",
+    results: [
+      "Each workflow is muted for an hour after it alerts, so one that fails on every lead posts once rather than once per lead, and one workflow's mute never silences another's",
+      "The hourly post arrives silently even when everything is fine, so a missing post means n8n itself is down: the one failure an error trigger can never report",
+      "Caught errors now end the run as failed after the caller already has its error reply, so the CRM and the task manager see no difference",
+      "Watches the nine production workflows plus itself, and a new one joins by pointing its error setting at the monitor. It shows up in the next hourly post on its own",
+      "Fire-drilled before go-live: a deliberately broken workflow alerted once and the repeat was muted, and the status lane reported all clear on the live instance",
+    ],
+    tech: ["n8n", "n8n REST API", "Discord", "Python"],
   },
   {
     title: "CRM Sync & Inquiry Pipeline",
@@ -326,6 +356,7 @@ export const work: WorkItem[] = [
       "Audited 4,000+ contacts across 20+ source sheets and consolidated them into 1,900+ deduplicated records",
       "A tag taxonomy where each tag carries exactly one fact, so adding a segment doesn't mean reworking existing lists",
       "Delivered a phased cleanup roadmap and a company-wide Contact Management SOP",
+      "Designed a weekly data-quality digest that reads every CRM contact each Monday and emails the team the records that are flagged for review, untagged, or have no owner, so the cleanup stays clean",
     ],
     tech: ["Python", "pandas", "GoHighLevel", "Data Modeling"],
   },

@@ -13,15 +13,15 @@ export const experience: ExperienceItem[] = [
     org: "Bai Finance",
     location: "Australia · remote from Cebu",
     summary:
-      "Owned a version-controlled n8n automation platform integrating GoHighLevel and Asana across a 19-pipeline brokerage, built the CRM sync and inquiry pipeline behind the company website and a company-wide leave platform, and led a six-person engineering team on builds, code reviews, and documentation standards.",
+      "Owned a version-controlled n8n automation platform integrating GoHighLevel and Asana across a 19-pipeline brokerage, built the CRM sync and inquiry pipeline behind the company website and a company-wide leave platform, put the platform under production monitoring and off-box backups, and led a six-person engineering team on builds, code reviews, and documentation standards.",
   },
   {
     period: "Jun 2026 — Sep 2026",
-    role: "Technical Operations Engineer (Agency Contract)",
+    role: "Software Engineer (Agency Contract)",
     org: "Confidential Client — Ecommerce",
     location: "Remote",
     summary:
-      "Placed by a software agency as the sole engineer on one client product, an affiliate-rewards ecommerce platform, owning uptime monitoring, incident response, security review of live endpoints, Supabase/PostgreSQL maintenance, and React/TypeScript feature work under a tiered SLA, in direct contact with the client.",
+      "Placed by a software agency as the sole engineer on a partly built affiliate-rewards ecommerce platform. Learned its architecture from the docs, cleared out the dead code and unused endpoints it was carrying, then built its finance and payout system end to end (schema, server functions and both role-gated dashboards), delivered 10 of 11 client requirements to production, hardened access to the live database, and closed the engagement with a full technical handoff to the incoming team.",
   },
   {
     period: "Jun 2025 — May 2026",
@@ -29,7 +29,7 @@ export const experience: ExperienceItem[] = [
     org: "Cebuano Speech-to-Text Capstone",
     location: "Cebu, Philippines",
     summary:
-      "Built and trained an end-to-end Cebuano ASR pipeline (Wav2Vec2-XLSR + KenLM) reaching 3.07% WER, and authored a conference paper on the results.",
+      "Built and trained an end-to-end Cebuano ASR pipeline (Wav2Vec2-XLSR + KenLM) reaching 4.15% WER with beam search alone, and authored a conference paper on the results.",
   },
   {
     period: "Feb — May 2026",

@@ -28,6 +28,11 @@ export const faqs: FaqItem[] = [
       "Builds come with health checks so failures show up as alerts instead of as a customer complaining. If you are on a retainer I respond and fix it. If you are not, you still own the system and the documentation, and you can call me for one-off help.",
   },
   {
+    question: "Can you take over a system someone else started?",
+    answer:
+      "Yes, and a lot of my work has started exactly there. I read whatever documentation exists, map how the system really runs from end to end, clear out what is dead or broken, and then finish or extend it. When I am done you get a written handoff, so whoever comes next does not start from zero.",
+  },
+  {
     question: "Does my team need to be technical to run this?",
     answer:
       "No. Anything I build is documented and handed over, and I walk your team through it. The point is that the system runs without me, not that you depend on me to keep it alive.",

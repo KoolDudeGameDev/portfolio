@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Payout system</title>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #171a24; font-family: 'Geist', system-ui, sans-serif; }
+    svg#d { width: 1200px; height: 675px; display: block; }
+  </style>
+</head>
+<body>
+  <svg id="d" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg"
+       role="img" aria-labelledby="payout-title payout-desc">
+    <title id="payout-title">Finance and payout system: earn, then pay</title>
+    <desc id="payout-desc">Two lanes. In the earn lane an order arrives from the storefront, its commission is computed from a rate card on a labelled basis, a refund holdback decides whether it has matured, and it becomes payable net of refunds. In the pay lane a staff member selects earnings, the creator's encrypted bank details are attached, and the payout ledger settles the oldest owed earnings first, which the creator then sees in their payout history.</desc>
+
+    <defs>
+      <marker id="arrow" markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto"><polygon points="0 0, 6 2.5, 0 5" fill="#9aa4bd"/></marker>
+      <marker id="arrow-accent" markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto"><polygon points="0 0, 6 2.5, 0 5" fill="#ea4b71"/></marker>
+      <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="rgba(232,236,245,0.07)"/></pattern>
+    </defs>
+
+    <rect width="100%" height="100%" fill="#171a24"/>
+    <rect width="100%" height="100%" fill="url(#dots)"/>
+
+    <!-- header -->
+    <text x="56" y="84" fill="#7f8aa5" font-size="13" font-family="'Geist Mono', monospace" letter-spacing="0.14em">FINANCE &amp; PAYOUT SYSTEM · EVERY PAYOUT TRACES BACK TO AN ORDER</text>
+    <line x1="56" y1="104" x2="1144" y2="104" stroke="rgba(232,236,245,0.10)" stroke-width="1"/>
+
+    <!-- lanes -->
+    <rect x="40" y="132" width="1120" height="168" rx="10" fill="rgba(232,236,245,0.015)" stroke="rgba(232,236,245,0.10)" stroke-dasharray="5 5"/>
+    <text x="64" y="156" fill="#7f8aa5" font-size="13" font-family="'Geist Mono', monospace" letter-spacing="0.14em">EARN</text>
+    <rect x="40" y="404" width="1120" height="168" rx="10" fill="rgba(232,236,245,0.015)" stroke="rgba(232,236,245,0.10)" stroke-dasharray="5 5"/>
+    <text x="64" y="428" fill="#7f8aa5" font-size="13" font-family="'Geist Mono', monospace" letter-spacing="0.14em">PAY</text>
+
+    <!-- earn spine -->
+    <g fill="none" stroke="#9aa4bd" stroke-width="2.4">
+      <path d="M288,216 H340" marker-end="url(#arrow)"/>
+      <path d="M568,216 H620" marker-end="url(#arrow)"/>
+      <path d="M848,216 H896" marker-end="url(#arrow)"/>
+    </g>
+    <text x="858" y="200" fill="#7f8aa5" font-size="13" font-family="'Geist Mono', monospace" letter-spacing="0.08em">YES</text>
+
+    <!-- what is owed drops into the ledger -->
+    <path d="M1012,268 V340 H740 V428" fill="none" stroke="#ea4b71" stroke-width="2.4" marker-end="url(#arrow-accent)"/>
+    <text x="1032" y="322" fill="#f3aec0" font-size="13" font-family="'Geist Mono', monospace" letter-spacing="0.08em">WHAT IS OWED</text>
+
+    <!-- pay spine -->
+    <g fill="none" stroke="#9aa4bd" stroke-width="2.4">
+      <path d="M288,488 H340" marker-end="url(#arrow)"/>
+      <path d="M568,488 H620" marker-end="url(#arrow)"/>
+    </g>
+    <path d="M848,488 H896" fill="none" stroke="#ea4b71" stroke-width="2.4" marker-end="url(#arrow-accent)"/>
+
+    <!-- earn nodes -->
+    <rect x="72" y="164" width="216" height="104" rx="52" fill="#171a24"/>
+    <rect x="72" y="164" width="216" height="104" rx="52" fill="rgba(52,211,153,0.06)" stroke="#34d399" stroke-width="1.4"/>
+    <circle cx="180" cy="186" r="6" fill="#34d399"/>
+    <text x="180" y="222" fill="#e8ecf5" font-size="24" font-weight="600" text-anchor="middle">Order</text>
+    <text x="180" y="246" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace" text-anchor="middle">from the storefront</text>
+
+    <rect x="352" y="164" width="216" height="104" rx="8" fill="#232838" stroke="#39415a" stroke-width="1.2"/>
+    <circle cx="460" cy="186" r="6" fill="#818cf8"/>
+    <text x="460" y="222" fill="#e8ecf5" font-size="24" font-weight="600" text-anchor="middle">Commission</text>
+    <text x="460" y="246" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace" text-anchor="middle">rate card · basis</text>
+
+    <path d="M632,216 L740,164 L848,216 L740,268 Z" fill="#232838" stroke="#39415a" stroke-width="1.2"/>
+    <circle cx="740" cy="190" r="6" fill="#fbbf24"/>
+    <text x="740" y="228" fill="#e8ecf5" font-size="24" font-weight="600" text-anchor="middle">Holdback</text>
+
+    <rect x="904" y="164" width="216" height="104" rx="8" fill="#232838" stroke="#39415a" stroke-width="1.2"/>
+    <circle cx="1012" cy="186" r="6" fill="#c084fc"/>
+    <text x="1012" y="222" fill="#e8ecf5" font-size="24" font-weight="600" text-anchor="middle">Payable</text>
+    <text x="1012" y="246" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace" text-anchor="middle">net of refunds</text>
+
+    <!-- pay nodes -->
+    <rect x="72" y="436" width="216" height="104" rx="52" fill="#171a24"/>
+    <rect x="72" y="436" width="216" height="104" rx="52" fill="rgba(52,211,153,0.06)" stroke="#34d399" stroke-width="1.4"/>
+    <circle cx="180" cy="458" r="6" fill="#34d399"/>
+    <text x="180" y="494" fill="#e8ecf5" font-size="24" font-weight="600" text-anchor="middle">Staff selects</text>
+    <text x="180" y="518" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace" text-anchor="middle">ticked earnings</text>
+
+    <rect x="352" y="436" width="216" height="104" rx="8" fill="#232838" stroke="#39415a" stroke-width="1.2"/>
+    <circle cx="460" cy="458" r="6" fill="#c084fc"/>
+    <text x="460" y="494" fill="#e8ecf5" font-size="24" font-weight="600" text-anchor="middle">Bank details</text>
+    <text x="460" y="518" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace" text-anchor="middle">AES-256-GCM</text>
+
+    <!-- FOCAL: the ledger both lanes meet in -->
+    <rect x="632" y="436" width="216" height="104" rx="8" fill="#171a24"/>
+    <rect x="632" y="436" width="216" height="104" rx="8" fill="rgba(234,75,113,0.10)" stroke="#ea4b71" stroke-width="1.6"/>
+    <circle cx="740" cy="458" r="6" fill="#ea4b71"/>
+    <text x="740" y="494" fill="#ffffff" font-size="24" font-weight="600" text-anchor="middle">Payout ledger</text>
+    <text x="740" y="518" fill="#f3aec0" font-size="15" font-family="'Geist Mono', monospace" text-anchor="middle">oldest owed first</text>
+
+    <rect x="904" y="436" width="216" height="104" rx="8" fill="#232838" stroke="#39415a" stroke-width="1.2"/>
+    <circle cx="1012" cy="458" r="6" fill="#8b93a8"/>
+    <text x="1012" y="494" fill="#e8ecf5" font-size="24" font-weight="600" text-anchor="middle">Creator sees it</text>
+    <text x="1012" y="518" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace" text-anchor="middle">payout history</text>
+
+    <!-- legend -->
+    <line x1="56" y1="612" x2="1144" y2="612" stroke="rgba(232,236,245,0.12)" stroke-width="1"/>
+    <text x="56" y="644" fill="#7f8aa5" font-size="13" font-family="'Geist Mono', monospace" letter-spacing="0.14em">STEP</text>
+    <circle cx="140" cy="639" r="6" fill="#34d399"/>
+    <text x="156" y="644" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace">trigger</text>
+    <circle cx="284" cy="639" r="6" fill="#818cf8"/>
+    <text x="300" y="644" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace">compute</text>
+    <circle cx="428" cy="639" r="6" fill="#fbbf24"/>
+    <text x="444" y="644" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace">rule</text>
+    <circle cx="536" cy="639" r="6" fill="#c084fc"/>
+    <text x="552" y="644" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace">database</text>
+    <circle cx="688" cy="639" r="6" fill="#8b93a8"/>
+    <text x="704" y="644" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace">dashboard</text>
+    <circle cx="848" cy="639" r="6" fill="#ea4b71"/>
+    <text x="864" y="644" fill="#9aa4bd" font-size="15" font-family="'Geist Mono', monospace">where both lanes settle</text>
+  </svg>
+</body>
+</html>
