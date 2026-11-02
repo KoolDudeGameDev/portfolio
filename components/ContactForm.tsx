@@ -18,9 +18,9 @@ const ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_KEY ?? "";
 type Status = "idle" | "sending" | "sent" | "error";
 
 const FIELD =
-  "w-full rounded-xl border border-border bg-bg px-4 py-3 text-sm text-fg placeholder:text-muted/70 transition-colors focus:border-fg focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
+  "w-full rounded-xl border border-border bg-surface px-4 py-2.5 text-sm text-fg placeholder:text-muted transition-colors focus:border-fg focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
 
-const LABEL = "block text-xs uppercase tracking-[0.14em] text-muted";
+const LABEL = "sr-only";
 
 /** Falls back to the old mailto button when no key is configured. */
 function MailtoFallback() {
@@ -102,14 +102,14 @@ export function ContactForm() {
       console.error("Web3Forms rejected the submission:", data);
       setError(
         response.status === 429
-          ? "Too many messages from this network just now. Try again in a few minutes, or email me directly."
-          : "That didn't go through.",
+          ? "Too many messages have been sent from this network. Please try again in a few minutes, or email me directly."
+          : "Your message could not be sent.",
       );
       setStatus("error");
     } catch {
       // Offline, DNS, or a blocked request — nothing came back at all.
       setError(
-        "Couldn't reach the server. Check your connection, or email me directly.",
+        "The server could not be reached. Please check your connection, or email me directly.",
       );
       setStatus("error");
     }
@@ -122,17 +122,17 @@ export function ContactForm() {
         // announce itself to anyone not watching the screen.
         role="status"
         aria-live="polite"
-        className="mx-auto max-w-xl rounded-2xl border border-border bg-bg px-6 py-10 text-center"
+        className="rounded-2xl border border-border px-6 py-5"
       >
-        <p className="font-serif text-2xl italic text-accent">Message sent.</p>
-        <p className="mt-3 leading-relaxed text-muted">
-          Thanks — it's in my inbox. I usually reply within a day, and I'll
-          come back with a few questions about scope.
+        <p className="font-serif text-xl italic text-accent">Message sent.</p>
+        <p className="mt-1 text-sm leading-relaxed text-muted">
+          Thank you. I usually reply within a day, with a few questions about
+          scope.
         </p>
         <button
           type="button"
           onClick={() => setStatus("idle")}
-          className="mt-6 text-sm font-medium underline-offset-4 hover:underline"
+          className="mt-2 text-sm font-medium underline-offset-4 hover:underline"
         >
           Send another
         </button>
@@ -145,7 +145,7 @@ export function ContactForm() {
   return (
     <form
       onSubmit={onSubmit}
-      className="mx-auto max-w-xl space-y-4 text-left"
+      className="space-y-2.5 text-left"
       noValidate={false}
     >
       {/* Honeypot. A real person never sees it, so anything that ticks it is a
@@ -160,8 +160,8 @@ export function ContactForm() {
         style={{ display: "none" }}
       />
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="space-y-2">
+      <div className="grid gap-2.5 sm:grid-cols-[1fr_1fr_auto]">
+        <div>
           <label htmlFor="cf-name" className={LABEL}>
             Name
           </label>
@@ -176,7 +176,7 @@ export function ContactForm() {
             className={FIELD}
           />
         </div>
-        <div className="space-y-2">
+        <div>
           <label htmlFor="cf-email" className={LABEL}>
             Email
           </label>
@@ -191,34 +191,33 @@ export function ContactForm() {
             className={FIELD}
           />
         </div>
+        <button
+          type="submit"
+          disabled={sending}
+          aria-busy={sending}
+          className="group inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-2.5 text-sm font-medium text-accent-fg transition-opacity hover:opacity-90 disabled:opacity-60"
+        >
+          <Mail className="h-4 w-4" />
+          {sending ? "Sending…" : "Send message"}
+        </button>
       </div>
 
-      <div className="space-y-2">
+      <div>
         <label htmlFor="cf-message" className={LABEL}>
-          What's slowing you down?
+          What is slowing you down?
         </label>
         <textarea
           id="cf-message"
           name="message"
           required
-          rows={5}
+          rows={2}
           disabled={sending}
-          placeholder="The process you'd like to automate, the system you need built, or just a question."
-          className={`${FIELD} resize-y`}
+          placeholder="The process you would like to automate, the system you need built, or a question."
+          className={`${FIELD} block resize-none lg:h-[clamp(3.25rem,9svh,4.5rem)]`}
         />
       </div>
 
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-3 pt-1">
-        <button
-          type="submit"
-          disabled={sending}
-          aria-busy={sending}
-          className="group inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 text-sm font-medium text-accent-fg transition-opacity hover:opacity-90 disabled:opacity-60"
-        >
-          <Mail className="h-4 w-4" />
-          {sending ? "Sending…" : "Send message"}
-          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-        </button>
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
 
         {/* Only renders once site.bookingUrl is set. */}
         {site.bookingUrl ? (
@@ -226,7 +225,7 @@ export function ContactForm() {
             href={site.bookingUrl}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-full border border-border px-6 py-3.5 text-sm font-medium transition-colors hover:border-accent hover:text-accent"
+            className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2 text-sm font-medium transition-colors hover:border-accent hover:text-accent"
           >
             Book a 15-min call
             <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
@@ -245,7 +244,7 @@ export function ContactForm() {
 
       {/* Announced rather than just drawn, so a failure isn't silent — which is
           the exact bug the mailto-only version had. */}
-      <p role="status" aria-live="polite" className="min-h-[1.25rem] text-sm">
+      <p role="status" aria-live="polite" className="text-sm empty:hidden">
         {status === "error" ? (
           <span className="text-fg">
             {error}{" "}

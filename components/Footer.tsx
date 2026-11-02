@@ -12,8 +12,10 @@ const socials = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-border px-6 py-12">
-      <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 text-center sm:flex-row sm:justify-between sm:text-left">
+    <footer
+      className="px-6 pt-8 pb-6 lg:pt-[clamp(1rem,3svh,2rem)] lg:pb-[clamp(0.75rem,2svh,1.5rem)]"
+    >
+      <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 border-t border-border pt-6 text-center sm:flex-row sm:justify-between sm:text-left lg:pt-[clamp(0.75rem,2.4svh,1.5rem)]">
         {/* The monogram signs off here rather than in the navbar, where it only
             repeated the wordmark sitting next to it. */}
         <div className="flex items-center gap-4">
@@ -51,7 +53,7 @@ export function Footer() {
         </div>
       </div>
 
-      <p className="mx-auto mt-8 max-w-6xl text-center text-xs text-muted sm:text-left">
+      <p className="mx-auto mt-4 max-w-6xl text-center text-xs text-muted sm:text-left">
         © {new Date().getFullYear()} {site.name}. Built with Next.js &
         TypeScript.
       </p>
