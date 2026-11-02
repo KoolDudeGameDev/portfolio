@@ -4,13 +4,15 @@ import { useEffect, useState } from "react";
 import { ThemeToggle } from "./ThemeToggle";
 import { ResumeModal } from "./ResumeModal";
 import { Menu, Close, FileIcon } from "./Icons";
-import { site } from "@/lib/site";
+import { asset, site } from "@/lib/site";
 
+// Full paths, so the same bar works from /work as well as the home page.
+const home = asset("/");
 const links = [
-  { href: "#services", label: "Services" },
-  { href: "#work", label: "Work" },
-  { href: "#stack", label: "Tech Stack" },
-  { href: "#experience", label: "Experience" },
+  { id: "services", label: "Services" },
+  { id: "work", label: "Work" },
+  { id: "stack", label: "Tech Stack" },
+  { id: "experience", label: "Experience" },
 ];
 
 export function Navbar() {
@@ -60,8 +62,9 @@ export function Navbar() {
     // Floats clear of the page rather than sitting on a full-width band, so the
     // cream ground runs behind it and the bar reads as a control, not a header.
     <header className="fixed inset-x-0 top-3 z-50 px-4 sm:top-4 sm:px-6">
-      {/* The pill only covers the middle 1024px, so full-bleed rows — the logo
-          marquee most of all — scroll past it on both sides at exactly nav
+      <div aria-hidden className="scroll-progress" />
+      {/* The pill only covers the middle 1024px, so full-bleed rows — the
+          carousel most of all — scroll past it on both sides at exactly nav
           height and read as a collision. This catches them across the full
           width. Blur rather than a colour band, so it works over both `--bg`
           and `--surface` sections without tinting either, and masked out at the
@@ -78,7 +81,7 @@ export function Navbar() {
         }`}
       >
         <a
-          href="#home"
+          href={`${home}#home`}
           className="shrink-0 font-serif text-base font-semibold tracking-tight sm:text-lg"
         >
           {site.name}
@@ -87,11 +90,11 @@ export function Navbar() {
         <div className="hidden items-center gap-6 md:flex">
           <ul className="flex items-center gap-1 text-sm">
             {links.map((link) => (
-              <li key={link.href}>
+              <li key={link.id}>
                 <a
-                  href={link.href}
+                  href={`${home}#${link.id}`}
                   className={`rounded-full px-3 py-1.5 transition-colors ${
-                    active === link.href.slice(1)
+                    active === link.id
                       ? "bg-surface text-fg"
                       : "text-muted hover:text-fg"
                   }`}
@@ -112,7 +115,7 @@ export function Navbar() {
               Résumé
             </button>
             <a
-              href="#contact"
+              href={`${home}#book`}
               className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-fg transition-opacity hover:opacity-90"
             >
               Start a project
@@ -143,9 +146,9 @@ export function Navbar() {
         <div className="mx-auto mt-2 max-w-5xl rounded-2xl border border-border bg-bg/95 shadow-[0_10px_30px_-12px_rgba(24,20,16,0.28)] backdrop-blur-xl md:hidden">
           <ul className="flex flex-col gap-1 px-5 py-4 text-sm">
             {links.map((link) => (
-              <li key={link.href}>
+              <li key={link.id}>
                 <a
-                  href={link.href}
+                  href={`${home}#${link.id}`}
                   onClick={() => setOpen(false)}
                   className="block py-2 text-muted transition-colors hover:text-fg"
                 >
@@ -168,7 +171,7 @@ export function Navbar() {
             </li>
             <li className="pt-2">
               <a
-                href="#contact"
+                href={`${home}#book`}
                 onClick={() => setOpen(false)}
                 className="inline-flex rounded-full bg-accent px-4 py-2 font-medium text-accent-fg"
               >

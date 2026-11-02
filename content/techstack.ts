@@ -13,8 +13,6 @@ export type StackItem = {
 export type StackGroup = {
   group: string;
   items: StackItem[];
-  /** Practices and APIs that have no logo but still belong to the group. */
-  notes?: string[];
 };
 
 export const techStack: StackGroup[] = [
@@ -29,15 +27,6 @@ export const techStack: StackGroup[] = [
       { name: "Apps Script", slug: "googleappsscript" },
       { name: "Slack", img: "mark-slack.png" },
       { name: "LearnWorlds", img: "mark-learnworlds.png", mask: true },
-    ],
-    notes: [
-      "GHL v2 API",
-      "Webhooks",
-      "REST payload contracts",
-      // "Bidirectional sync" reads as jargon to the business owners this page
-      // is written for. Same capability, said plainly.
-      "Two-way data sync across platforms",
-      "Email deliverability (SPF/DKIM/DMARC)",
     ],
   },
   {
@@ -55,7 +44,6 @@ export const techStack: StackGroup[] = [
       { name: "Prisma", slug: "prisma" },
       { name: "Tailwind CSS", slug: "tailwindcss" },
     ],
-    notes: ["REST APIs", "Django REST Framework", "Supabase Edge Functions"],
   },
   {
     group: "Data & Storage",
@@ -65,21 +53,12 @@ export const techStack: StackGroup[] = [
       { name: "pandas", slug: "pandas" },
       { name: "SQL", slug: "sql" },
     ],
-    notes: ["Data modeling", "Migrations", "Deduplication pipelines"],
   },
   {
     group: "Testing, Security & Reliability",
     items: [
       { name: "Playwright", img: "mark-playwright.png" },
       { name: "Vitest", slug: "vitest" },
-    ],
-    notes: [
-      "Row-Level Security",
-      "Rate limiting",
-      "CSP & security headers",
-      "Health checks",
-      "Incident response",
-      "Uptime monitoring",
     ],
   },
   {
@@ -89,15 +68,6 @@ export const techStack: StackGroup[] = [
       { name: "Gemini API", slug: "googlegemini" },
       { name: "Claude", slug: "claude" },
       { name: "Groq", img: "mark-groq.png", mask: true },
-    ],
-    // Deliberately the models and protocols built *with*, not the editors coded
-    // in: an MCP server is a service other systems call, not a coding habit.
-    notes: [
-      "MCP servers",
-      "RAG pipelines",
-      "Wav2Vec2-XLSR",
-      "KenLM",
-      "Speech recognition pipelines",
     ],
   },
   {
@@ -116,27 +86,5 @@ export const techStack: StackGroup[] = [
       { name: "Shopify", slug: "shopify" },
       { name: "Jitsi", slug: "jitsi" },
     ],
-    notes: ["CI/CD", "Cloudflare Tunnel", "Version-controlled deploys"],
   },
-];
-
-/**
- * The client-facing subset shown in the hero marquee — the names a business
- * owner is likely to recognise, not the full engineering stack.
- */
-export const featuredTools: StackItem[] = [
-  { name: "n8n", slug: "n8n" },
-  { name: "GoHighLevel", img: "mark-gohighlevel.png" },
-  { name: "Supabase", slug: "supabase" },
-  { name: "Next.js", slug: "nextdotjs" },
-  { name: "React", slug: "react" },
-  { name: "TypeScript", slug: "typescript" },
-  { name: "Python", slug: "python" },
-  { name: "PostgreSQL", slug: "postgresql" },
-  { name: "Asana", slug: "asana" },
-  { name: "Zapier", slug: "zapier" },
-  { name: "Shopify", slug: "shopify" },
-  { name: "WhatsApp", slug: "whatsapp" },
-  { name: "Docker", slug: "docker" },
-  { name: "Cloudflare", slug: "cloudflare" },
 ];

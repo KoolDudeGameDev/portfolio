@@ -21,6 +21,18 @@
   --live: #16a34a;
   /* A soft radial lift behind the page. Ink here, paper in dark. */
   --veil: rgba(12, 12, 12, 0.045);
+  /* Section shades. Translucent on purpose, so the veil shows through them all. */
+  --tint-1: rgb(12 12 12 / 0.016);
+  --tint-2: rgb(12 12 12 / 0.03);
+  --tint-3: rgb(12 12 12 / 0.045);
+  --tint-4: rgb(12 12 12 / 0.075);
+  --section-light: rgb(255 255 255 / 0.7);
+  --shadow-card:
+    0 1px 2px rgb(12 12 12 / 0.05), 0 10px 20px -8px rgb(12 12 12 / 0.1),
+    0 24px 48px -16px rgb(12 12 12 / 0.16);
+  --shadow-tile: 0 1px 2px rgb(12 12 12 / 0.08), 0 8px 18px -8px rgb(12 12 12 / 0.28);
+  --tile-dim: rgb(12 12 12 / 0.1);
+  --card-floor: rgb(12 12 12 / 0.32);
 }
 
 .dark {
@@ -36,6 +48,17 @@
   /* Brighter than the light-mode green so it holds contrast on near-black. */
   --live: #4ade80;
   --veil: rgba(245, 245, 244, 0.05);
+  --tint-1: rgb(255 255 255 / 0.012);
+  --tint-2: rgb(255 255 255 / 0.024);
+  --tint-3: rgb(255 255 255 / 0.036);
+  --tint-4: rgb(255 255 255 / 0.05);
+  --section-light: rgb(255 255 255 / 0.05);
+  --shadow-card:
+    0 1px 2px rgb(0 0 0 / 0.5), 0 12px 24px -8px rgb(0 0 0 / 0.6),
+    0 28px 56px -16px rgb(0 0 0 / 0.7);
+  --shadow-tile: 0 1px 2px rgb(0 0 0 / 0.5), 0 10px 22px -8px rgb(0 0 0 / 0.7);
+  --tile-dim: rgb(0 0 0 / 0.42);
+  --card-floor: rgb(0 0 0 / 0.8);
 }
 
 /* ---- Diagram canvas ----
@@ -93,6 +116,10 @@
 
   --font-sans: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-fraunces), ui-serif, Georgia, serif;
+
+  /* Eased from Tailwind's -0.025em, which closed up the word gaps below display
+     size. The hero headline keeps the tighter value on its own. */
+  --tracking-tight: -0.015em;
 }
 
 /* ==================== BASE ==================== */
@@ -116,6 +143,18 @@ section[id] {
   scroll-margin-top: 92px;
 }
 
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p,
+li,
+dd {
+  text-wrap: pretty;
+}
+
 ::selection {
   background: var(--accent);
   color: var(--accent-fg);
@@ -127,6 +166,10 @@ section[id] {
    elements are on screen or a thousand. A `transition: background-color` on
    body could never do that, and next-themes' `disableTransitionOnChange`
    suppressed it anyway. */
+@view-transition {
+  navigation: auto;
+}
+
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: 220ms;
@@ -207,93 +250,137 @@ section[id] {
   color: var(--brand-dark);
 }
 
-/* ==================== LOGO MARQUEE ==================== */
-/* A real scroll container, not a transform animation: the drift is driven by
-   scrollLeft in LogoMarquee.tsx, so dragging, the trackpad, and the arrow keys
-   all move the same thing instead of fighting an animation. */
-.marquee {
-  /* Fade the logos into the page edges instead of clipping them hard. */
+/* ==================== SHOWCASE ==================== */
+/* One fade down each side of the whole carousel, not a separate one per row. */
+.showcase-rows {
+  --edge: 1rem;
   -webkit-mask-image: linear-gradient(
     to right,
     transparent,
-    #000 6rem,
-    #000 calc(100% - 6rem),
+    #000 var(--edge),
+    #000 calc(100% - var(--edge)),
     transparent
   );
   mask-image: linear-gradient(
     to right,
     transparent,
-    #000 6rem,
-    #000 calc(100% - 6rem),
+    #000 var(--edge),
+    #000 calc(100% - var(--edge)),
     transparent
   );
+}
+
+/* A real scroll container, not a transform animation: the drift is driven by
+   scrollLeft in Showcase.tsx, so dragging, the trackpad, and the arrow keys all
+   move the same thing instead of fighting an animation. */
+.showcase-row {
+  --tile-h: 7.5rem;
+  /* Room for the tile shadow, which overflow-x would otherwise clip. */
+  padding-block: 0.5rem;
   overflow-x: auto;
   /* The page scrolls smoothly for nav links; this one must not, or every
      scrollLeft nudge would animate against the next frame's nudge. */
   scroll-behavior: auto;
   overscroll-behavior-x: contain;
   cursor: grab;
-  /* The strip is its own affordance — a scrollbar under it would read as chrome. */
+  /* The strip is its own affordance. */
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
 
-.marquee::-webkit-scrollbar {
+.showcase-row::-webkit-scrollbar {
   display: none;
 }
 
-.marquee.is-dragging {
+.showcase-row.is-dragging {
   cursor: grabbing;
 }
 
-.marquee:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 4px;
+.showcase-track {
+  width: max-content;
 }
 
-.marquee-track {
-  width: max-content;
+.showcase-tile {
+  position: relative;
+  display: block;
+  height: var(--tile-h);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--card);
+  box-shadow: var(--shadow-tile);
+  cursor: zoom-in;
+  transition:
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.2s ease;
+}
+
+/* Rests the images on the page, so bright white app screens don't glare, and
+   lights the one you point at. A layer rather than `filter`, which would be
+   recomputed for every moving tile. */
+.showcase-tile::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--tile-dim);
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.showcase-tile:hover::after,
+.showcase-tile:focus-visible::after {
+  opacity: 0;
+}
+
+.showcase-tile[data-kind="web"] {
+  aspect-ratio: 1.846;
+}
+
+/* Phones are tall, so a tile shows the top of the screen; the popup shows it all. */
+.showcase-tile[data-kind="phone"] {
+  aspect-ratio: 0.72;
+  border-radius: 1rem;
+}
+
+.showcase-tile img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  -webkit-user-drag: none;
+}
+
+.showcase-tile:hover {
+  transform: translateY(-3px);
+  border-color: var(--fg);
+}
+
+.showcase-tile:focus-visible {
+  outline: 2px solid var(--accent);
+  z-index: 1;
+  outline-offset: -2px;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
-  * {
+  *,
+  *::before,
+  *::after {
     transition: none !important;
     animation: none !important;
   }
 }
 
-/* Degrade the marquee to a plain wrapped row when motion is unwelcome. The
-   rule sits after the block above so it wins on the properties it repeats. */
+/* No drift with reduced motion, so one copy of each row is enough to scroll. */
 @media (prefers-reduced-motion: reduce) {
-  .marquee {
-    -webkit-mask-image: none;
-    mask-image: none;
-    /* Nothing overflows once the row wraps, so a grab cursor would be a lie. */
-    overflow-x: visible;
-    cursor: auto;
-  }
-  .marquee-track {
-    width: 100%;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  /* The track holds as many copies as the viewport needs; a wrapped static row
-     only wants the first. */
-  .marquee-copy:not(:first-child) {
+  .showcase-copy:not(:first-child) {
     display: none;
   }
-  /* The logos live inside the copy, not the track, so the copy is what has to
-     wrap. Without this it stays one unbroken line wider than the viewport and
-     the whole page scrolls sideways for anyone with Reduce Motion on. */
-  .marquee-copy {
-    flex-shrink: 1;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1.5rem 2.5rem;
-    padding-inline: 1.5rem;
+  .showcase-row {
+    cursor: auto;
   }
 }
 
@@ -310,6 +397,642 @@ section[id] {
     var(--veil),
     transparent 70%
   );
+}
+
+/* ==================== SECTION SHADES ==================== */
+.tint-1 {
+  background: var(--tint-1);
+}
+
+.tint-2 {
+  background: var(--tint-2);
+}
+
+.tint-3 {
+  background: var(--tint-3);
+}
+
+.tint-4 {
+  background: var(--tint-4);
+}
+
+/* ==================== ONE SCREEN PER SECTION ==================== */
+/* Desktop only. A phone keeps normal scrolling: forcing a long section into one
+   short screen would cut content off. Below 640px tall the same goes for
+   laptops. Sizes inside each section use svh clamps so they fit rather than
+   overflow; tests/one-screen.spec.ts checks that at four window sizes.
+
+   `proximity`, not `mandatory`, by Kyle's choice: the wheel moves the page at
+   the visitor's own speed and it only settles when they stop near a section.
+   Browsers can't slow a mandatory snap, which read as instant.
+
+   `:has` keeps this to the home page, and the top padding clears the nav pill,
+   which is why scroll-margin drops to 0: under snapping a margin would leave a
+   strip of the previous section showing. */
+@media (min-width: 1024px) and (min-height: 640px) {
+  html:has(.snap-page) {
+    scroll-snap-type: y proximity;
+  }
+
+  section.screen {
+    display: flex;
+    min-height: 100svh;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: clamp(4.75rem, 11svh, 6rem);
+    padding-bottom: clamp(0.75rem, 2.5svh, 1.75rem);
+    scroll-margin-top: 0;
+    scroll-snap-align: start;
+    view-timeline: --screen block;
+    position: relative;
+    isolation: isolate;
+  }
+
+  /* The closing band runs edge to edge and keeps the footer at its foot. It
+     rests square under the nav, where rounded corners would leave white wedges
+     at the top of the screen. The scroll effects round it on the way in. */
+  section.contact-band {
+    justify-content: space-between;
+    padding-bottom: 0;
+    border-radius: 0;
+  }
+
+  .showcase-rows {
+    --edge: 4rem;
+  }
+
+  .showcase-row {
+    --tile-h: clamp(5.25rem, calc((100svh - 17.75rem) / 3), 13.5rem);
+  }
+
+  /* The home cards are a summary; the full card is on /work and in the modal. */
+  .screen .work-thumb {
+    aspect-ratio: auto;
+    height: clamp(4.5rem, calc((100svh - 44rem) / 2), 11rem);
+  }
+
+  .screen .work-blurb {
+    display: none;
+  }
+}
+
+/* Short laptops: the supporting line goes before anything essential does. */
+@media (min-width: 1024px) and (max-height: 820px) {
+  .screen .fit-hide {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 720px) {
+  .screen .fit-tiny {
+    display: none;
+  }
+}
+
+/* ==================== MOTION ==================== */
+/* The hero's entrance, once on load. */
+.rise {
+  animation: rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0s) backwards;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+.scroll-progress {
+  display: none;
+}
+
+/* Everything below is driven by the scroll position in CSS, with no JavaScript.
+   A browser without scroll timelines skips this block and shows the page still;
+   nothing depends on it, so content is never left hidden. The reduced-motion
+   rule above removes these animations too.
+
+   Reveals go on wrappers, never on an element with its own hover transform,
+   because a filled animation would pin that transform. They also need no
+   `overflow: hidden` between them and the page, which would capture the
+   timeline: use `overflow: clip` there. */
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: reveal linear both;
+    animation-timeline: view();
+    animation-range: entry calc(var(--i, 0) * 7%) entry calc(50% + var(--i, 0) * 10%);
+  }
+
+  @keyframes reveal {
+    from {
+      opacity: 0;
+      transform: translateY(28px);
+    }
+  }
+
+  /* Rows arrive from the side they drift toward. */
+  .showcase-row.reveal[data-direction="left"] {
+    animation-name: reveal-from-right;
+  }
+
+  .showcase-row.reveal[data-direction="right"] {
+    animation-name: reveal-from-left;
+  }
+
+  @keyframes reveal-from-right {
+    from {
+      opacity: 0;
+      transform: translateX(6vw);
+    }
+  }
+
+  @keyframes reveal-from-left {
+    from {
+      opacity: 0;
+      transform: translateX(-6vw);
+    }
+  }
+
+  .scroll-progress {
+    display: block;
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 60;
+    height: 2px;
+    background: var(--fg);
+    transform-origin: left;
+    animation: scroll-progress linear both;
+    animation-timeline: scroll(root);
+  }
+
+  @keyframes scroll-progress {
+    from {
+      transform: scaleX(0);
+    }
+  }
+
+  /* Desktop: everything runs on the section's own timeline, so a section
+     unfolds across the whole scroll into it and is complete at rest. The
+     outgoing one recedes the same way. On the children rather than the section,
+     because a transform on a snap target moves its snap position. */
+  @media (min-width: 1024px) and (min-height: 640px) {
+    .screen .reveal {
+      animation-timeline: --screen;
+      animation-range: entry calc(15% + var(--i, 0) * 5%) entry calc(78% + var(--i, 0) * 4%);
+    }
+
+    .screen > *:not(.card-stage-wrap) {
+      animation: recede linear both;
+      animation-timeline: --screen;
+      animation-range: exit 0% exit 100%;
+    }
+
+    @keyframes recede {
+      to {
+        opacity: 0.08;
+        transform: translateY(-6svh) scale(0.98);
+      }
+    }
+
+    /* A soft pool of light that drifts across each section as you pass. */
+    section.screen::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background: radial-gradient(
+        46% 60% at 50% 42%,
+        var(--section-light),
+        transparent 72%
+      );
+      animation: section-light linear both;
+      animation-timeline: --screen;
+      animation-range: cover 0% cover 100%;
+    }
+
+    section.screen {
+      overflow-x: clip;
+    }
+
+    @keyframes section-light {
+      from {
+        transform: translateX(-22%);
+      }
+      to {
+        transform: translateX(22%);
+      }
+    }
+
+    section.contact-band {
+      animation: band-flatten linear both;
+      animation-timeline: --screen;
+      animation-range: entry 35% entry 100%;
+    }
+
+    @keyframes band-flatten {
+      from {
+        border-radius: 2rem 2rem 0 0;
+      }
+    }
+
+    .card-arrive {
+      animation: card-arrive linear both;
+      animation-timeline: --screen;
+      animation-range: entry 10% entry 95%;
+    }
+
+    @keyframes card-arrive {
+      from {
+        transform: translateY(16svh) rotateX(16deg);
+      }
+    }
+
+    /* The line under the three roles draws itself as the section arrives. */
+    .exp-track::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 1px;
+      background: var(--border);
+      transform-origin: left;
+      animation: exp-line linear both;
+      animation-timeline: --screen;
+      animation-range: entry 25% entry 95%;
+    }
+
+    @keyframes exp-line {
+      from {
+        transform: scaleX(0);
+      }
+    }
+  }
+}
+
+/* The line is there without scroll timelines too, just not drawn in. */
+@supports not (animation-timeline: view()) {
+  @media (min-width: 1024px) {
+    .exp-track::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 1px;
+      background: var(--border);
+    }
+  }
+}
+
+/* ==================== CARDS ==================== */
+.service-card {
+  transition:
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.2s ease;
+}
+
+.service-card:hover,
+.service-card:focus-within {
+  transform: translateY(-5px);
+  border-color: color-mix(in srgb, var(--fg) 22%, transparent);
+  box-shadow: var(--shadow-card);
+}
+
+.service-outcome {
+  transition: color 0.2s ease;
+}
+
+/* Desktop: the link takes the rail's line on hover instead of adding a row.
+   It stays in flow, not absolute, because its ::after is what makes the whole
+   card clickable and that has to be sized against the card. */
+@media (min-width: 1024px) {
+  .service-cta {
+    order: -1;
+    height: 1.25rem;
+    margin-top: 0;
+    margin-bottom: -1.25rem;
+    line-height: 1.25rem;
+  }
+
+  .service-card:hover .service-outcome,
+  .service-card:focus-within .service-outcome {
+    color: transparent;
+  }
+
+  .service-card:hover .service-outcome span,
+  .service-card:focus-within .service-outcome span {
+    color: transparent;
+  }
+}
+
+/* ==================== CLOSING PANEL AND BAND ==================== */
+/* Re-scopes the tokens, so anything inside reads as dark in either theme. */
+.ink {
+  --bg: #0a0a0a;
+  --surface: #171717;
+  --card: #1a1a1a;
+  --fg: #f5f5f4;
+  --muted: #a1a1aa;
+  --border: rgb(255 255 255 / 0.16);
+  --accent: #fafafa;
+  --accent-fg: #0a0a0a;
+  --live: #4ade80;
+  --section-light: rgb(255 255 255 / 0.05);
+  color: var(--fg);
+}
+
+.ring-panel {
+  background: radial-gradient(90% 90% at 50% 110%, #1c1c1c, #080808 70%);
+}
+
+.dark .ring-panel {
+  background: radial-gradient(90% 90% at 50% 110%, #262626, #121212 70%);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.07);
+}
+
+.ink-band {
+  border-radius: 2rem 2rem 0 0;
+  background: linear-gradient(112deg, #090909, #1e1e1e 55%, #0c0c0c);
+}
+
+.dark .ink-band {
+  background: linear-gradient(112deg, #151515, #262626 55%, #171717);
+}
+
+/* ==================== BUSINESS CARD ==================== */
+/* Stage, tilt and flip are nested on purpose. Each transforms on its own, so the
+   lean toward the pointer and the turn never fight over one `transform`. Nothing
+   above `.card-stage` may set perspective, and nothing between it and the faces
+   may set overflow, opacity or filter: any of those flattens the 3D.
+
+   Nothing around the card may run a scroll effect either. `.reveal` and the recede
+   wrap it in an off-screen surface, and on a real GPU the card's edges left lines
+   along its swing path on that surface. It arrives on `.card-arrive` instead,
+   which only moves inside the 3D scene and never fades. */
+.card-stage {
+  position: relative;
+  width: min(100%, 60rem, calc((100svh - 10.5rem) * 1.75));
+  margin-inline: auto;
+  aspect-ratio: 7 / 4;
+  perspective: 2200px;
+}
+
+/* A shadow on the page rather than on the card, so it stays put as the card turns. */
+.card-floor {
+  position: absolute;
+  inset: auto 6% -7%;
+  height: 16%;
+  background: radial-gradient(closest-side, var(--card-floor), transparent);
+}
+
+/* These three are empty planes sitting in the same 3D space as the faces, so they
+   have to stay out of hit testing or one of them takes the click meant for a
+   button on the face. */
+.card-arrive,
+.card-tilt,
+.card-flip {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+
+.card-tilt {
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* The overshoot is what gives it weight: it swings past and settles. */
+.card-flip {
+  transition: transform 0.95s cubic-bezier(0.3, 1.3, 0.5, 1);
+}
+
+.card-flip[data-flipped] {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  --face-pad: clamp(1.25rem, 5cqw, 2.75rem);
+  position: absolute;
+  inset: 0;
+  display: flex;
+  overflow: clip;
+  isolation: isolate;
+  border-radius: 1.25rem;
+  pointer-events: auto;
+  backface-visibility: hidden;
+  container-type: size;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08);
+}
+
+.card-front {
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: var(--face-pad);
+  text-align: left;
+  transform: translateZ(1px);
+}
+
+.card-back {
+  align-items: center;
+  justify-content: center;
+  padding: var(--face-pad);
+  text-align: center;
+  transform: rotateY(180deg) translateZ(1px);
+}
+
+/* The small monogram, stamped in silver foil that shifts as the card leans. */
+.card-mark {
+  position: absolute;
+  top: var(--face-pad);
+  left: var(--face-pad);
+  width: clamp(3rem, 10cqw, 5.5rem);
+  aspect-ratio: 1;
+  background-image: linear-gradient(
+    115deg,
+    #8a8a8a,
+    #fafafa var(--mx, 45%),
+    #7a7a7a
+  );
+}
+
+/* The same mark, oversized and pressed into the stock. */
+.card-deboss {
+  position: absolute;
+  right: -7%;
+  bottom: -30%;
+  height: 135%;
+  aspect-ratio: 1;
+  color: rgb(255 255 255 / 0.03);
+}
+
+.card-name {
+  font-size: clamp(1.75rem, 6cqw, 3.25rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.card-role {
+  margin-top: 0.5rem;
+  font-size: clamp(0.65rem, 1.35cqw, 0.8rem);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.card-title {
+  font-size: clamp(1.75rem, 5.2cqw, 3rem);
+  line-height: 1.1;
+}
+
+.card-button {
+  position: absolute;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  padding: 0.3125rem 0.75rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.card-front .card-button {
+  right: var(--face-pad);
+  bottom: var(--face-pad);
+}
+
+.card-back .card-button {
+  top: 1rem;
+  right: 1rem;
+}
+
+.card-button:hover,
+.card-front:hover .card-button {
+  border-color: var(--fg);
+  color: var(--fg);
+}
+
+.card-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.card-button-cover::after {
+  content: "";
+  position: absolute;
+  inset: -100vmax;
+}
+
+/* The light raking across the stock, following the pointer. The back is a mirror
+   image of the front, so its pool runs the other way. */
+.card-sheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    55% 75% at var(--mx, 30%) var(--my, 15%),
+    rgb(255 255 255 / 0.1),
+    transparent 75%
+  );
+}
+
+.card-back .card-sheen {
+  background: radial-gradient(
+    55% 75% at calc(100% - var(--mx, 30%)) var(--my, 15%),
+    rgb(255 255 255 / 0.08),
+    transparent 75%
+  );
+}
+
+/* A real card's shape can't hold the text on a phone, so it turns portrait. */
+@media (max-width: 767px) {
+  .card-stage {
+    width: min(100%, 24rem);
+    aspect-ratio: 5 / 7.4;
+  }
+
+  .card-name {
+    font-size: clamp(1.75rem, 9.5cqw, 2.25rem);
+  }
+
+  .card-role {
+    font-size: 0.65rem;
+    letter-spacing: 0.16em;
+  }
+
+  .card-title {
+    font-size: clamp(1.75rem, 9cqw, 2.25rem);
+  }
+
+  .card-mark {
+    width: 4rem;
+  }
+
+  .card-deboss {
+    right: -35%;
+    bottom: -3%;
+    height: 80%;
+  }
+
+  .card-front {
+    padding-bottom: calc(var(--face-pad) + 3rem);
+  }
+
+  /* Sized to the card's narrow side, or the ring falls outside it altogether. */
+  .card-back .ring-orb {
+    height: 82%;
+  }
+}
+
+/* ==================== RING ==================== */
+.ring-orb {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: -1;
+  height: 150%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 120px rgb(255 255 255 / 0.1),
+    0 0 90px rgb(255 255 255 / 0.05);
+}
+
+/* A conic highlight masked down to a thin ring, turning slowly. The second copy
+   is the same ring blurred, which is the glow. */
+.ring-orb span {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    rgb(255 255 255 / 0.1) 0 8%,
+    #fff 24%,
+    rgb(255 255 255 / 0.1) 40% 58%,
+    rgb(255 255 255 / 0.85) 74%,
+    rgb(255 255 255 / 0.1) 92%
+  );
+  -webkit-mask: radial-gradient(closest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+  mask: radial-gradient(closest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+  animation: ring-turn 28s linear infinite;
+}
+
+.ring-orb span:last-child {
+  inset: -14px;
+  -webkit-mask: radial-gradient(closest-side, transparent calc(100% - 34px), #000 calc(100% - 16px));
+  mask: radial-gradient(closest-side, transparent calc(100% - 34px), #000 calc(100% - 16px));
+  filter: blur(12px);
+}
+
+@keyframes ring-turn {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ==================== PROCESS FLOW BAND ==================== */
@@ -370,7 +1093,13 @@ section[id] {
 .flow-stage:hover .flow-stage-readout,
 .flow-stage:hover .flow-stage-detail,
 .flow-stage:hover .flow-stage-ticks {
-  opacity: 1;
+  opacity: 1 !important;
+}
+
+.flow-canvas:has(.flow-stage:hover) .flow-stage:not(:hover) .flow-stage-readout,
+.flow-canvas:has(.flow-stage:hover) .flow-stage:not(:hover) .flow-stage-detail,
+.flow-canvas:has(.flow-stage:hover) .flow-stage:not(:hover) .flow-stage-ticks {
+  opacity: 0 !important;
 }
 
 /* The idle state retires the moment any stage is being inspected. */
@@ -389,9 +1118,12 @@ section[id] {
    the ones that are NOT hovered — rather than fighting specificity. */
 .flow-canvas:has(.flow-stage:hover) .flow-stage:not(:hover) .flow-stage-box {
   opacity: 0.4;
+  border-color: var(--rest) !important;
+  transform: none !important;
 }
 
 .flow-stage-box {
+  --rest: var(--diagram-line);
   transition:
     transform 180ms ease,
     border-color 180ms ease,
@@ -405,16 +1137,20 @@ section[id] {
     border-color 180ms ease;
 }
 
+.flow-stage-box[data-focal] {
+  --rest: color-mix(in srgb, var(--diagram-fg) 60%, transparent);
+}
+
 .flow-stage:hover .flow-stage-box {
   opacity: 1;
-  transform: translateY(-3px);
-  border-color: var(--diagram-fg);
+  transform: translateY(-3px) !important;
+  border-color: var(--diagram-fg) !important;
 }
 
 /* The whole card lights, not just its border. */
 .flow-stage:hover .flow-stage-icon,
 .flow-stage:hover .flow-stage-chip {
-  color: var(--diagram-fg);
+  color: var(--diagram-fg) !important;
 }
 
 .flow-stage:hover .flow-stage-chip {
@@ -452,7 +1188,76 @@ section[id] {
   background: var(--diagram-fg);
   box-shadow: 0 0 8px 2px var(--diagram-glow);
   pointer-events: none;
-  animation: flow-spark 2.6s linear infinite;
+  opacity: 0;
+}
+
+/* The live loop: an 18s walk through the six steps, 3s each. Each stage starts
+   its own copy `--n` steps in, so nothing here needs JavaScript. Keyframes name
+   the resting values because a section can't refer back to "whatever it was",
+   and !important on the hover rules is what lets a pointer override the walk
+   while it carries on behind. */
+@media (prefers-reduced-motion: no-preference) {
+  .flow-stage-box {
+    animation: flow-card 18s calc(var(--n) * 3s) ease infinite;
+  }
+
+  .flow-stage-icon,
+  .flow-stage-chip {
+    animation: flow-lit 18s calc(var(--n) * 3s) ease infinite;
+  }
+
+  .flow-stage-readout,
+  .flow-stage-detail,
+  .flow-stage-ticks {
+    animation: flow-show 18s calc(var(--n) * 3s) ease infinite;
+  }
+
+  /* Each connector fires as the walk reaches the step after it. */
+  .flow-spark {
+    animation: flow-spark 18s calc(var(--n) * 3s - 0.9s) linear infinite;
+  }
+
+  .flow-loop-dot {
+    animation: flow-loop 18s linear infinite;
+  }
+}
+
+@keyframes flow-card {
+  0%,
+  16.4%,
+  100% {
+    transform: translateY(0);
+    border-color: var(--rest);
+  }
+  1.6%,
+  14.4% {
+    transform: translateY(-3px);
+    border-color: var(--diagram-fg);
+  }
+}
+
+@keyframes flow-lit {
+  0%,
+  16.4%,
+  100% {
+    color: var(--diagram-muted);
+  }
+  1.6%,
+  14.4% {
+    color: var(--diagram-fg);
+  }
+}
+
+@keyframes flow-show {
+  0%,
+  16.4%,
+  100% {
+    opacity: 0;
+  }
+  1.6%,
+  14.4% {
+    opacity: 1;
+  }
 }
 
 @keyframes flow-spark {
@@ -460,15 +1265,52 @@ section[id] {
     transform: translate(0, -50%);
     opacity: 0;
   }
-  15% {
+  0.8%,
+  4.2% {
     opacity: 1;
   }
-  85% {
-    opacity: 1;
-  }
+  5%,
   100% {
     transform: translate(var(--run, 100%), -50%);
     opacity: 0;
+  }
+}
+
+/* After step 06, a dot runs back along the alert loop. */
+.flow-loop-dot {
+  position: absolute;
+  bottom: -3px;
+  left: 100%;
+  height: 5px;
+  width: 5px;
+  margin-left: -3px;
+  border-radius: 9999px;
+  background: var(--diagram-fg);
+  box-shadow: 0 0 8px 2px var(--diagram-glow);
+  opacity: 0;
+}
+
+@keyframes flow-loop {
+  0%,
+  84% {
+    left: 100%;
+    opacity: 0;
+  }
+  86%,
+  97% {
+    opacity: 1;
+  }
+  99%,
+  100% {
+    left: 0;
+    opacity: 0;
+  }
+}
+
+/* The walk fills the corner these sit in, so they only apply without it. */
+@media (prefers-reduced-motion: no-preference) and (min-width: 1024px) {
+  .flow-idle {
+    display: none;
   }
 }
 
@@ -503,7 +1345,8 @@ section[id] {
 /* The global reduce rule already stops the animation; removing the spark from
    paint as well means no stray dot parked at the start of every connector. */
 @media (prefers-reduced-motion: reduce) {
-  .flow-spark {
+  .flow-spark,
+  .flow-loop-dot {
     display: none;
   }
 }

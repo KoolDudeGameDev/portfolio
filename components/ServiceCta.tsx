@@ -28,14 +28,14 @@ export function ServiceCta({ service }: { service: string }) {
           const untouched = box.value === box.dataset.prefill;
           if (box.value.trim() && !untouched) return;
 
-          // Not lowercased — the titles carry acronyms ("CRM & Data
-          // Architecture"), and "crm" reads like a typo.
+          // Not lowercased — the titles carry acronyms ("Backends, APIs
+          // & Data"), and "apis" reads like a typo.
           const text = `I'd like to talk about ${service}.\n\n`;
           box.value = text;
           box.dataset.prefill = text;
         });
       }}
-      className="mt-6 inline-flex items-center gap-1.5 self-start text-sm font-medium transition-opacity after:absolute after:inset-0 after:content-[''] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100"
+      className="service-cta mt-3 inline-flex items-center gap-1.5 self-start text-sm font-medium transition-opacity after:absolute after:inset-0 after:content-[''] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100"
     >
       Discuss this
       <span className="sr-only"> — {service}</span>

@@ -1,9 +1,4 @@
-export type ServiceIcon =
-  | "automation"
-  | "backend"
-  | "crm"
-  | "reliability"
-  | "web";
+export type ServiceIcon = "automation" | "backend" | "reliability" | "web";
 
 export type Service = {
   icon: ServiceIcon;
@@ -12,64 +7,42 @@ export type Service = {
   outcome: string;
   tagline: string;
   description: string;
-  stack: string[];
-  /** Spans the full grid width — use for a single closing card. */
-  wide?: boolean;
 };
 
 // Outcome-framed for business owners: what they get, not just what I use.
+// The custom web app leads, because it is the offer the rest supports.
 export const services: Service[] = [
   {
-    icon: "automation",
-    title: "Automation & Systems Integration",
-    outcome: "runs without you",
-    tagline: "Stop doing by hand what software can do for you.",
+    icon: "web",
+    title: "Custom Web Apps",
+    outcome: "built around you",
+    tagline: "For when off-the-shelf software no longer fits.",
     description:
-      "I connect the tools your business already runs on (CRM, project boards, email, spreadsheets) into one automated system, so leads, tasks, and updates flow without anyone copying data between tabs.",
-    stack: ["n8n", "GoHighLevel", "Asana", "Webhooks", "REST APIs"],
+      "Internal tools, dashboards and client portals designed around your process, with the right access for each person.",
   },
   {
-    icon: "crm",
-    title: "CRM & Data Architecture",
-    outcome: "one source of truth",
-    tagline: "A single source of truth you can actually trust.",
+    icon: "automation",
+    title: "Automation & Integration",
+    outcome: "less manual work",
+    tagline: "Free your team from repetitive work.",
     description:
-      "I design clean CRM structures, routing, and access rules, then audit and de-duplicate the messy data underneath, so your team stops chasing ghosts and every contact lands with the right person.",
-    stack: ["Supabase", "PostgreSQL", "GoHighLevel", "Access Control"],
+      "I connect the tools you already use, so leads, tasks and updates move on their own and fewer leads are missed.",
   },
   {
     icon: "backend",
-    title: "Backend & API Development",
-    outcome: "holds up in production",
-    tagline: "Reliable systems that hold up in production.",
+    title: "Backends, APIs & Data",
+    outcome: "built to scale",
+    tagline: "One source of truth you can trust.",
     description:
-      "REST API contracts, webhooks, and backend services built with clean architecture and real error handling: the kind of plumbing that keeps working after launch, not just in the demo.",
-    stack: ["Node.js", "FastAPI", "Django", "Prisma", "PostgreSQL"],
-  },
-  {
-    icon: "web",
-    title: "Web Apps & AI Integration",
-    outcome: "shipped end to end",
-    tagline: "Modern products, shipped end to end.",
-    description:
-      "Full web applications with role-based access, live features, and AI woven in where it earns its place, from the database schema to the deployed front end.",
-    stack: ["Next.js", "React", "TypeScript", "Supabase", "Gemini API"],
+      "Clean data models, secure APIs and clear access rules, including the cleanup of existing records, built to grow with you.",
   },
   {
     icon: "reliability",
-    title: "Reliability, Monitoring & Security",
-    outcome: "fails loudly, not silently",
-    tagline: "Know it's working before your customers tell you.",
+    title: "AI, Monitoring & Reliability",
+    outcome: "no silent failures",
+    tagline: "Know about a problem before your customers do.",
     description:
-      "Shipping is the easy half; someone has to keep it running. I set up end-to-end health checks, respond when something breaks, and audit the parts that touch your data, so silent failures show up as alerts instead of as lost revenue you find out about later.",
-    stack: [
-      "Health Checks",
-      "Incident Response",
-      "Security Audits",
-      "PostgreSQL",
-      "n8n",
-    ],
-    wide: true,
+      "Practical AI and health checks that surface failures early, before they cost you revenue or customer trust.",
   },
 ];
 
@@ -81,7 +54,6 @@ export type Engagement = {
   /** How it's scoped and billed, in a few words. No prices on purpose. */
   terms: string;
   description: string;
-  goodFor: string;
 };
 
 // How a business can hire me. Deliberately no rates: every engagement is
@@ -90,25 +62,22 @@ export const engagements: Engagement[] = [
   {
     icon: "audit",
     title: "Automation audit",
-    terms: "Fixed scope · 1–2 weeks",
+    terms: "1–2 week fixed scope",
     description:
-      "I map how work actually moves through your tools, find where hours and leads are leaking, and hand back a prioritised plan you can build with me or with anyone else.",
-    goodFor: "Knowing what to fix first",
+      "I map how work moves through your tools, identify where time and leads are being lost, and deliver a prioritized plan you can build with me or another team.",
   },
   {
     icon: "build",
-    title: "Project build",
+    title: "Custom build",
     terms: "Quoted per project",
     description:
-      "One workflow, integration or app, built end to end: scoped before any work starts, tested against real data, and documented so your team can run it without me.",
-    goodFor: "A process you already know you want automated",
+      "One app, workflow or integration, built end to end: scoped before work begins, tested against real data, and handed over with everything your team needs.",
   },
   {
     icon: "support",
     title: "Ongoing support",
     terms: "Monthly retainer",
     description:
-      "Monitoring, fixes and small improvements for systems that are already running, including ones I didn't build.",
-    goodFor: "Keeping things working after launch",
+      "Monitoring, fixes and continuous improvements for systems already in use, including systems I did not build.",
   },
 ];

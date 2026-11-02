@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import {
   AutomationIcon,
   Blocks,
@@ -7,6 +8,7 @@ import {
   ReliabilityIcon,
 } from "./Icons";
 import {
+  handoverItems,
   processClusters,
   processLoop,
   type ProcessIcon,
@@ -26,7 +28,7 @@ const steps: ProcessStep[] = processClusters.flatMap((c) => c.steps);
 const planeLabel = { you: "With you", me: "On me" } as const;
 
 /**
- * The process band under the hero: a live, inspectable canvas rather than one
+ * How a build goes: a live, inspectable canvas rather than one
  * more static WebP.
  *
  * ☠️ There is no "use client" here, and there must not be one. Every moving
@@ -43,13 +45,10 @@ const planeLabel = { you: "With you", me: "On me" } as const;
  */
 export function BuildFlow() {
   return (
-    <section className="px-6 pt-10 pb-10 md:pt-14 md:pb-12">
-      <div className="mx-auto max-w-6xl">
-        <div className="mb-8 flex flex-wrap items-end justify-between gap-x-8 gap-y-3">
+    <section id="process" className="screen tint-2 px-6 pt-10 pb-10 md:pt-14 md:pb-12">
+      <div className="mx-auto w-full max-w-6xl">
+        <div className="reveal mb-8 lg:mb-[clamp(0.5rem,2svh,2rem)] flex flex-wrap items-end justify-between gap-x-8 gap-y-3">
           <div>
-            <p className="mb-3 font-mono text-xs uppercase tracking-[0.2em] text-muted">
-              How a build goes
-            </p>
             <h2 className="font-sans text-2xl font-semibold tracking-tight sm:text-3xl">
               One system,{" "}
               <span className="font-serif font-normal italic text-accent">
@@ -58,14 +57,14 @@ export function BuildFlow() {
             </h2>
           </div>
           <p className="max-w-md text-sm leading-relaxed text-muted">
-            Every engagement runs the same six steps. You know the scope and the
-            price before anything is built, and you own what comes out of it.
+            Every custom build follows the same six steps. You agree the scope and
+            price before work begins, and you own everything that is delivered.
           </p>
         </div>
 
         {/* `relative` makes this the containing block every stage's readout,
             detail and ticks paint into. */}
-        <div className="flow-canvas relative overflow-hidden rounded-3xl border border-diagram-line/70 bg-diagram-bg p-6 md:p-7">
+        <div className="flow-canvas reveal relative overflow-hidden rounded-3xl border border-diagram-line/70 bg-diagram-bg p-6 md:p-7 lg:py-[clamp(0.75rem,2.2svh,1.75rem)]">
           <div className="flex items-start justify-between gap-6">
             <div>
               <p className="font-sans text-xl font-medium tracking-tight text-diagram-fg sm:text-2xl">
@@ -87,7 +86,7 @@ export function BuildFlow() {
             </p>
           </div>
 
-          <div className="mt-7 flex flex-col gap-4 lg:flex-row lg:items-stretch">
+          <div className="mt-7 flex flex-col gap-4 lg:mt-[clamp(0.5rem,1.8svh,1.75rem)] lg:flex-row lg:items-stretch">
             {processClusters.map((cluster) => (
               <div
                 key={cluster.label}
@@ -103,9 +102,13 @@ export function BuildFlow() {
                     const n = steps.findIndex((x) => x.index === step.index);
                     return (
                       <div key={step.index} className="flow-pair contents">
-                        {si > 0 ? <Connector /> : null}
-                        <div className="flow-stage flex-1">
+                        {si > 0 ? <Connector step={n} /> : null}
+                        <div
+                          className="flow-stage flex-1"
+                          style={{ "--n": n } as CSSProperties}
+                        >
                           <div
+                            data-focal={step.focal || undefined}
                             className={`flow-stage-box flex h-full cursor-default flex-col rounded-xl border bg-diagram-node p-3 ${
                               step.focal
                                 ? "border-diagram-fg/60"
@@ -123,7 +126,7 @@ export function BuildFlow() {
                               {step.label}
                             </p>
 
-                            <span className="flow-stage-icon flex flex-1 items-center justify-center py-5 text-diagram-muted">
+                            <span className="flow-stage-icon flex flex-1 items-center justify-center py-5 text-diagram-muted lg:py-[clamp(0.25rem,1.6svh,1.25rem)]">
                               <Icon className="h-7 w-7" />
                             </span>
 
@@ -176,12 +179,13 @@ export function BuildFlow() {
               stage 06; they are decorative, so small drift is fine, but
               re-measure if a stage is ever added or removed. Hidden below lg,
               where the clusters stack and a horizontal loop points at nothing. */}
-          <div className="mt-4 hidden lg:block">
+          <div className="fit-tiny mt-4 hidden lg:block">
             <div className="relative ml-[58%] mr-[8%] h-6 rounded-b-xl border-x border-b border-dashed border-diagram-line">
               <span
                 aria-hidden
                 className="absolute -left-[4px] -top-[5px] h-0 w-0 border-x-[4px] border-b-[5px] border-x-transparent border-b-diagram-line"
               />
+              <span aria-hidden className="flow-loop-dot" />
               <span className="absolute left-1/2 top-full -translate-x-1/2 -translate-y-1/2 whitespace-nowrap bg-diagram-bg px-3 font-mono text-[10px] uppercase tracking-[0.18em] text-diagram-muted">
                 {processLoop}
               </span>
@@ -189,7 +193,7 @@ export function BuildFlow() {
           </div>
 
           {/* Reserved footer so revealing a detail never shifts the layout. */}
-          <div className="mt-6 hidden h-[72px] lg:block">
+          <div className="mt-3 hidden h-[clamp(3.25rem,8svh,4.5rem)] lg:block">
             <p
               aria-hidden
               className="flow-idle font-mono text-[10px] uppercase tracking-[0.18em] text-diagram-muted/70"
@@ -199,13 +203,28 @@ export function BuildFlow() {
           </div>
         </div>
 
-        <div className="mt-5 flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2">
-          <p className="text-sm font-medium">
-            A failure reaches me as an alert, not as your customer complaining.
-          </p>
-          <p className="font-serif text-sm italic text-muted">
-            You own the system and the documentation either way.
-          </p>
+        {/* The handover is the offer, so it is spelled out item by item. */}
+        <div className="mt-6 lg:mt-[clamp(0.5rem,1.8svh,1.5rem)]">
+          <h3 className="reveal font-sans text-lg font-semibold tracking-tight">
+            What you receive at handover.{" "}
+            <span className="font-serif font-normal italic text-muted">
+              All of it yours.
+            </span>
+          </h3>
+          <dl className="mt-3 grid grid-cols-2 gap-x-6 gap-y-3 md:grid-cols-3 lg:mt-2 lg:grid-cols-6">
+            {handoverItems.map((item, i) => (
+              <div
+                key={item.title}
+                className="reveal border-t border-border pt-2"
+                style={{ "--i": i } as CSSProperties}
+              >
+                <dt className="text-sm font-medium">{item.title}</dt>
+                <dd className="mt-0.5 text-xs leading-snug text-muted">
+                  {item.detail}
+                </dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </div>
     </section>
@@ -237,12 +256,12 @@ function Key({ plane }: { plane: ProcessStep["plane"] }) {
  * The run between two stages. `--run` is how far the spark travels before it
  * fades, kept just short of the next card's edge.
  */
-function Connector() {
+function Connector({ step }: { step: number }) {
   return (
     <div
       aria-hidden
       className="relative mx-1.5 w-5 shrink-0 self-center sm:w-7"
-      style={{ ["--run" as string]: "calc(100% - 6px)" }}
+      style={{ ["--run" as string]: "calc(100% - 6px)", ["--n" as string]: step }}
     >
       <span className="flow-connector-line block h-px w-full bg-diagram-line" />
       <span className="flow-connector-arrow absolute right-0 top-1/2 h-0 w-0 -translate-y-1/2 border-y-[3px] border-l-[5px] border-y-transparent border-l-diagram-line" />

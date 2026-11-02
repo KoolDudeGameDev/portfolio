@@ -1,34 +1,34 @@
 import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
-import { BuildFlow } from "@/components/BuildFlow";
-import { LogoMarquee } from "@/components/LogoMarquee";
+import { Showcase } from "@/components/Showcase";
 import { Services } from "@/components/Services";
+import { BuildFlow } from "@/components/BuildFlow";
 import { Work } from "@/components/Work";
 import { TechStack } from "@/components/TechStack";
 import { Experience } from "@/components/Experience";
 import { About } from "@/components/About";
-import { Contact } from "@/components/Contact";
-import { Footer } from "@/components/Footer";
+import { Book, Contact } from "@/components/Contact";
 
 export default function Home() {
   return (
     <>
       <Navbar />
-      <main>
+      {/* `snap-page` turns on one-screen-per-section. See globals.css. */}
+      <main className="snap-page">
         <Hero />
-        {/* Demonstration band, unnumbered like the marquee below it. */}
-        <BuildFlow />
-        {/* Credibility band: what I build with. */}
-        <LogoMarquee />
+        {/* The project carousel, unnumbered: it is proof, not a chapter. */}
+        <Showcase />
         <Services />
+        {/* How a build goes and what you keep. Unnumbered, like the carousel. */}
+        <BuildFlow />
         <Work />
         <TechStack />
         <Experience />
         <About />
-        {/* The FAQ lives inside Contact, beside the form. */}
+        <Book />
+        {/* FAQ, form and footer, as one connected band. */}
         <Contact />
       </main>
-      <Footer />
     </>
   );
 }
