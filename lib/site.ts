@@ -18,7 +18,7 @@ export const SITE_ORIGIN =
 
 export const site = {
   name: "Kyle Gregory Ibo",
-  role: "Automation & Systems Integration Engineer",
+  role: "Full-Stack & Automations Developer",
   email: "gregoryibo7@gmail.com",
   location: "Cebu, Philippines",
   /**
@@ -32,7 +32,7 @@ export const site = {
    * Shown in the About fact strip. "Any timezone" is the availability claim,
    * not a promise of a 24-hour reply — the overlap is arranged per client.
    */
-  timezone: "GMT+8 · any timezone",
+  timezone: "GMT+8 · any time zone",
   socials: {
     github: "https://github.com/KoolDudeGameDev",
     linkedin: "https://www.linkedin.com/in/kyle-gregory-ibo-a89455301/",

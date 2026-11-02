@@ -21,12 +21,13 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "Kyle Gregory Ibo — Automation & Systems Integration Engineer",
+  title: "Kyle Gregory Ibo — Full-Stack & Automations Developer",
   description:
-    "I build software end to end — web apps, backends, REST APIs, and the automation that wires them together. Working remotely with clients in Australia and the Philippines.",
+    "I help growing businesses replace spreadsheets and manual work with custom web apps and automation, then hand over everything needed to run them. Based in Cebu, Philippines, working with clients in Australia, the Philippines and internationally.",
   keywords: [
     "full-stack developer",
-    "automation engineer",
+    "automation developer",
+    "custom web apps",
     "systems integration",
     "web developer",
     "n8n",
@@ -44,9 +45,9 @@ export const metadata: Metadata = {
   // card resolves to a relative path and no preview renders at all.
   metadataBase: new URL(SITE_ORIGIN),
   openGraph: {
-    title: "Kyle Gregory Ibo — Automation & Systems Integration Engineer",
+    title: "Kyle Gregory Ibo — Full-Stack & Automations Developer",
     description:
-      "Web apps, backends, APIs, and the automation that wires them together.",
+      "Custom web apps and the automation behind them, handed over with everything you need to run them.",
     type: "website",
     url: asset("/"),
     siteName: "Kyle Gregory Ibo",
@@ -55,15 +56,15 @@ export const metadata: Metadata = {
         url: asset("/assets/og.png"),
         width: 1200,
         height: 630,
-        alt: "Kyle Gregory Ibo — Automation & Systems Integration Engineer",
+        alt: "Kyle Gregory Ibo — Full-Stack & Automations Developer",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Kyle Gregory Ibo — Automation & Systems Integration Engineer",
+    title: "Kyle Gregory Ibo — Full-Stack & Automations Developer",
     description:
-      "Web apps, backends, APIs, and the automation that wires them together.",
+      "Custom web apps and the automation behind them, handed over with everything you need to run them.",
     images: [asset("/assets/og.png")],
   },
 };
