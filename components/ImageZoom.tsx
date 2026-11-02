@@ -2,7 +2,14 @@
 
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { ChevronLeft, ChevronRight, Close, ZoomIn, ZoomOut } from "./Icons";
+import {
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  Close,
+  ZoomIn,
+  ZoomOut,
+} from "./Icons";
 import { type WorkShot } from "@/content/work";
 import { asset } from "@/lib/site";
 import { useDialog } from "@/lib/useDialog";
@@ -24,12 +31,15 @@ export function ImageZoom({
   title,
   onIndex,
   onClose,
+  action,
 }: {
   shots: WorkShot[];
   index: number;
   title: string;
   onIndex: (i: number) => void;
   onClose: () => void;
+  /** An extra button beside the caption, such as a link to the case study. */
+  action?: { label: string; onClick: () => void };
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -165,13 +175,25 @@ export function ImageZoom({
         </>
       ) : null}
 
-      <div className="flex shrink-0 items-baseline justify-between gap-4 px-5 pb-4 pt-2 text-sm text-white/75">
+      <div className="flex shrink-0 items-center justify-between gap-4 px-5 pb-4 pt-2 text-sm text-white/75">
         <p className="leading-relaxed">{shot.caption}</p>
-        {count > 1 ? (
-          <span className="shrink-0 text-xs font-medium">
-            {index + 1} / {count}
-          </span>
-        ) : null}
+        <div className="flex shrink-0 items-center gap-4">
+          {count > 1 ? (
+            <span className="text-xs font-medium">
+              {index + 1} / {count}
+            </span>
+          ) : null}
+          {action ? (
+            <button
+              type="button"
+              onClick={action.onClick}
+              className="inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-medium text-black transition-opacity hover:opacity-85"
+            >
+              {action.label}
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          ) : null}
+        </div>
       </div>
     </div>
   );

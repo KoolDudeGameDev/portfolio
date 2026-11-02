@@ -11,6 +11,30 @@ const base = {
   viewBox: "0 0 24 24",
 };
 
+export function Turn(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M4 12a8 8 0 0 1 13.7-5.6L20 9M20 4v5h-5M20 12a8 8 0 0 1-13.7 5.6L4 15M4 20v-5h5" />
+    </svg>
+  );
+}
+
+export function Pause(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M9 5v14M15 5v14" />
+    </svg>
+  );
+}
+
+export function Play(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="m8 5 11 7-11 7V5Z" />
+    </svg>
+  );
+}
+
 export function ArrowRight(props: IconProps) {
   return (
     <svg {...base} {...props}>

@@ -2,7 +2,7 @@
   "name": "portfolio",
   "version": "1.0.0",
   "private": true,
-  "description": "Personal portfolio — Kyle Gregory Ibo",
+  "description": "Personal portfolio \u2014 Kyle Gregory Ibo",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -12,6 +12,7 @@
     "diagrams": "node scripts/render-diagrams.mjs",
     "workflow": "node scripts/render-workflow.mjs",
     "shots": "node scripts/optimize-shots.mjs",
+    "showcase": "node scripts/showcase-images.mjs",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "resume:preview": "python scripts/render-resume-preview.py"
