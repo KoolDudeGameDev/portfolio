@@ -24,34 +24,34 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("seeds the message box with the service that was clicked", async ({ page }) => {
-  await serviceCta(page, "CRM & Data Architecture").click();
+  await serviceCta(page, "Custom Web Apps").click();
   await expect(page.locator(MESSAGE)).toHaveValue(
-    /I'd like to talk about CRM & Data Architecture\./,
+    /I'd like to talk about Custom Web Apps\./,
   );
 });
 
 test("clicking a second service replaces the first one's text", async ({ page }) => {
-  await serviceCta(page, "CRM & Data Architecture").click();
-  await expect(page.locator(MESSAGE)).toHaveValue(/CRM & Data Architecture/);
+  await serviceCta(page, "Custom Web Apps").click();
+  await expect(page.locator(MESSAGE)).toHaveValue(/Custom Web Apps/);
 
-  await serviceCta(page, "Backend & API Development").click();
+  await serviceCta(page, "Backends, APIs & Data").click();
 
   // `toHaveValue` rather than a one-shot `inputValue()`: the handler writes on
   // the next animation frame, so an immediate read races it and sees the old
   // text. That race is what made this test fail against working code.
   await expect(page.locator(MESSAGE)).toHaveValue(
-    /I'd like to talk about Backend & API Development\./,
+    /I'd like to talk about Backends, APIs & Data\./,
   );
   // The regression this guards: the box kept the first service and silently
   // ignored the second click, so the form said the wrong thing.
-  await expect(page.locator(MESSAGE)).not.toHaveValue(/CRM & Data Architecture/);
+  await expect(page.locator(MESSAGE)).not.toHaveValue(/Custom Web Apps/);
 });
 
 test("never overwrites something the visitor typed", async ({ page }) => {
   const typed = "We need help untangling two systems that disagree.";
   await page.locator(MESSAGE).fill(typed);
 
-  await serviceCta(page, "CRM & Data Architecture").click();
+  await serviceCta(page, "Custom Web Apps").click();
 
   await expect(page.locator(MESSAGE)).toHaveValue(typed);
 });
@@ -59,18 +59,18 @@ test("never overwrites something the visitor typed", async ({ page }) => {
 test("an edited prefill counts as the visitor's text and is left alone", async ({
   page,
 }) => {
-  await serviceCta(page, "CRM & Data Architecture").click();
-  await page.locator(MESSAGE).fill("I'd like to talk about CRM — specifically dedupe.");
+  await serviceCta(page, "Custom Web Apps").click();
+  await page.locator(MESSAGE).fill("I'd like to talk about apps — specifically dashboards.");
 
-  await serviceCta(page, "Backend & API Development").click();
+  await serviceCta(page, "Backends, APIs & Data").click();
 
   await expect(page.locator(MESSAGE)).toHaveValue(
-    "I'd like to talk about CRM — specifically dedupe.",
+    "I'd like to talk about apps — specifically dashboards.",
   );
 });
 
 test("the card link scrolls to the contact section", async ({ page }) => {
-  await serviceCta(page, "CRM & Data Architecture").click();
+  await serviceCta(page, "Custom Web Apps").click();
   await expect(page).toHaveURL(/#contact$/);
   await expect(page.locator("#contact")).toBeInViewport();
 });

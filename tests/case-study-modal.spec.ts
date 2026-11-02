@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { route } from "./paths";
+import { hydrated, route } from "./paths";
 
 /**
  * The dialog contract lives in lib/useDialog.ts and both modals share it. The
@@ -11,6 +11,7 @@ const DIALOG = '[role="dialog"]';
 
 async function openFirstCaseStudy(page: import("@playwright/test").Page) {
   await page.goto(route());
+  await hydrated(page);
   const card = page.locator("#work article").first();
   await card.getByRole("button", { name: /Case study/ }).click();
   await expect(page.locator(DIALOG)).toBeVisible();
@@ -25,6 +26,15 @@ test("opens a case study and parks focus inside the dialog", async ({ page }) =>
     return panel?.contains(document.activeElement) ?? false;
   });
   expect(inside).toBe(true);
+});
+
+test("a case study leads with the business problem and says why it matters", async ({
+  page,
+}) => {
+  await openFirstCaseStudy(page);
+  const dialog = page.locator(DIALOG);
+  await expect(dialog.getByText("The business problem —")).toBeVisible();
+  await expect(dialog.getByText("Why it matters —")).toBeVisible();
 });
 
 test("traps Tab inside the dialog instead of leaking to the page behind", async ({
@@ -61,6 +71,7 @@ test("Escape closes it, unlocks scrolling and returns focus to the opener", asyn
   page,
 }) => {
   await page.goto(route());
+  await hydrated(page);
   const card = page.locator("#work article").first();
   const opener = card.getByRole("button", { name: /Case study/ });
 
@@ -79,6 +90,7 @@ test("the enlarged image closes on its own, then the case study", async ({
   page,
 }) => {
   await page.goto(route());
+  await hydrated(page);
   const opener = page
     .locator("#work article")
     .first()
@@ -100,6 +112,7 @@ test("the enlarged image closes on its own, then the case study", async ({
 
 test("the résumé dialog honours the same contract", async ({ page }) => {
   await page.goto(route());
+  await hydrated(page);
   const opener = page.getByRole("button", { name: /Résumé/ });
   await opener.click();
   await expect(page.locator(DIALOG)).toBeVisible();

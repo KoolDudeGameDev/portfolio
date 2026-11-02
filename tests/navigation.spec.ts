@@ -31,7 +31,7 @@ for (const [id, label] of [
   });
 }
 
-for (const id of ["about", "faq", "contact"] as const) {
+for (const id of ["about", "book", "faq", "contact"] as const) {
   test(`highlights nothing over #${id}, which the nav does not list`, async ({
     page,
   }) => {
