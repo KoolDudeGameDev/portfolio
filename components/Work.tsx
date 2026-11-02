@@ -1,75 +1,46 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
+import { ArrowRight } from "./Icons";
 import { SectionHeading } from "./SectionHeading";
 import { WorkCard } from "./WorkCard";
 import { WorkModal } from "./WorkModal";
-import { work, workGroups, type WorkGroup, type WorkItem } from "@/content/work";
+import { work, type WorkItem } from "@/content/work";
+import { asset } from "@/lib/site";
 
-const FEATURED = "Featured" as const;
-type Tab = typeof FEATURED | WorkGroup;
+const featured = work.filter((item) => item.featured);
 
-function inTab(item: (typeof work)[number], tab: Tab) {
-  return tab === FEATURED ? Boolean(item.featured) : item.group === tab;
-}
-
-/** Only offer tabs that actually hold something. */
-const tabs: Tab[] = [
-  FEATURED,
-  ...workGroups.filter((group) => work.some((item) => item.group === group)),
-];
-
+/** The six projects on the home page. The rest live on /work. */
 export function Work() {
-  const [active, setActive] = useState<Tab>(FEATURED);
   // One dialog for the whole section rather than one per card.
   const [detail, setDetail] = useState<WorkItem | null>(null);
 
   return (
-    <section id="work" className="bg-surface px-6 py-20 md:py-28">
-      <div className="mx-auto max-w-6xl">
-        <SectionHeading
-          index="02"
-          eyebrow="Selected work"
-          title="Real systems, built to"
-          titleItalic="survive production."
-          description="Web apps, client automation, backend systems, open-source reference workflows and research — each framed by the problem it solved."
-        />
-
-        <div className="mb-10 flex flex-wrap gap-2">
-          {tabs.map((tab) => {
-            const count = work.filter((item) => inTab(item, tab)).length;
-            const selected = tab === active;
-            return (
-              <button
-                key={tab}
-                type="button"
-                onClick={() => setActive(tab)}
-                aria-pressed={selected}
-                className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
-                  selected
-                    ? "border-fg bg-fg text-bg"
-                    : "border-border text-muted hover:border-fg/40 hover:text-fg"
-                }`}
-              >
-                {tab}
-                <span
-                  className={selected ? "text-bg/60" : "text-muted/70"}
-                >
-                  {count}
-                </span>
-              </button>
-            );
-          })}
+    <section id="work" className="screen tint-3 px-6 py-20 md:py-28">
+      <div className="mx-auto w-full max-w-6xl">
+        <div className="flex flex-wrap items-end justify-between gap-x-8">
+          <SectionHeading
+            index="02"
+            eyebrow="Case studies"
+            title="Real systems, built for"
+            titleItalic="real businesses."
+          />
+          <a
+            href={asset("/work/")}
+            className="group mb-8 inline-flex items-center gap-2 text-sm font-medium lg:mb-[clamp(1rem,2.6svh,3rem)]"
+          >
+            Browse all work
+            <span className="text-muted">{work.length}</span>
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+          </a>
         </div>
 
-        {/* Every card stays in the markup and is hidden with CSS. Rendering
-            only the active tab would leave the other projects out of the
-            exported HTML entirely, where no crawler would ever see them. */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {work.map((item) => (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-[clamp(0.75rem,2svh,1.5rem)]">
+          {featured.map((item, i) => (
             <div
               key={item.title}
-              className={inTab(item, active) ? "contents" : "hidden"}
+              className="reveal flex"
+              style={{ "--i": i % 3 } as CSSProperties}
             >
               <WorkCard item={item} onOpen={() => setDetail(item)} />
             </div>

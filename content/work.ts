@@ -32,6 +32,11 @@ export type WorkItem = {
   category: string;
   problem: string;
   build: string;
+  /**
+   * Why this matters to the business. Say what the system enables, and never
+   * state a benefit as a measured result unless it was measured.
+   */
+  value: string;
   results: string[];
   tech: string[];
   image?: string; // path under /assets — the card thumbnail
@@ -42,8 +47,116 @@ export type WorkItem = {
   featured?: boolean;
 };
 
-// Real case studies, framed problem -> what I built -> result.
+// Real case studies, framed business problem -> what I built -> why it matters ->
+// results. See "Writing standards" in CLAUDE.md.
 export const work: WorkItem[] = [
+  {
+    title: "Jim's Franchise Loan",
+    org: "Bai Finance — technical lead",
+    // Every name and personal detail in these captures is fictional. See
+    // "Case-study imagery" in CLAUDE.md before re-shooting any of them.
+    image: "showcase/jims-dashboard.webp",
+    shots: [
+      {
+        src: "showcase/jims-dashboard.webp",
+        caption:
+          "The dashboard: the pipeline by stage, and who needs attention today. All names and personal details here are fictional.",
+      },
+      {
+        src: "showcase/jims-drawer.webp",
+        caption:
+          "An applicant opens beside the list, with their history, follow-ups and comments in one place.",
+      },
+      {
+        src: "showcase/jims-board.webp",
+        caption: "The same applicants as a board, one column per loan stage.",
+      },
+      {
+        src: "showcase/jims-calculator.webp",
+        caption:
+          "The servicing calculator. Figures from the application form come in on their own, and the result updates as staff type.",
+      },
+      {
+        src: "showcase/jims-permissions.webp",
+        caption:
+          "Permissions per account, enforced in the database rather than only hidden in the screen.",
+      },
+      {
+        src: "showcase/jims-stages.webp",
+        caption:
+          "Stages matched to the CRM pipeline by id, so renaming one in the app never breaks the link.",
+      },
+    ],
+    group: "Web Apps",
+    category: "Custom CRM",
+    status: "Active",
+    featured: true,
+    problem:
+      "Bai Finance tracked loan applications from Jim's franchisees in a Google Sheet. A spreadsheet could not control who saw what, keep a reliable history, or give Jim's sales managers a shared view of each applicant's progress.",
+    build:
+      "Led the team from requirements analysis and system design through release, delivering a custom CRM-style loan tracker in Next.js and Supabase that replaced the spreadsheet. Applications arrive automatically from the intake form, move through 10 stages matched to the GoHighLevel pipeline, and are assessed by a built-in servicing calculator. Staff and sales managers now work from one record.",
+    value:
+      "Replacing a shared spreadsheet gives the business controlled access to sensitive financial data, a dependable history of every decision, and one view of each application, which reduces follow-up work and the risk of errors.",
+    results: [
+      "Servicing is assessed at intake, and applications with a credit score below 500 are declined automatically, with the decision recorded in the applicant's history",
+      "Access is enforced in the database with row-level security: sales managers see their own applicants, and each account has its own permissions",
+      "Every stage change, score edit and comment is recorded in the applicant's history, and follow-ups and mentions reach people by email",
+      "Stages are matched to GoHighLevel by ID, so renaming one in the app never breaks the sync",
+      "Sign-in uses an emailed code, with a 2-minute resend wait and a 10-minute expiry enforced on the server",
+      "Covered by 624 automated tests, with the servicing calculator checked against saved reference results",
+    ],
+    tech: ["Next.js", "TypeScript", "Supabase", "PostgreSQL", "n8n", "GoHighLevel API"],
+  },
+  {
+    title: "Company Radar",
+    org: "Bai Philippines — technical lead",
+    image: "showcase/radar-dashboard.webp",
+    shots: [
+      {
+        src: "showcase/radar-dashboard.webp",
+        caption:
+          "The dashboard: this week's prospects, the pipeline, and who to call next. All company names and contacts here are fictional.",
+      },
+      {
+        src: "showcase/radar-prospects.webp",
+        caption: "The prospect list, one row per company, with its open roles and sources.",
+      },
+      {
+        src: "showcase/radar-drawer.webp",
+        caption:
+          "A company's record: its score, contact, postings, and why it counts as a prospect.",
+      },
+      {
+        src: "showcase/radar-dnc.webp",
+        caption:
+          "Companies the AI suspects are agencies wait here for an admin to decide. The AI never removes a company on its own.",
+      },
+      {
+        src: "showcase/radar-manage.webp",
+        caption:
+          "Runs, search quota and AI spend, all on one screen, so a cost surprise cannot build up quietly.",
+      },
+    ],
+    group: "Web Apps",
+    category: "Custom CRM + AI",
+    status: "Active",
+    featured: true,
+    problem:
+      "Bai Philippines sells outsourcing to Australian companies, and its best prospects are the ones already advertising roles in the Philippines. Finding them meant searching job boards by hand and guessing which companies were genuinely Australian.",
+    build:
+      "Led the team that designed and built a custom sales CRM with AI prospecting: a weekly pipeline collects job ads, checks each company for Australian signals, then classifies and scores it, and the sales team manages prospects through nine stages in the dashboard.",
+    value:
+      "The sales team starts each week with a scored list of prospects instead of searching job boards by hand, which focuses its time on the companies most likely to need outsourcing.",
+    results: [
+      "Runs automatically every Monday, and the team can start a run from the app at any time",
+      "Testing showed most job-board results were recruitment agencies rather than employers, so suspected agencies go to a review queue and an administrator makes the final decision",
+      "A competitor list and a Do Not Contact archive keep those companies out of every future run",
+      "Search quota and AI spending are visible on one screen, and each has a cap",
+      "Each company keeps its stage, next follow-up date, notes and files, and the list exports to CSV",
+      "Backed by more than 600 automated tests, including real browser flows",
+    ],
+    tech: ["Python", "FastAPI", "PostgreSQL", "Supabase", "Groq", "Claude API", "n8n", "Docker"],
+  },
   {
     title: "Automation & Integration Platform",
     org: "Bai Finance",
@@ -56,7 +169,7 @@ export const work: WorkItem[] = [
       {
         src: "workflow-stage-sync.webp",
         caption:
-          "The sync, in both directions. Each side reads where the record already is before it writes; if it's already at that stage the run stops. That check is what ended the echo loop.",
+          "The sync, in both directions. Each side reads where the record already is before it writes, and if it is already at that stage the run stops. That check is what ended the echo loop.",
       },
       {
         src: "workflow-broker-routing.webp",
@@ -99,15 +212,17 @@ export const work: WorkItem[] = [
     status: "Active",
     featured: true,
     problem:
-      "An Australian finance brokerage ran on a brittle Google Apps Script setup. New opportunities didn't become tasks, and updates echoed back and forth as duplicates.",
+      "An Australian finance brokerage relied on a fragile Google Apps Script setup. New opportunities did not become tasks, and updates bounced between systems as duplicates.",
     build:
-      "Architected a scalable, version-controlled automation platform on n8n with dedicated webhook endpoints and REST payload contracts, driving bidirectional GoHighLevel↔Asana sync on the GHL v2 API.",
+      "Designed a scalable, version-controlled automation platform on n8n that keeps GoHighLevel and Asana in sync in both directions, using dedicated webhook endpoints and documented data contracts.",
+    value:
+      "Brokers and support staff work from accurate records in both systems without entering data twice, so opportunities are less likely to stall and client information stays with the right broker.",
     results: [
-      "Runs across 19 pipelines for a 64-user brokerage: 191 workflows, 41 of them published, and 14.1K enrollments to date",
-      "Mapped 30+ pipeline stages into auto-created tasks",
-      "Engineered an authoritative-state check that killed the bidirectional echo loop causing duplicate updates",
-      "Added follower-based broker routing that enforces per-broker data confidentiality",
-      "Led a six-person engineering team building against it: assigning workflow builds, reviewing deliverables, and owning the documentation standards",
+      "Runs across 19 pipelines for a 64-user brokerage, with 191 workflows, 41 of them published, and 14.1K enrollments to date",
+      "Converts more than 30 pipeline stages into tasks automatically",
+      "Eliminated the echo loop behind the duplicate updates by checking each record's current state before writing to it",
+      "Introduced follower-based broker routing that keeps each broker's client data confidential",
+      "Led a six-person engineering team building on the platform, assigning builds, reviewing deliverables and setting the documentation standards",
     ],
     tech: ["n8n", "GoHighLevel v2 API", "Asana API", "Webhooks", "REST"],
   },
@@ -122,7 +237,7 @@ export const work: WorkItem[] = [
       {
         src: "payout-system.webp",
         caption:
-          "The finance and payout system, in two lanes. An order earns commission on a labelled basis and becomes payable once the refund window has passed; staff then settle it through a ledger that always pays the oldest owed earnings first.",
+          "The finance and payout system, in two lanes. An order earns commission on a labeled basis and becomes payable once the refund window has passed; staff then settle it through a ledger that always pays the oldest owed earnings first.",
       },
       {
         src: "health-check.webp",
@@ -145,62 +260,66 @@ export const work: WorkItem[] = [
     status: "Shipped",
     featured: true,
     problem:
-      "An ecommerce brand paid its creators commission on every sale, but its finance team couldn't see what each order earned, what had been paid, what was still owed, or what a refund should take back. The dashboards showed totals, the commission rates lived in the page markup, and the system came half-built from a previous team, with dead code and endpoints nothing called.",
+      "An ecommerce brand paid its creators commission on every sale, but its finance team could not see what each order earned, what had been paid, what was still owed, or what a refund should recover. The dashboards showed only totals, the commission rates sat in the page markup, and a previous team had left the system half-built.",
     build:
-      "Took the system over as its sole engineer. Learned the stack and architecture from the project docs, traced the whole flow from storefront order through the automation layer to the database and both dashboards, and cleared out the dead weight. Then built its finance and payout system end to end: an order-level transaction ledger, a rate card moved out of the code into the database, a configurable refund holdback, a payout ledger that settles the oldest earnings first, and encrypted bank details. That meant the schema, 17 new server functions, and a rebuild of both role-gated dashboards for internal staff and for creators.",
+      "Took over the system as its sole engineer. Mapped the full flow from storefront order through the automation layer to the database and both dashboards, removed dead code and unused endpoints, then built the finance and payout system end to end: an order-level transaction ledger, a rate card managed in the database, a configurable refund holdback, a payout ledger that settles the oldest earnings first, and encrypted bank details. The work covered the schema, 17 new server functions, and a rebuild of both role-based dashboards for staff and creators.",
+    value:
+      "Finance can see what every order earned and what each creator is owed, on one clearly labeled commission basis, with bank details protected and a traceable record behind every payout.",
     results: [
-      "Audited the inherited codebase against what production actually ran, stripped dead code, faked fields and unused endpoints, and reconciled every database function between environments before building on top of it",
-      "Delivered 10 of the 11 requirements Finance and Marketing set, and shipped 25 server functions to production in one release, browser-verified afterwards",
-      "Made the commission basis visible: \"sales\" had been three different numbers about 15% apart, displayed as one and paid on another. They are now labelled columns, and every export states its basis",
-      "Bank details are encrypted with AES-256-GCM, and every time a creator reveals their own account number the reveal is logged before it is shown",
-      "Removed an unauthenticated endpoint that could write directly to the live database, closing a path to forged commission records, and caught an account-creation path that let any staff member make themselves an administrator",
-      "Root-caused an analytics endpoint that had silently returned zeros since launch, and rebuilt it to fail closed",
-      "Wrote a daily end-to-end health check that runs a real signup and a real login through production, probes every server function, and sweeps every workflow's failed runs into one morning report",
-      "Split development from production with a personal-data-scrubbing clone, then closed the contract with a re-verified handoff, release runbooks and scripts for the incoming team",
+      "Audited the inherited codebase against what production actually ran, removed dead code, faked fields and unused endpoints, and reconciled every database function between environments before building on it",
+      "Delivered 10 of the 11 requirements set by Finance and Marketing, and shipped 25 server functions to production in one browser-verified release",
+      "Made the commission basis visible: \"sales\" had been three different numbers about 15% apart, displayed as one and paid on another. They are now labeled columns, and every export states its basis",
+      "Bank details are encrypted with AES-256-GCM, and each time a creator reveals their account number the event is logged before the number is shown",
+      "Removed an unauthenticated endpoint that could write directly to the live database, closing a path to forged commission records, and identified and fixed a flaw that let staff make themselves administrators",
+      "Traced an analytics endpoint that had silently returned zeros since launch, and rebuilt it to fail closed",
+      "Wrote a daily end-to-end health check that runs a real signup and login through production, tests every server function, and gathers every workflow's failed runs into one morning report",
+      "Separated development from production with a clone that removes personal data, then closed the contract with a verified handover, release runbooks and scripts for the incoming team",
     ],
     tech: ["Supabase", "PostgreSQL", "Deno", "TypeScript", "JavaScript", "Chart.js", "n8n"],
   },
   {
     title: "Leave Application Platform",
-    org: "Bai Finance",
-    image: "workflow-leave-intake.webp",
+    org: "Bai Finance — sole developer",
+    image: "showcase/leave-form.webp",
     shots: [
       {
-        src: "workflow-leave-intake.webp",
+        src: "showcase/leave-form.webp",
         caption:
-          "The balance is computed once, in SQL, by the HR app's own accrual engine — so the two systems cannot quote different numbers for the same person.",
+          "The request form, served by n8n itself. Staff see their leave credits before they ask. The person shown is sample data.",
+      },
+      {
+        src: "showcase/leave-request-phone.webp",
+        caption:
+          "On a phone, where most requests are filed: leave type, dates, and a live count of the days.",
       },
       {
         src: "n8n-leave-intake.webp",
         caption:
-          "Intake: serve the page, issue and burn a one-time code, open a session, then price the request against the HR app's accrual engine before writing it.",
+          "Intake: serve the page, issue and burn a one-time code, open a session, then work out the balance before writing the request.",
       },
       {
         src: "n8n-leave-approval.webp",
         caption:
           "Approval. The top path only renders a confirmation page; the bottom path is the only one that records a decision.",
       },
-      {
-        src: "leave-intake-form.webp",
-        caption:
-          "The intake page, served by n8n itself so the page and its API share an origin.",
-      },
     ],
     group: "Automation",
     category: "Internal Platform",
     status: "Active",
+    featured: true,
     problem:
-      "Staff filed leave over chat and email. Not everyone was onboarded into the HR app, approvals left no record, and the balance a person was quoted didn't always match the one the HR app would compute.",
+      "Contractors requested leave over chat and email. Approvals left no record, and the balance a person was quoted depended on who they asked.",
     build:
-      "Built a no-login intake page served by n8n itself, backed by an email approval layer that reads and writes the HR app's own database. No second system of record, and no second policy engine.",
+      "As the sole developer, analyzed the leave rules with HR and built a request form served directly from n8n, with an emailed sign-in code, a live view of each person's leave credits, and an email approval step for their supervisor. HR continues to work from the sheet it already maintains.",
+    value:
+      "Staff see their balance before they ask, supervisors approve from their inbox, and HR gains a complete record without a new system to maintain.",
     results: [
-      "Staff sign in with an employee ID; the one-time code goes to the address already on their record, so nobody can direct a code to an address they chose",
-      "Balances are computed once, in SQL, against the HR app's existing accrual engine, so the two systems can't quote different numbers for the same person",
-      "Leave spanning a quarter boundary is charged day by day to the quarter it falls in, and the paid/unpaid split is shown before anyone submits",
-      "Approval emails open a confirmation page instead of deciding on click. Mail scanners prefetch every link, so a decide-on-GET link would approve itself",
-      "Lives in its own Postgres schema with no foreign keys into the HR app's tables, so its migrations can never fail because of this",
+      "Staff sign in with their email, and one-time codes are stored hashed, limited by attempts and invalidated after use",
+      "The form shows credits by period, carry-over and half days before anyone submits, so people know the answer before they ask",
+      "Approval emails open a confirmation page instead of deciding on click, because mail scanners follow every link and would otherwise approve requests on their own",
+      "HR data stays on the contractor sheet HR already runs, so there is no second system to keep in step",
     ],
-    tech: ["n8n", "Supabase", "PostgreSQL", "SQL", "SMTP"],
+    tech: ["n8n", "PostgreSQL", "Google Sheets API", "SMTP"],
   },
   {
     title: "Automation Training Series",
@@ -227,14 +346,16 @@ export const work: WorkItem[] = [
     category: "Enablement",
     status: "Shipped",
     problem:
-      "New engineers had to learn three unfamiliar systems (GoHighLevel, n8n and Asana) by building real integrations between them, without their practice runs getting anywhere near live client data.",
+      "New engineers had to learn three unfamiliar systems (GoHighLevel, n8n and Asana) by building real integrations between them, without their practice work coming near live client data.",
     build:
-      "Wrote a six-part, hands-on training series: orientation and ground rules, a GHL → n8n → Asana sync and its reverse, CRM configuration, contact data and tagging, and a debugging and operations handbook. Each part ends in something the engineer builds and tests.",
+      "Wrote a six-part, hands-on training series covering orientation and ground rules, a GHL → n8n → Asana sync and its reverse, CRM configuration, contact data and tagging, and a debugging and operations handbook. Each part ends in something the engineer builds and tests.",
+    value:
+      "New team members can contribute to real integrations sooner, and the business carries no risk to live client data while they learn.",
     results: [
-      "Interns work in a separate testing account set up for the programme, so they can test and implement as much as they need without touching live data",
-      "Both directions of a real integration are built against the actual APIs: reading the reference, finding the IDs, mapping the fields",
-      "The debugging handbook comes from failures that actually happened: fixes left in draft, swallowed errors, test versus production URLs, automations triggering each other, and matching on names instead of IDs",
-      "Every part ends in a deliverable, and fixes are written up as runbook entries in one fixed shape",
+      "Interns work in a separate testing account set up for the program, so they can practice freely without touching live data",
+      "Both directions of a real integration are built against the actual APIs: reading the reference, finding the IDs and mapping the fields",
+      "The debugging handbook draws on real failures: fixes left in draft, swallowed errors, test and production URLs confused, automations triggering each other, and matching on names instead of IDs",
+      "Every part ends in a deliverable, and fixes are written up as runbook entries in one consistent format",
     ],
     tech: ["n8n", "GoHighLevel", "Asana API", "Technical Writing"],
   },
@@ -245,19 +366,20 @@ export const work: WorkItem[] = [
     group: "Infrastructure & Reliability",
     category: "Infrastructure",
     status: "Active",
-    featured: true,
     problem:
-      "The automation platform ran on a hosted n8n plan. That plan went away and took its database with it. Every workflow the business depended on was gone in one afternoon, with no way to log in and get them back.",
+      "The automation platform ran on a hosted n8n plan. When that plan ended, it took the database with it, and every workflow the business depended on was gone in one afternoon, with no way to log in and recover them.",
     build:
-      "Rebuilt the platform on a VPS the company controls: a Docker Compose stack behind Traefik doing TLS at the edge, with the workflow definitions kept in git so the running instance is reproducible rather than irreplaceable.",
+      "Rebuilt the platform on a VPS the company controls: a Docker Compose stack behind Traefik, with workflow definitions kept in Git so the running instance can always be reproduced.",
+    value:
+      "The business now controls its own automation platform and can restore it from version control, rather than depending on a vendor plan for systems it cannot run without.",
     results: [
-      "Restored every workflow from the git-committed JSON exports. The repo was the only surviving copy, which is now the point rather than the accident",
-      "Traefik terminates TLS and redirects HTTP at the entrypoint, so no workflow has to know anything about certificates",
+      "Restored every workflow from the JSON exports committed to Git, which were the only surviving copy",
+      "Traefik handles TLS and HTTP redirects at the edge, so no workflow has to manage certificates",
       "Postgres holds execution state instead of the container filesystem, so the stack can be rebuilt without losing history",
-      "The encryption key is treated as the platform's real secret: lose it and every stored credential becomes permanently unreadable",
-      "Traced a TLS failure to a proxy release that had dropped two config keys, and was serving a self-signed certificate rather than erroring",
-      "Three backup tiers, each covering the last one's blind spot: provider snapshots, a nightly database dump on the box, and a nightly GitHub Actions job that commits every workflow off-box as normalised JSON, so a diff answers who changed what, and when",
-      "Every workflow is tagged as production, internal or practice, and noisy internal workflows no longer store their successful runs, so the execution history holds what someone might actually need to read",
+      "The encryption key is protected as the platform's most critical secret, because losing it would make every stored credential permanently unreadable",
+      "Traced a TLS failure to a proxy release that had dropped two configuration keys and was serving a self-signed certificate instead of reporting an error",
+      "Three backup tiers, each covering the last one's blind spot: provider snapshots, a nightly database dump on the server, and a nightly GitHub Actions job that commits every workflow off the server as normalized JSON, so a diff shows who changed what, and when",
+      "Every workflow is tagged as production, internal or practice, and noisy internal workflows no longer store their successful runs, so the execution history holds what someone may actually need to read",
       "Opened the repository to the wider team with a contributing guide and a dev-branch model, so changes are reviewed before they reach the live instance",
     ],
     tech: ["Docker Compose", "Traefik", "Linux", "PostgreSQL", "n8n", "GitHub Actions"],
@@ -270,15 +392,17 @@ export const work: WorkItem[] = [
     category: "Monitoring",
     status: "Active",
     problem:
-      "The brokerage's production workflows caught their own errors so callers always got a clean reply, which also meant n8n recorded every failure as a success. A broken CRM sync could fail on every lead for days and nobody would hear about it.",
+      "The brokerage's production workflows caught their own errors so that callers always received a clean reply, which also meant n8n recorded every failure as a success. A broken CRM sync could fail on every lead for days without anyone knowing.",
     build:
-      "Built one n8n workflow with two lanes. The error lane posts each failed run to the team's Discord the moment it happens. The status lane posts a summary of the previous hour, every hour. Then went back into the production workflows and made their caught errors fail the run, so there was something to report.",
+      "Built a single n8n workflow with two lanes: one posts each failed run to the team's Discord the moment it happens, and the other posts a summary of the previous hour. Then changed the production workflows so that caught errors fail the run, giving the monitor something to report.",
+    value:
+      "The team hears about a failure as it happens, not days later from a broker or a client, which protects leads and shortens the time spent investigating.",
     results: [
-      "Each workflow is muted for an hour after it alerts, so one that fails on every lead posts once rather than once per lead, and one workflow's mute never silences another's",
-      "The hourly post arrives silently even when everything is fine, so a missing post means n8n itself is down: the one failure an error trigger can never report",
-      "Caught errors now end the run as failed after the caller already has its error reply, so the CRM and the task manager see no difference",
-      "Watches the nine production workflows plus itself, and a new one joins by pointing its error setting at the monitor. It shows up in the next hourly post on its own",
-      "Fire-drilled before go-live: a deliberately broken workflow alerted once and the repeat was muted, and the status lane reported all clear on the live instance",
+      "Each workflow is muted for an hour after it alerts, so a workflow that fails on every lead posts once rather than once per lead, and one workflow's mute never silences another's",
+      "The hourly post arrives even when everything is healthy, so a missing post means n8n itself is down, the one failure an error trigger can never report",
+      "Caught errors now end the run as failed after the caller has its error reply, so the CRM and the task manager see no difference",
+      "Watches the nine production workflows and itself, and a new workflow joins by pointing its error setting at the monitor",
+      "Fire-drilled before go-live: a deliberately broken workflow alerted once, the repeat was muted, and the status lane reported all clear on the live instance",
     ],
     tech: ["n8n", "n8n REST API", "Discord", "Python"],
   },
@@ -305,23 +429,24 @@ export const work: WorkItem[] = [
       {
         src: "baifinance-analytics.webp",
         caption:
-          "The site's analytics view, built by the web team. Figures blurred — they're the client's business volumes, not mine to publish.",
+          "The site's analytics view, built by the web team. Figures are blurred because they are the client's business volumes.",
       },
     ],
     group: "Backend & Data",
     category: "Integration",
     status: "Active",
-    featured: true,
     problem:
-      "Leads from the brokerage's website reached GoHighLevel through an edge function that lived only in the deployed environment — unversioned, unreviewable, and named after the afternoon it was written. Separately, a chat thread could be closed by a timer, a cron sweep or an admin at the same moment, and nothing decided which one owned the close.",
+      "Leads from the brokerage's website reached GoHighLevel through an edge function that existed only in the deployed environment, unversioned and unreviewed. Separately, a chat thread could be closed by a timer, a scheduled sweep or an admin at the same moment, with nothing deciding which one owned the close.",
     build:
       "Brought the CRM sync into the repository as a reviewed Supabase Edge Function, and built the inquiry close-and-transcript pipeline behind it: tiered contact de-duplication, two independent exactly-once claims, and the schema and indexes underneath.",
+    value:
+      "Website inquiries reach the CRM matched to the right contact, and each transcript is delivered once, so the sales team is not working from duplicates or missing conversations.",
     results: [
-      "Contact matching is tiered rather than all-or-nothing: an email match merges, a phone match merges only when the surname agrees, and a weaker match still creates the contact but tags it for review instead of silently fusing two people",
+      "Contact matching is tiered: an email match merges, a phone match merges only when the surname agrees, and a weaker match still creates the contact but tags it for review instead of silently combining two people",
       "A merge only fills blank fields, so an inbound lead can never overwrite good data already in the CRM",
-      "Two separate exactly-once claims, because they race on different things: one conditional update claims the close, another claims the transcript email — and a failed send releases its claim so a retry can still deliver",
-      "A closed thread now records whether a timer or a human ended it, which the two paths previously made indistinguishable",
-      "Added the two indexes the cron sweep and transcript build were missing — Postgres does not index a foreign key on its own",
+      "Two separate exactly-once claims, because they race on different things: one conditional update claims the close, another claims the transcript email, and a failed send releases its claim so a retry can still deliver",
+      "A closed thread now records whether a timer or a person ended it, which was previously impossible to tell",
+      "Added the two indexes the scheduled sweep and transcript build were missing, because Postgres does not index a foreign key on its own",
       "Backed by unit, integration and security tests, on the 90% coverage floor CI enforces for the contact path",
     ],
     tech: ["Supabase Edge Functions", "Deno", "TypeScript", "PostgreSQL", "GoHighLevel API", "Vitest"],
@@ -349,14 +474,16 @@ export const work: WorkItem[] = [
     category: "Data",
     status: "Shipped",
     problem:
-      "Years of growth left thousands of contacts spread across 20+ spreadsheets and CRM exports: duplicates, malformed emails and phone numbers, and couples sharing a single record.",
+      "Years of growth had left thousands of contacts spread across more than 20 spreadsheets and CRM exports, with duplicates, malformed emails and phone numbers, and couples sharing a single record.",
     build:
-      "Wrote a Python pipeline that consolidates every source into one import-ready master: normalizing contact details, splitting joint applicants into individual records, and applying a namespaced tagging scheme through a single validation step.",
+      "Wrote a Python pipeline that consolidates every source into one import-ready master list: normalizing contact details, splitting joint applicants into individual records, and applying a namespaced tagging scheme through a single validation step.",
+    value:
+      "The team gains one clean contact base to market from and report on, so campaigns reach the right people and staff stop working around duplicates.",
     results: [
-      "Audited 4,000+ contacts across 20+ source sheets and consolidated them into 1,900+ deduplicated records",
-      "A tag taxonomy where each tag carries exactly one fact, so adding a segment doesn't mean reworking existing lists",
+      "Audited more than 4,000 contacts across 20+ source sheets and consolidated them into more than 1,900 de-duplicated records",
+      "Introduced a tag taxonomy where each tag carries exactly one fact, so adding a segment does not mean reworking existing lists",
       "Delivered a phased cleanup roadmap and a company-wide Contact Management SOP",
-      "Designed a weekly data-quality digest that reads every CRM contact each Monday and emails the team the records that are flagged for review, untagged, or have no owner, so the cleanup stays clean",
+      "Designed a weekly data-quality digest that reviews every CRM contact each Monday and emails the team the records that are flagged, untagged or unowned, so the data stays clean",
     ],
     tech: ["Python", "pandas", "GoHighLevel", "Data Modeling"],
   },
@@ -380,9 +507,11 @@ export const work: WorkItem[] = [
     category: "Backend",
     status: "Shipped",
     problem:
-      "Creators on the rewards platform live on WhatsApp, not email, but the authentication provider could only issue sessions from its own email or SMS codes.",
+      "Creators on the rewards platform rely on WhatsApp rather than email, but the authentication provider could only issue sessions from its own email or SMS codes.",
     build:
       "Designed a second login channel that delivers a one-time code over WhatsApp, then bridges it into a genuine authenticated session using admin-generated magic-link tokens, leaving the existing email login untouched.",
+    value:
+      "Creators sign in on the channel they already use, which removes friction from the login experience without adding a new vendor.",
     results: [
       "Login over the channel creators already use, with email still available as a fallback",
       "Reused the platform's existing WhatsApp provider instead of onboarding a new vendor",
@@ -404,18 +533,20 @@ export const work: WorkItem[] = [
     category: "Automation",
     status: "Active",
     problem:
-      "Prospects scanned from business cards had to reach the right broker instantly, with a welcome email that wouldn't land in spam.",
+      "Prospects scanned from business cards had to reach the right broker instantly, with a welcome email that would not land in spam.",
     build:
-      "Built an n8n flow that upserts scanned prospects into GHL, assigns the owning broker through a routing guard, and sends a welcome email via a verified sender with per-broker Reply-To.",
+      "Built an n8n flow that adds scanned prospects to GoHighLevel, assigns the owning broker through a routing guard, and sends a welcome email from a verified sender with a per-broker Reply-To address.",
+    value:
+      "Every prospect met in person reaches the right broker straight away, with no lead waiting on manual follow-up.",
     results: [
-      "Per-broker Reply-To routing that preserves SPF/DKIM/DMARC alignment",
-      "Zero manual triage: every scan is routed and greeted automatically",
+      "Per-broker Reply-To routing that preserves SPF, DKIM and DMARC alignment",
+      "No manual triage: every scan is routed and greeted automatically",
     ],
     tech: ["n8n", "GoHighLevel", "Email Deliverability", "DNS"],
   },
   {
     title: "Idempotent Webhook Intake",
-    org: "Open source n8n workflow",
+    org: "Open-source n8n workflow",
     image: "workflow-idempotent-intake.webp",
     shots: [
       {
@@ -433,14 +564,16 @@ export const work: WorkItem[] = [
     category: "Open Source",
     status: "Shipped",
     problem:
-      "Senders retry, and networks drop the response after the write has already happened. Any endpoint that creates something will eventually be called twice with the same payload, and quietly create two records.",
+      "Senders retry, and networks drop responses after a write has already happened. Any endpoint that creates something will eventually be called twice with the same data, and quietly create two records.",
     build:
-      "An importable n8n workflow that keys every request on a hash of the caller's own fields, checks that key before writing, and answers in a way the caller can act on. The reasoning sits in sticky notes beside the nodes it explains.",
+      "An importable n8n workflow that identifies every request by a hash of the caller's own fields, checks that key before writing, and responds in a way the caller can act on. The reasoning sits in sticky notes beside the nodes it explains.",
+    value:
+      "Prevents duplicate records when systems retry, which keeps customer data clean and avoids the same order or lead being processed twice.",
     results: [
       "The key is a SHA-256 of the caller's identifying fields, never a timestamp or a random value, because a retry has to produce the same key",
-      "A unique index on the key backs up the lookup, so a race that slips past the check still can't create a second row",
-      "Answers 400 when retrying won't help, 200 when the record already exists, and 201 when something was created",
-      "No client data and no credentials: every secret is an environment reference",
+      "A unique index on the key backs up the lookup, so a race that slips past the check still cannot create a second row",
+      "Responds 400 when retrying will not help, 200 when the record already exists, and 201 when something was created",
+      "Contains no client data or credentials: every secret is an environment reference",
     ],
     tech: ["n8n", "Webhooks", "SHA-256", "Supabase"],
     links: [
@@ -453,7 +586,7 @@ export const work: WorkItem[] = [
   },
   {
     title: "More Open-Source Workflows",
-    org: "Open source n8n workflows",
+    org: "Open-source n8n workflows",
     image: "workflow-open-source-set.webp",
     shots: [
       {
@@ -464,7 +597,7 @@ export const work: WorkItem[] = [
       {
         src: "ref-health-check.webp",
         caption:
-          "Endpoint health check: every target is probed before anything is reported, so one dead endpoint can't hide the others behind it.",
+          "Endpoint health check: every target is probed before anything is reported, so one dead endpoint cannot hide the others behind it.",
       },
       {
         src: "ref-workflow-backup.webp",
@@ -481,14 +614,16 @@ export const work: WorkItem[] = [
     category: "Open Source",
     status: "Shipped",
     problem:
-      "Three smaller workflows published from the same instinct: the failure mode matters more than the happy path. Monitoring that fires one alert per failure, a platform that is the only copy of its own automations, and an enrichment script that dies on the first dead website.",
+      "Three smaller workflows built on one principle: how a system fails matters more than how it succeeds. Monitoring that fires one alert per failure, a platform that holds the only copy of its own automations, and an enrichment script that stops at the first dead website.",
     build:
-      "An endpoint health check that probes a list of targets and sends one digest only when something is down; a nightly export committing every workflow to git; and a company enrichment run that profiles each homepage against a fixed schema and writes it back to a sheet.",
+      "An endpoint health check that tests a list of targets and sends one digest only when something is down, a nightly export that commits every workflow to Git, and a company enrichment run that profiles each homepage against a fixed schema and writes it back to a sheet.",
+    value:
+      "Each one removes a common operational risk: outages nobody notices, automations with no backup, and batch jobs that fail on a single bad record.",
     results: [
-      "Health check: failures are collected before anything is sent — one digest for ten dead endpoints, not ten alerts, and silence is the success case",
-      "Git backup: files are named by workflow id, so a rename produces a diff instead of an orphan, and self-changing fields are stripped so a nightly run only commits real changes",
-      "Enrichment: a dead site fails its own row rather than the batch, and the model may answer unknown, because a visible blank beats a guess someone later mistakes for research",
-      "Built from problems that actually happened — the git backup exists because a hosted n8n plan ended and took its database with it",
+      "Health check: failures are collected before anything is sent, so ten dead endpoints produce one digest rather than ten alerts, and silence means success",
+      "Git backup: files are named by workflow ID, so a rename produces a diff instead of an orphan, and self-changing fields are stripped so a nightly run commits only real changes",
+      "Enrichment: a dead site fails its own row rather than the batch, and the model may answer unknown, because a visible blank is better than a guess later mistaken for research",
+      "Built from real problems: the Git backup exists because a hosted n8n plan ended and took its database with it",
     ],
     tech: ["n8n", "Scheduling", "GitHub API", "Gemini", "Uptime Monitoring"],
     links: [
@@ -501,7 +636,7 @@ export const work: WorkItem[] = [
   },
   {
     title: "RAG Gmail Reply Assistant",
-    org: "Open source n8n workflow",
+    org: "Open-source n8n workflow",
     image: "workflow-rag-gmail.webp",
     shots: [
       {
@@ -521,11 +656,13 @@ export const work: WorkItem[] = [
     problem:
       "Most inbound email is the same handful of questions, answered by hand from documents the business already has. A model answering from general knowledge will invent whatever those documents would have told it.",
     build:
-      "An n8n workflow that triages each new email, lets an AI agent look the answer up in a Qdrant knowledge base built from the company's own documents, and saves the reply as a Gmail draft. A second lane loads documents into that knowledge base.",
+      "An n8n workflow that triages each new email, lets an AI agent find the answer in a Qdrant knowledge base built from the company's own documents, and saves the reply as a Gmail draft. A second lane loads documents into that knowledge base.",
+    value:
+      "Routine questions can be answered faster and more consistently from approved documents, while a person keeps control of every reply.",
     results: [
       "There is no send step, so the model can only ever produce a draft that a person reads and sends",
       "Triage runs before retrieval, so complaints and account-specific mail go straight to a person and never reach the agent",
-      "When the knowledge base has nothing, the agent answers ESCALATE and the email is labelled for a human instead of guessed at",
+      "When the knowledge base has no answer, the agent responds ESCALATE and the email is labeled for a person instead of being guessed at",
       "The document lane and the question lane share one embedding model, because mixing two makes retrieval return confident nonsense",
     ],
     tech: ["n8n", "RAG", "Qdrant", "Gemini", "Gmail"],
@@ -539,7 +676,7 @@ export const work: WorkItem[] = [
   },
   {
     title: "Invoice Intake & Approval Queue",
-    org: "Open source n8n workflow",
+    org: "Open-source n8n workflow",
     image: "workflow-invoice-queue.webp",
     shots: [
       {
@@ -557,14 +694,16 @@ export const work: WorkItem[] = [
     category: "Open Source",
     status: "Shipped",
     problem:
-      "Invoices arrive by email faster than anyone approves them. Approving straight from the inbox means a duplicate can be paid twice, nothing records what was decided, and a request nobody answered simply disappears.",
+      "Invoices arrive by email faster than anyone can approve them. Approving straight from the inbox means a duplicate can be paid twice, nothing records what was decided, and a request nobody answered simply disappears.",
     build:
-      "Two lanes in one n8n workflow. Intake reads each invoice PDF, extracts its fields with a model and queues it. Approval hands the oldest queued invoice to an approver, one at a time, and records the outcome in a masterfile.",
+      "Two lanes in one n8n workflow. Intake reads each invoice PDF, extracts its fields with a model and queues it. Approval hands the oldest queued invoice to an approver, one at a time, and records the outcome in a master file.",
+    value:
+      "Reduces the risk of paying an invoice twice and gives finance a clear record of every decision, while invoices keep moving when an approver is unavailable.",
     results: [
       "Intake never waits on approval, so invoices keep queueing while one is in review",
       "Only one invoice is ever in review: the approval lane does nothing while any row is IN_REVIEW, and that single check is the whole queue lock",
-      "A SHA-256 of vendor, invoice number and amount means the same PDF forwarded twice is recognised rather than queued again",
-      "No answer within two days releases the invoice back to the queue, so a missed email never silently rejects it",
+      "A SHA-256 of vendor, invoice number and amount means the same PDF forwarded twice is recognized rather than queued again",
+      "With no answer within two days, the invoice returns to the queue, so a missed email never silently rejects it",
     ],
     tech: ["n8n", "Gemini", "Google Sheets", "Gmail", "SHA-256"],
     links: [
@@ -583,7 +722,7 @@ export const work: WorkItem[] = [
       {
         src: "baiacademy-register.webp",
         caption:
-          "The registration wizard — my component. Step one of five; the referral code a broker or BDA hands out is redeemed later in the flow, against a throttled endpoint so the codes can't be guessed by probing.",
+          "The registration wizard, which I built. Step one of five: the referral code a broker or BDA hands out is redeemed later in the flow, against a throttled endpoint, so the codes cannot be guessed by probing.",
       },
       {
         src: "baiacademy-lms.webp",
@@ -599,19 +738,20 @@ export const work: WorkItem[] = [
     group: "Web Apps",
     category: "Backend & Platform",
     status: "Active",
-    featured: true,
     problem:
       "A learning platform written by eight people across parallel branches had no audit trail, no log retention, and a deployment configuration with origins and TLS assumptions hard-coded for one machine. Migrations from separate feature branches had also diverged into conflicting heads.",
     build:
-      "Built the audit and access-logging subsystem, owned the production deployment hardening, and shipped the broker/BDA referral-code flow end to end — Django model and migrations, through DRF, to the Next.js registration wizard.",
+      "Built the audit and access-logging subsystem, owned the production deployment hardening, and shipped the broker and BDA referral-code flow end to end, from the Django model and migrations through DRF to the Next.js registration wizard.",
+    value:
+      "The platform can now show who did what and when, and its releases no longer depend on one developer's machine, which supports accountability and dependable deployments.",
     results: [
-      "Added application, access and audit logging as first-class models, with middleware capturing every request and a management command enforcing per-table retention windows (audit longest, access shortest) with a dry-run mode",
-      "Access logs are written by a background thread off a non-blocking queue and batched into bulk inserts, so a request never waits on a log write — and if the queue backs up, events are dropped and counted rather than slowing the site down",
-      "That writer closes its database connection after each flush, which is what the Supabase transaction pooler wants, and drains what's left on shutdown",
-      "Referral-code redemption is throttled under its own scope and logs failed attempts with the caller's IP, so the codes can't be found by probing",
-      "Made the deployment portable: environment-driven CORS and CSRF trusted origins, proxy TLS trust for the host, and WhiteNoise serving static files — replacing values pinned to one developer's machine",
+      "Added application, access and audit logging as first-class models, with middleware capturing every request and a management command enforcing per-table retention windows, with a dry-run mode",
+      "Access logs are written by a background thread off a non-blocking queue and batched into bulk inserts, so a request never waits on a log write, and if the queue backs up, events are dropped and counted rather than slowing the site down",
+      "That writer closes its database connection after each flush, as the Supabase transaction pooler requires, and drains what remains on shutdown",
+      "Referral-code redemption is throttled under its own scope and logs failed attempts with the caller's IP address, so the codes cannot be found by probing",
+      "Made the deployment portable: environment-driven CORS and CSRF trusted origins, proxy TLS trust for the host, and WhiteNoise serving static files, replacing values pinned to one developer's machine",
       "Shipped referral codes for broker and BDA signup across the whole stack: schema migration, a backfill for existing accounts, rate limiting on redemption, and the registration wizard and profile screens that use them",
-      "Reconciled three-way migration conflicts between feature branches that had each added a head, so the shared database could migrate cleanly again",
+      "Reconciled three-way migration conflicts between feature branches, so the shared database could migrate cleanly again",
       "Fixed an ASGI startup ordering bug that broke the WebSocket dashboard, and derived the socket URL from configuration instead of a hard-coded host",
     ],
     tech: ["Django", "DRF", "PostgreSQL", "Next.js", "TypeScript", "Railway"],
@@ -628,11 +768,14 @@ export const work: WorkItem[] = [
     problem:
       "Cebuano is a low-resource language with almost no ready speech-recognition tooling to build on.",
     build:
-      "Engineered an end-to-end ASR pipeline in Python with Hugging Face Transformers, Wav2Vec2-XLSR, and a custom KenLM language model, training and decoding the models independently.",
+      "Engineered an end-to-end speech recognition pipeline in Python with Hugging Face Transformers, Wav2Vec2-XLSR and a custom KenLM language model, training and decoding the models independently.",
+    value:
+      "Provides a working foundation for voice products in a language with very little existing tooling, including the Cebuano AI voice agent now in development.",
     results: [
-      "4.15% WER and 1.16% CER on 552 held-out samples — beam search with no language model, so the figure depends on nothing but the acoustic model",
-      "3,622 utterances from 22 speakers (1.72 hours), split on clean audio before augmentation so every augmented clip inherits its source clip’s split and cannot leak across it",
-      "Found a test-set leakage in my own KenLM evaluation after the fact; the decoder is being rebuilt and no language-model figures are quoted until it is honest",
+      "Reached a 4.15% word error rate and a 1.16% character error rate on 552 held-out samples, using beam search with no language model, so the figure depends only on the acoustic model",
+      "3,622 utterances from 22 speakers (1.72 hours), split on clean audio before augmentation so every augmented clip inherits its source clip's split and cannot leak across it",
+      "Found a test-set leakage in my own KenLM evaluation after the fact. The decoder is being rebuilt, and no language-model figures are quoted until it is sound",
+      "Now developing a Cebuano AI voice agent on this model: microphone, voice detection, speaker gate, speech recognition, then an LLM reply",
     ],
     tech: ["Python", "Wav2Vec2-XLSR", "KenLM", "Hugging Face"],
     links: [
@@ -651,9 +794,11 @@ export const work: WorkItem[] = [
     status: "Completed",
     image: "labelingloop.webp",
     problem:
-      "Building the ASR dataset needed one place to upload, transcribe, correct, and export audio, not a pile of scripts.",
+      "Building the speech dataset needed one place to upload, transcribe, correct and export audio, not a collection of scripts.",
     build:
-      "Developed a Django CRUD application integrating audio upload, transcription, correction, and export into a single backend workflow, deployed via Cloudflare Tunnel for live user testing.",
+      "Developed a Django application that brings audio upload, transcription, correction and export into a single workflow, deployed through Cloudflare Tunnel for live user testing.",
+    value:
+      "Gives the dataset one managed workflow, which reduces handling errors and makes the labeling process repeatable.",
     results: [
       "Unified the full labeling workflow into one deployed app",
       "Ran live user testing through a Cloudflare Tunnel deployment",

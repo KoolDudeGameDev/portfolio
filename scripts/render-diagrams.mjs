@@ -41,7 +41,6 @@ const OUTPUT_NAME = {
   "whatsapp-otp": "whatsapp-otp-login",
   "idempotent-intake": "workflow-idempotent-intake",
   "invoice-queue": "workflow-invoice-queue",
-  "leave-intake": "workflow-leave-intake",
   "open-source-set": "workflow-open-source-set",
   "rag-gmail": "workflow-rag-gmail",
   "cebuano-asr": "asr",

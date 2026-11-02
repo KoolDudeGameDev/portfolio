@@ -198,12 +198,16 @@ export function WorkModal({
           ) : null}
 
           <p className="leading-relaxed text-muted">
-            <span className="font-medium text-fg">The problem — </span>
+            <span className="font-medium text-fg">The business problem — </span>
             {item.problem}
           </p>
           <p className="mt-4 leading-relaxed text-muted">
             <span className="font-medium text-fg">What I built — </span>
             {item.build}
+          </p>
+          <p className="mt-4 leading-relaxed text-muted">
+            <span className="font-medium text-fg">Why it matters — </span>
+            {item.value}
           </p>
 
           <h3 className="mt-7 text-xs uppercase tracking-[0.16em] text-muted">

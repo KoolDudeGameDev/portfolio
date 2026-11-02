@@ -29,7 +29,7 @@ function StatusBadge({ status }: { status: WorkItem["status"] }) {
  */
 function Thumbnail({ item }: { item: WorkItem }) {
   return (
-    <div className="aspect-[16/9] overflow-hidden rounded-xl border border-border">
+    <div className="work-thumb aspect-[16/9] overflow-hidden rounded-xl border border-border">
       {item.image ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -37,7 +37,10 @@ function Thumbnail({ item }: { item: WorkItem }) {
           alt=""
           loading="lazy"
           decoding="async"
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          className={`h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03] ${
+            // App screens read from the top; diagrams read from the middle.
+            item.image.startsWith("showcase/") ? "object-top" : "object-center"
+          }`}
         />
       ) : (
         <div className="flex h-full w-full flex-col items-center justify-center gap-1.5 bg-surface px-6 text-center">
@@ -64,24 +67,26 @@ export function WorkCard({
     // `relative` + the stretched pseudo-element on the button below makes the
     // whole card the click target while keeping exactly one tab stop and a real
     // button for screen readers — a card-level onClick would give neither.
-    <article className="group relative flex cursor-pointer flex-col rounded-2xl border border-border bg-card p-5 transition-all hover:-translate-y-1 hover:border-fg/25 focus-within:border-fg/25 md:p-6">
+    <article className="group relative flex w-full cursor-pointer flex-col rounded-2xl border border-border bg-card p-5 transition-all hover:-translate-y-1 hover:border-fg/25 focus-within:border-fg/25 md:p-6 lg:p-[clamp(0.75rem,2svh,1.5rem)]">
       <Thumbnail item={item} />
 
-      <div className="mt-5 flex items-center justify-between gap-3">
+      <div className="mt-5 flex items-center justify-between gap-3 lg:mt-[clamp(0.5rem,1.6svh,1.25rem)]">
         <span className="text-xs uppercase tracking-[0.16em] text-muted">
           {item.category}
         </span>
         <StatusBadge status={item.status} />
       </div>
 
-      <h3 className="mt-3 text-lg font-semibold md:text-xl">{item.title}</h3>
-      <p className="mt-1 text-sm text-muted">{item.org}</p>
+      <h3 className="mt-2 text-lg font-semibold md:text-xl lg:text-[clamp(1rem,2.4svh,1.25rem)]">
+        {item.title}
+      </h3>
+      <p className="fit-tiny mt-1 text-sm text-muted">{item.org}</p>
 
-      <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-muted">
+      <p className="work-blurb mt-3 line-clamp-2 text-sm leading-relaxed text-muted">
         {item.problem}
       </p>
 
-      <ul className="mt-4 flex flex-wrap items-center gap-2">
+      <ul className="work-blurb mt-4 flex flex-wrap items-center gap-2">
         {item.tech.slice(0, MAX_TECH).map((tech) => (
           <li
             key={tech}
@@ -96,11 +101,11 @@ export function WorkCard({
       </ul>
 
       {/* Pushes the action to the bottom so every card in a row lines up. */}
-      <div className="mt-auto pt-5">
+      <div className="mt-auto pt-3">
         <button
           type="button"
           onClick={onOpen}
-          className="inline-flex w-full items-center justify-between border-t border-border pt-4 text-sm font-medium transition-colors after:absolute after:inset-0 after:rounded-2xl after:content-[''] group-hover:text-muted"
+          className="inline-flex w-full items-center justify-between border-t border-border pt-2.5 text-sm font-medium transition-colors after:absolute after:inset-0 after:rounded-2xl after:content-[''] group-hover:text-muted"
         >
           <span>
             Case study
