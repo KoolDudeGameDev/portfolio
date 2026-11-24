@@ -337,6 +337,61 @@ export const work: WorkItem[] = [
     tech: ["n8n", "PostgreSQL", "Google Sheets API", "SMTP"],
   },
   {
+    title: "Document Hub",
+    slug: "document-hub",
+    org: "Bai Philippines — lead developer",
+    // Captured 2026-11-23 from a local copy running the demo seed: every client,
+    // person and file is fictional. See product-videos/README.md.
+    image: "showcase/doc-hub-portal.webp",
+    shots: [
+      {
+        src: "showcase/doc-hub-overview.webp",
+        caption:
+          "The admin overview: clients, pending invitations and recent activity. Every name here is fictional.",
+      },
+      {
+        src: "showcase/doc-hub-clients.webp",
+        caption:
+          "One card per client, with its OneDrive link, standard folders and portal users.",
+      },
+      {
+        src: "showcase/doc-hub-client-admin.webp",
+        caption:
+          "A client's portal content, read live from their OneDrive folder. The internal folder at the bottom is hidden from the client.",
+      },
+      {
+        src: "showcase/doc-hub-portal.webp",
+        caption: "The client's own portal: only their folders, and what is new for them.",
+      },
+      {
+        src: "showcase/doc-hub-upload.webp",
+        caption: "A client uploads into a folder. The file goes straight to Microsoft, up to 100 MB.",
+      },
+      {
+        src: "showcase/doc-hub-activity.webp",
+        caption: "The activity log records every sign-in, upload and download, and every change made in the hub.",
+      },
+    ],
+    group: "Web Apps",
+    category: "Client Portal",
+    status: "Active",
+    problem:
+      "Bai Philippines shares agreements, invoices, résumés and reports with each client from one company OneDrive. Its first client portal was a front-end prototype: nothing was stored anywhere real, the sign-in did not protect the files, and clients could have deleted Bai's own signed agreements.",
+    build:
+      "As lead developer, planned and rebuilt it as one secure web app on Bai's own server. Files stay in OneDrive and are read live through the Microsoft Graph API, never copied. Administrators link each client's main folder once and the hub matches the standard folders by name. Clients sign in with an emailed code, browse and upload into their own folders, and delete only what they uploaded.",
+    value:
+      "Each client gets one private place for every document Bai shares with them, Bai keeps filing in the OneDrive it already uses, and every sign-in, upload and download, and every change made in the hub, leaves a record.",
+    results: [
+      "Sign-in uses an emailed code that works once, expires in 10 minutes and can be resent every 2 minutes, enforced on the server",
+      "Every request is checked against the client's own folders before anything is listed or downloaded",
+      "Clients upload straight to Microsoft, up to 100 MB a file and only in allowed file types",
+      "Internal folders can be hidden per client, and administrators can view any portal exactly as the client sees it",
+      "Changes made in OneDrive appear in the hub within about 30 seconds, and deleted items can be restored",
+      "Runs on Bai's server in Docker, with nightly backups",
+    ],
+    tech: ["Next.js", "TypeScript", "PostgreSQL", "Drizzle ORM", "Microsoft Graph API", "Docker"],
+  },
+  {
     title: "Automation Training Series",
     slug: "automation-training-series",
     org: "Bai Finance",
