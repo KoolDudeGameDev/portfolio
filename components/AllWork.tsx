@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { SectionHeading } from "./SectionHeading";
 import { WorkCard } from "./WorkCard";
-import { WorkModal } from "./WorkModal";
-import { work, workGroups, type WorkGroup, type WorkItem } from "@/content/work";
+import { work, workGroups, type WorkGroup } from "@/content/work";
 
 const ALL = "All" as const;
 type Tab = typeof ALL | WorkGroup;
@@ -22,8 +21,6 @@ const tabs: Tab[] = [
 /** The full list on /work. The home page shows the featured six. */
 export function AllWork() {
   const [active, setActive] = useState<Tab>(ALL);
-  // One dialog for the whole section rather than one per card.
-  const [detail, setDetail] = useState<WorkItem | null>(null);
 
   return (
     <section className="px-6 pt-32 pb-20 md:pt-40 md:pb-28">
@@ -71,13 +68,11 @@ export function AllWork() {
               key={item.title}
               className={inTab(item, active) ? "contents" : "hidden"}
             >
-              <WorkCard item={item} onOpen={() => setDetail(item)} />
+              <WorkCard item={item} />
             </div>
           ))}
         </div>
       </div>
-
-      <WorkModal item={detail} onClose={() => setDetail(null)} />
     </section>
   );
 }

@@ -1,5 +1,5 @@
 import { ArrowRight } from "./Icons";
-import { type WorkItem } from "@/content/work";
+import { workHref, type WorkItem } from "@/content/work";
 import { asset } from "@/lib/site";
 
 /** Chips are capped so a long stack can't set the card's height. */
@@ -54,19 +54,13 @@ function Thumbnail({ item }: { item: WorkItem }) {
   );
 }
 
-export function WorkCard({
-  item,
-  onOpen,
-}: {
-  item: WorkItem;
-  onOpen: () => void;
-}) {
+export function WorkCard({ item }: { item: WorkItem }) {
   const extraTech = item.tech.length - MAX_TECH;
 
   return (
-    // `relative` + the stretched pseudo-element on the button below makes the
+    // `relative` + the stretched pseudo-element on the link below makes the
     // whole card the click target while keeping exactly one tab stop and a real
-    // button for screen readers — a card-level onClick would give neither.
+    // link for screen readers: a card-level onClick would give neither.
     <article className="group relative flex w-full cursor-pointer flex-col rounded-2xl border border-border bg-card p-5 transition-all hover:-translate-y-1 hover:border-fg/25 focus-within:border-fg/25 md:p-6 lg:p-[clamp(0.75rem,2svh,1.5rem)]">
       <Thumbnail item={item} />
 
@@ -102,9 +96,8 @@ export function WorkCard({
 
       {/* Pushes the action to the bottom so every card in a row lines up. */}
       <div className="mt-auto pt-3">
-        <button
-          type="button"
-          onClick={onOpen}
+        <a
+          href={workHref(item.slug)}
           className="inline-flex w-full items-center justify-between border-t border-border pt-2.5 text-sm font-medium transition-colors after:absolute after:inset-0 after:rounded-2xl after:content-[''] group-hover:text-muted"
         >
           <span>
@@ -112,7 +105,7 @@ export function WorkCard({
             <span className="sr-only"> — {item.title}</span>
           </span>
           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-        </button>
+        </a>
       </div>
     </article>
   );

@@ -1,8 +1,10 @@
-/** One visual in a case study. The card shows `image`; the modal shows these. */
+import { asset } from "@/lib/site";
+
+/** One visual in a case study. The card shows `image`; the case-study page shows these. */
 export type WorkShot = {
   /** Filename under public/assets. */
   src: string;
-  /** What the reader is looking at. Shown under the image in the modal. */
+  /** What the reader is looking at. Shown under the image on the case-study page. */
   caption: string;
 };
 
@@ -40,18 +42,27 @@ export type WorkItem = {
   results: string[];
   tech: string[];
   image?: string; // path under /assets — the card thumbnail
-  /** Extra visuals for the modal. Falls back to `image` when omitted. */
+  /** The case-study page gallery. Falls back to `image` when omitted. */
   shots?: WorkShot[];
   links?: WorkLink[];
   status: "Active" | "Shipped" | "Completed" | "Research";
   featured?: boolean;
+  /**
+   * The case study's address: /work/<slug>/. Written out rather than derived from
+   * the title, so renaming a project never breaks a link someone already shared.
+   */
+  slug: string;
 };
+
+/** Link to a case study page, base path included. */
+export const workHref = (slug: string) => asset(`/work/${slug}/`);
 
 // Real case studies, framed business problem -> what I built -> why it matters ->
 // results. See "Writing standards" in CLAUDE.md.
 export const work: WorkItem[] = [
   {
     title: "Jim's Franchise Loan",
+    slug: "jims-franchise-loan",
     org: "Bai Finance — technical lead",
     // Every name and personal detail in these captures is fictional. See
     // "Case-study imagery" in CLAUDE.md before re-shooting any of them.
@@ -109,6 +120,7 @@ export const work: WorkItem[] = [
   },
   {
     title: "Company Radar",
+    slug: "company-radar",
     org: "Bai Philippines — technical lead",
     image: "showcase/radar-dashboard.webp",
     shots: [
@@ -159,6 +171,7 @@ export const work: WorkItem[] = [
   },
   {
     title: "Automation & Integration Platform",
+    slug: "automation-integration-platform",
     org: "Bai Finance",
     // The authored diagram leads, not the raw GoHighLevel canvas. At card size
     // a screenshot of a 30-node canvas is grey texture; this one still reads
@@ -228,6 +241,7 @@ export const work: WorkItem[] = [
   },
   {
     title: "Creator Rewards Finance & Payout System",
+    slug: "creator-rewards-payouts",
     org: "Confidential Client — Ecommerce",
     // Leads with the system Kyle built. The two n8n workflows at the end were
     // already running when he took over; their captions say so, because this
@@ -279,6 +293,7 @@ export const work: WorkItem[] = [
   },
   {
     title: "Leave Application Platform",
+    slug: "leave-application-platform",
     org: "Bai Finance — sole developer",
     image: "showcase/leave-form.webp",
     shots: [
@@ -323,6 +338,7 @@ export const work: WorkItem[] = [
   },
   {
     title: "Automation Training Series",
+    slug: "automation-training-series",
     org: "Bai Finance",
     image: "training-ghl-asana.webp",
     shots: [
@@ -361,6 +377,7 @@ export const work: WorkItem[] = [
   },
   {
     title: "Self-Hosted Automation Platform",
+    slug: "self-hosted-automation-platform",
     org: "Bai Finance",
     image: "platform-architecture.webp",
     group: "Infrastructure & Reliability",
@@ -386,6 +403,7 @@ export const work: WorkItem[] = [
   },
   {
     title: "Workflow Monitor",
+    slug: "workflow-monitor",
     org: "Bai Finance",
     image: "workflow-monitor.webp",
     group: "Infrastructure & Reliability",
@@ -408,6 +426,7 @@ export const work: WorkItem[] = [
   },
   {
     title: "CRM Sync & Inquiry Pipeline",
+    slug: "crm-sync-inquiry-pipeline",
     org: "Bai Finance — company website",
     image: "baifinance-inquiry-form.webp",
     shots: [
@@ -461,6 +480,7 @@ export const work: WorkItem[] = [
 
   {
     title: "CRM Migration & Data Pipeline",
+    slug: "crm-migration-data-pipeline",
     org: "Bai Finance",
     image: "crm-pipeline.webp",
     shots: [
@@ -489,6 +509,7 @@ export const work: WorkItem[] = [
   },
   {
     title: "WhatsApp OTP Login",
+    slug: "whatsapp-otp-login",
     org: "Confidential Client — Ecommerce",
     image: "whatsapp-otp-login.webp",
     shots: [
@@ -520,6 +541,7 @@ export const work: WorkItem[] = [
   },
   {
     title: "QR Lead-Capture Flow",
+    slug: "qr-lead-capture",
     org: "Bai Finance",
     image: "workflow-qr-capture.webp",
     shots: [
@@ -546,6 +568,7 @@ export const work: WorkItem[] = [
   },
   {
     title: "Idempotent Webhook Intake",
+    slug: "idempotent-webhook-intake",
     org: "Open-source n8n workflow",
     image: "workflow-idempotent-intake.webp",
     shots: [
@@ -586,6 +609,7 @@ export const work: WorkItem[] = [
   },
   {
     title: "More Open-Source Workflows",
+    slug: "open-source-workflows",
     org: "Open-source n8n workflows",
     image: "workflow-open-source-set.webp",
     shots: [
@@ -636,6 +660,7 @@ export const work: WorkItem[] = [
   },
   {
     title: "RAG Gmail Reply Assistant",
+    slug: "rag-gmail-reply-assistant",
     org: "Open-source n8n workflow",
     image: "workflow-rag-gmail.webp",
     shots: [
@@ -676,6 +701,7 @@ export const work: WorkItem[] = [
   },
   {
     title: "Invoice Intake & Approval Queue",
+    slug: "invoice-intake-approval",
     org: "Open-source n8n workflow",
     image: "workflow-invoice-queue.webp",
     shots: [
@@ -716,6 +742,7 @@ export const work: WorkItem[] = [
   },
   {
     title: "Audit Logging & Production Hardening",
+    slug: "audit-logging-hardening",
     org: "BaiAcademy — team-built LMS",
     image: "baiacademy-register.webp",
     shots: [
@@ -759,6 +786,7 @@ export const work: WorkItem[] = [
 
   {
     title: "Cebuano Speech-to-Text",
+    slug: "cebuano-speech-to-text",
     org: "Capstone Research",
     group: "Research & Systems",
     category: "Machine Learning",
@@ -788,6 +816,7 @@ export const work: WorkItem[] = [
   },
   {
     title: "AI Labeling Loop",
+    slug: "ai-labeling-loop",
     org: "Speech Data Tooling",
     group: "Backend & Data",
     category: "Backend",

@@ -3,13 +3,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ImageZoom } from "./ImageZoom";
 import { Pause, Play } from "./Icons";
-import { WorkModal } from "./WorkModal";
 import {
   showcaseRows,
   type ShowcaseRow,
   type ShowcaseShot,
 } from "@/content/showcase";
-import { work, type WorkItem } from "@/content/work";
+import { work, workHref } from "@/content/work";
 import { asset } from "@/lib/site";
 
 /** Two copies is the minimum that can loop at all; wide screens need more. */
@@ -330,7 +329,6 @@ export function Showcase() {
   const [open, setOpen] = useState<ShowcaseShot | null>(null);
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
-  const [detail, setDetail] = useState<WorkItem | null>(null);
 
   // The popup walks through every screen of that project, not just the one row.
   const gallery = useMemo(
@@ -350,7 +348,6 @@ export function Showcase() {
     setOpen(shot);
   }, []);
   const closeShot = useCallback(() => setOpen(null), []);
-  const closeDetail = useCallback(() => setDetail(null), []);
 
   return (
     <section id="showcase" className="screen tint-4 overflow-x-clip py-14">
@@ -384,7 +381,7 @@ export function Showcase() {
             key={row.label}
             row={row}
             index={i}
-            stopped={paused || open !== null || detail !== null}
+            stopped={paused || open !== null}
             onOpen={openShot}
           />
         ))}
@@ -397,16 +394,12 @@ export function Showcase() {
           title={open.project}
           onIndex={setIndex}
           onClose={closeShot}
-          action={{
-            label: "Read the case study",
-            onClick: () => {
-              setDetail(work.find((w) => w.title === open.project) ?? null);
-              setOpen(null);
-            },
-          }}
+          action={(() => {
+            const study = work.find((w) => w.title === open.project);
+            return study ? { label: "Read the case study", href: workHref(study.slug) } : undefined;
+          })()}
         />
       ) : null}
-      <WorkModal item={detail} onClose={closeDetail} />
     </section>
   );
 }

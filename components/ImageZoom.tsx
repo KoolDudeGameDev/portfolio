@@ -18,7 +18,8 @@ const controlClass =
   "inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/25 bg-black/45 text-white backdrop-blur-sm transition hover:bg-black/70";
 
 /**
- * Full-screen viewer for a case study's images, opened from WorkModal.
+ * Full-screen viewer for a case study's images, opened from the case-study
+ * gallery and from the Showcase tiles.
  *
  * Two states and no library: "fit" shows the whole image uncropped, and a click
  * switches to a larger fixed width inside a scrolling box, scrolled so the
@@ -38,8 +39,8 @@ export function ImageZoom({
   title: string;
   onIndex: (i: number) => void;
   onClose: () => void;
-  /** An extra button beside the caption, such as a link to the case study. */
-  action?: { label: string; onClick: () => void };
+  /** A link beside the caption, such as to the case study. */
+  action?: { label: string; href: string };
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -184,14 +185,13 @@ export function ImageZoom({
             </span>
           ) : null}
           {action ? (
-            <button
-              type="button"
-              onClick={action.onClick}
+            <a
+              href={action.href}
               className="inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-medium text-black transition-opacity hover:opacity-85"
             >
               {action.label}
               <ArrowRight className="h-4 w-4" />
-            </button>
+            </a>
           ) : null}
         </div>
       </div>

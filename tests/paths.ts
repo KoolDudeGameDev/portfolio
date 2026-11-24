@@ -15,7 +15,8 @@ export const route = (path = "/") => `${BASE}${path}`;
  * hydrate with several workers running, and a click before that does nothing.
  */
 export const hydrated = (page: Page) =>
-  page.waitForFunction(() => {
-    const button = document.querySelector("#work article button");
-    return button && Object.keys(button).some((k) => k.startsWith("__reactProps"));
-  });
+  page.waitForFunction(() =>
+    [...document.querySelectorAll("button")].some((b) =>
+      Object.keys(b).some((k) => k.startsWith("__reactProps")),
+    ),
+  );

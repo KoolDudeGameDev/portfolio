@@ -16,8 +16,8 @@ const FOCUSABLE = [
  * and Tab cycles *inside* the dialog instead of walking out into the page
  * behind it — which is the part both modals were missing.
  *
- * `onKey` runs first for dialogs that want their own shortcuts (WorkModal's
- * arrow-key carousel); it never sees Tab or Escape, which are handled here.
+ * `onKey` runs first for dialogs that want their own shortcuts (ImageZoom's
+ * arrow keys and zoom); it never sees Tab or Escape, which are handled here.
  */
 export function useDialog({
   open,

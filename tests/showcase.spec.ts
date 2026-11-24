@@ -75,12 +75,9 @@ test("clicking an image opens it and stops every row until it closes", async ({
 test("the popup leads on to the case study", async ({ page }) => {
   await openShowcase(page);
   await clickTile(page);
-  await page.getByRole("button", { name: "Read the case study" }).click();
-  await expect(page.locator("#work-modal-title")).toHaveText("Jim's Franchise Loan");
-
-  await page.keyboard.press("Escape");
-  await expect(page.locator(DIALOG)).toHaveCount(0);
-  await expect(page.locator("body")).not.toHaveCSS("overflow", "hidden");
+  await page.getByRole("link", { name: "Read the case study" }).click();
+  await expect(page).toHaveURL(/\/work\/jims-franchise-loan\/$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Jim's Franchise Loan");
 });
 
 test("the pause button holds the rows", async ({ page }) => {
