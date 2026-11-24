@@ -240,33 +240,23 @@ export const work: WorkItem[] = [
     tech: ["n8n", "GoHighLevel v2 API", "Asana API", "Webhooks", "REST"],
   },
   {
-    title: "Creator Rewards Finance & Payout System",
-    slug: "creator-rewards-payouts",
+    title: "Affiliate Commission & Payout System",
+    slug: "affiliate-payout-system",
     org: "Confidential Client — Ecommerce",
-    // Leads with the system Kyle built. The two n8n workflows at the end were
-    // already running when he took over; their captions say so, because this
-    // card must survive "walk me through how you built that".
+    // Kept deliberately general (Kyle, 2026-11-24) so the client is hard to
+    // identify: no counts, no client-specific findings, and none of the
+    // client's own pre-existing workflows. Claims stay within what he built.
     image: "payout-system.webp",
     shots: [
       {
         src: "payout-system.webp",
         caption:
-          "The finance and payout system, in two lanes. An order earns commission on a labeled basis and becomes payable once the refund window has passed; staff then settle it through a ledger that always pays the oldest owed earnings first.",
+          "How a payout is earned and settled: an order earns commission, becomes payable once the refund window has passed, and is paid through a ledger that settles the oldest earnings first.",
       },
       {
         src: "health-check.webp",
         caption:
-          "The daily health check. A signup and a login run through production for real and clean up after themselves; the rest are read-only probes. One report says what each status is and how it was proven.",
-      },
-      {
-        src: "workflow-sales-attribution.webp",
-        caption:
-          "The order flow I traced end to end when I took the system over: a storefront order is matched to a creator by discount code, then by referral link, before commission runs.",
-      },
-      {
-        src: "workflow-commission-engine.webp",
-        caption:
-          "The automation layer the dashboards read from, already running when I took over. Every claim is routed by type and checked against the table that owns that bonus.",
+          "The daily health check: a real sign-up and login run against the live system, every server function and workflow is checked, and one morning report says what passed.",
       },
     ],
     group: "Web Apps",
@@ -274,22 +264,20 @@ export const work: WorkItem[] = [
     status: "Shipped",
     featured: true,
     problem:
-      "An ecommerce brand paid its creators commission on every sale, but its finance team could not see what each order earned, what had been paid, what was still owed, or what a refund should recover. The dashboards showed only totals, the commission rates sat in the page markup, and a previous team had left the system half-built.",
+      "An ecommerce business pays its affiliates a commission on sales. Its finance team could not see what each order earned, what had been paid or what was still owed, and a previous team had left the system half-built.",
     build:
-      "Took over the system as its sole engineer. Mapped the full flow from storefront order through the automation layer to the database and both dashboards, removed dead code and unused endpoints, then built the finance and payout system end to end: an order-level transaction ledger, a rate card managed in the database, a configurable refund holdback, a payout ledger that settles the oldest earnings first, and encrypted bank details. The work covered the schema, 17 new server functions, and a rebuild of both role-based dashboards for staff and creators.",
+      "Took over the system as its only engineer and cleaned up the codebase before building on it. Then built the commission and payout features: tracking per order, refund handling, a payout ledger and encrypted bank details. Alongside that, maintain its automation workflows and database, and handle issues, fixes and security improvements.",
     value:
-      "Finance can see what every order earned and what each creator is owed, on one clearly labeled commission basis, with bank details protected and a traceable record behind every payout.",
+      "Finance can see what every order earned and what each affiliate is owed, with bank details protected and a record behind every payout.",
     results: [
-      "Audited the inherited codebase against what production actually ran, removed dead code, faked fields and unused endpoints, and reconciled every database function between environments before building on it",
-      "Delivered 10 of the 11 requirements set by Finance and Marketing, and shipped 25 server functions to production in one browser-verified release",
-      "Made the commission basis visible: \"sales\" had been three different numbers about 15% apart, displayed as one and paid on another. They are now labeled columns, and every export states its basis",
-      "Bank details are encrypted with AES-256-GCM, and each time a creator reveals their account number the event is logged before the number is shown",
-      "Removed an unauthenticated endpoint that could write directly to the live database, closing a path to forged commission records, and identified and fixed a flaw that let staff make themselves administrators",
-      "Traced an analytics endpoint that had silently returned zeros since launch, and rebuilt it to fail closed",
-      "Wrote a daily end-to-end health check that runs a real signup and login through production, tests every server function, and gathers every workflow's failed runs into one morning report",
-      "Separated development from production with a clone that removes personal data, then closed the contract with a verified handover, release runbooks and scripts for the incoming team",
+      "Audited the inherited codebase and removed dead code and unused endpoints before building on it",
+      "Commission is tracked per order, refunds are held back until their window closes, and payouts settle the oldest earnings first",
+      "Bank details are encrypted, and every time one is revealed the event is logged",
+      "Closed a security gap that exposed the live database and fixed a permissions flaw",
+      "A daily end-to-end health check reports on the live system every morning",
+      "Handed over with documentation, runbooks and scripts for the next team",
     ],
-    tech: ["Supabase", "PostgreSQL", "Deno", "TypeScript", "JavaScript", "Chart.js", "n8n"],
+    tech: ["Supabase", "PostgreSQL", "TypeScript", "JavaScript", "n8n", "REST APIs"],
   },
   {
     title: "Leave Application Platform",
@@ -588,28 +576,23 @@ export const work: WorkItem[] = [
       {
         src: "whatsapp-otp-login.webp",
         caption:
-          "The code travels over WhatsApp, but the session is a genuine one: once the code checks out, an admin-minted magic-link token is exchanged for it.",
-      },
-      {
-        src: "workflow-messaging-engine.webp",
-        caption:
-          "The platform's existing WhatsApp delivery layer. The login reuses it to send the code rather than onboarding a second messaging vendor.",
+          "The code travels over WhatsApp, but the session is a normal one: once the code checks out, it is exchanged for a standard signed-in session.",
       },
     ],
     group: "Backend & Data",
     category: "Backend",
     status: "Shipped",
     problem:
-      "Creators on the rewards platform rely on WhatsApp rather than email, but the authentication provider could only issue sessions from its own email or SMS codes.",
+      "The platform's users rely on WhatsApp rather than email, but its sign-in provider could only send codes by email or SMS.",
     build:
-      "Designed a second login channel that delivers a one-time code over WhatsApp, then bridges it into a genuine authenticated session using admin-generated magic-link tokens, leaving the existing email login untouched.",
+      "Added a second sign-in option that sends a one-time code over WhatsApp and turns it into a normal signed-in session, leaving email sign-in unchanged.",
     value:
-      "Creators sign in on the channel they already use, which removes friction from the login experience without adding a new vendor.",
+      "Users sign in through the app they already use, and the business adds no new vendor to do it.",
     results: [
-      "Login over the channel creators already use, with email still available as a fallback",
-      "Reused the platform's existing WhatsApp provider instead of onboarding a new vendor",
+      "Sign-in over WhatsApp, with email still available as a fallback",
+      "Reused the platform's existing WhatsApp provider instead of adding a new vendor",
     ],
-    tech: ["Supabase Auth", "Deno", "WhatsApp API", "PostgreSQL"],
+    tech: ["Supabase Auth", "WhatsApp API", "PostgreSQL", "TypeScript"],
   },
   {
     title: "QR Lead-Capture Flow",
