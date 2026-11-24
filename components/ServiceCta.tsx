@@ -30,7 +30,9 @@ export function ServiceCta({ service }: { service: string }) {
 
           // Not lowercased — the titles carry acronyms ("Backends, APIs
           // & Data"), and "apis" reads like a typo.
-          const text = `I'd like to talk about ${service}.\n\n`;
+          // One line, no trailing blank lines: the box is two lines tall, and
+          // blank lines pushed the text past it and brought up a scrollbar.
+          const text = `I'd like to talk about ${service}. `;
           box.value = text;
           box.dataset.prefill = text;
         });
