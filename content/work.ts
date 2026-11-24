@@ -114,7 +114,7 @@ export const work: WorkItem[] = [
       "Every stage change, score edit and comment is recorded in the applicant's history, and follow-ups and mentions reach people by email",
       "Stages are matched to GoHighLevel by ID, so renaming one in the app never breaks the sync",
       "Sign-in uses an emailed code, with a 2-minute resend wait and a 10-minute expiry enforced on the server",
-      "Covered by 624 automated tests, with the servicing calculator checked against saved reference results",
+      "Covered by automated tests, with the servicing calculator checked against saved reference results",
     ],
     tech: ["Next.js", "TypeScript", "Supabase", "PostgreSQL", "n8n", "GoHighLevel API"],
   },

@@ -14,7 +14,7 @@ export function Experience() {
         />
 
         {/* `.exp-track` draws the line the three dots sit on as you arrive. */}
-        <ol className="exp-track relative grid gap-10 lg:grid-cols-[1.2fr_1.1fr_0.9fr] lg:gap-[clamp(1.25rem,3vw,2.5rem)]">
+        <ol className="exp-track relative grid gap-10 lg:grid-cols-[1.1fr_1.2fr_0.9fr] lg:gap-[clamp(1.25rem,3vw,2.5rem)]">
           {experience.map((item, i) => (
             <li
               key={`${item.org}-${item.role}`}

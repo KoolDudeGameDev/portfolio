@@ -8,7 +8,7 @@ import { asset, site } from "@/lib/site";
 const facts = [
   { label: "Candidate for Cum Laude", sub: "Computer Technology, May 2027" },
   { label: site.location, sub: site.timezone },
-  { label: "Leads six engineers", sub: "Across two project teams" },
+  { label: "Leads six engineers", sub: "Across Bai's software projects" },
   { label: "Australia + Philippines clients", sub: "And international clients" },
 ];
 
@@ -17,7 +17,7 @@ export function About() {
     <section id="about" className="screen tint-3 px-6 py-20 md:py-28">
       <div className="mx-auto grid w-full max-w-6xl items-center gap-12 md:grid-cols-[0.9fr_1.1fr] md:gap-16">
         <div className="reveal relative mx-auto w-full max-w-sm lg:max-w-[min(24rem,56svh)]">
-          <div className="overflow-hidden rounded-2xl border border-border">
+          <div className="overflow-hidden rounded-2xl">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={asset("/assets/photo.webp")}
@@ -29,10 +29,6 @@ export function About() {
               className="w-full object-cover"
             />
           </div>
-          <div
-            aria-hidden
-            className="absolute -inset-3 -z-10 rounded-2xl border border-accent/40"
-          />
         </div>
 
         <div className="reveal">
@@ -62,17 +58,19 @@ export function About() {
 
           <div className="mt-6 space-y-4 leading-relaxed text-muted lg:mt-[clamp(0.5rem,2svh,1.5rem)] lg:space-y-[clamp(0.5rem,1.6svh,1rem)] lg:text-[clamp(0.875rem,2.2svh,1rem)]">
             <p>
-              I turn business requirements into systems people rely on every day,
-              from the database and APIs to the screens and the automation
-              between them. I work on-site in Cebu for the Bai Group of
-              Companies, where I lead two project teams of six engineers, and I
-              take on freelance and agency work for clients in Australia, the
-              Philippines and internationally.
+              I start from the business problem and build the whole system: the
+              database and APIs, the screens people use, and the automation that
+              connects them to the tools a team already uses. I take freelance
+              and agency projects for clients in Australia, the Philippines and
+              other countries. At the Bai Group of Companies in Cebu, where I work
+              on-site as an intern, I lead two to three project teams of six
+              engineers in total.
             </p>
             <p>
-              I am completing my degree in Computer Technology, expected in May
-              2027, and developing a Cebuano AI voice agent on the speech model I
-              trained.
+              I have completed my coursework in Computer Technology. The
+              internship is my final requirement, ending in January 2027, and I
+              graduate in May 2027. I am also building a Cebuano AI voice agent
+              on the speech model I trained.
             </p>
           </div>
 

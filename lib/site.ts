@@ -35,7 +35,7 @@ export const site = {
   timezone: "GMT+8 · any time zone",
   socials: {
     github: "https://github.com/KoolDudeGameDev",
-    linkedin: "https://www.linkedin.com/in/kyle-gregory-ibo-a89455301/",
+    linkedin: "https://www.linkedin.com/in/kylegregoryibo/",
     facebook: "https://www.facebook.com/profile.php?id=61577563267705",
     // User-id form, which is what resolves for an account without a vanity URL.
     discord: "https://discord.com/users/1257833676675485758",
