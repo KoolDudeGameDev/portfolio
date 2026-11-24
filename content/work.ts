@@ -461,6 +461,23 @@ export const work: WorkItem[] = [
     slug: "workflow-monitor",
     org: "Bai Finance",
     image: "workflow-monitor.webp",
+    // The two Discord captures (2026-10-19) show workflow names and errors only,
+    // no people or client data.
+    shots: [
+      {
+        src: "workflow-monitor.webp",
+        caption: "How the monitor works: one lane alerts on each failure as it happens, the other posts a summary every hour.",
+      },
+      {
+        src: "workflow-monitor-alert.webp",
+        caption:
+          "A live failure: the workflow, the failing step and the error, with a link to the run. Repeats inside the hour are counted in the next status post instead of alerting again.",
+      },
+      {
+        src: "workflow-monitor-status.webp",
+        caption: "A quiet night. The status post arrives even when nothing failed, so a missing post means n8n itself is down.",
+      },
+    ],
     group: "Infrastructure & Reliability",
     category: "Monitoring",
     status: "Active",
@@ -474,7 +491,7 @@ export const work: WorkItem[] = [
       "Each workflow is muted for an hour after it alerts, so a workflow that fails on every lead posts once rather than once per lead, and one workflow's mute never silences another's",
       "The hourly post arrives even when everything is healthy, so a missing post means n8n itself is down, the one failure an error trigger can never report",
       "Caught errors now end the run as failed after the caller has its error reply, so the CRM and the task manager see no difference",
-      "Watches the nine production workflows and itself, and a new workflow joins by pointing its error setting at the monitor",
+      "Watches every production workflow and itself, and a new workflow joins by pointing its error setting at the monitor",
       "Fire-drilled before go-live: a deliberately broken workflow alerted once, the repeat was muted, and the status lane reported all clear on the live instance",
     ],
     tech: ["n8n", "n8n REST API", "Discord", "Python"],
